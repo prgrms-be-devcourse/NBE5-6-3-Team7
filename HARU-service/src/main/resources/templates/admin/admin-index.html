@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 화면</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/chart.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+<script src="/js/logout.js"></script>
+
+<div class="main">
+  <div class="chart-title-container">
+    <div class="chart-page-title">대시보드</div>
+  </div>
+  <div class="three-chart-container">
+    <div class="three-chart-box">
+      <div class="three-chart-title">
+        총 회원 수
+      </div>
+      <div class="three-chart-row">
+        <div class="three-chart-circle" style="background-color: #F0CD6E">
+          <img src="/images/icon/user.svg" alt="회원 아이콘"/>
+        </div>
+        <div class="three-chart-content">
+          [[${memberCount}]]
+        </div>
+      </div>
+    </div>
+    <div class="three-chart-box">
+      <div class="three-chart-title">
+        이번달 작성된 일기
+      </div>
+      <div class="three-chart-row">
+        <div class="three-chart-circle" style="background-color: #856B5B">
+          <img src="/images/icon/diary.svg" alt="일기 아이콘"/>
+        </div>
+        <div class="three-chart-content">
+          [[${monthDiaryCount}]]
+        </div>
+      </div>
+    </div>
+    <div class="three-chart-box">
+      <div class="three-chart-title">
+        이번달 대화 횟수
+      </div>
+      <div class="three-chart-row">
+        <div class="three-chart-circle" style="background-color: #467750">
+          <img src="/images/icon/chat.svg" style="width: 65px; height: 65px" alt="채팅 아이콘"/>
+        </div>
+        <div class="three-chart-content">
+          [[${monthChatCount}]]
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart-box">
+      <div class="chart-title">AI 인기도</div>
+      <canvas id="popularAi" width="400" height="200" style="width: 400px; height: 200px"></canvas>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">인기 키워드</div>
+      <canvas id="popularKeyword" width="400" height="200" style="width: 400px; height: 200px;"></canvas>
+    </div>
+  </div>
+</div>
+</body>
+<script src="/js/sidebar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+  const popularCustoms = [[${popularCustoms}]];
+  const popularKeywords = [[${popularKeywords}]];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const aiLabels = popularCustoms.map(e => e.name);
+    const aiData = popularCustoms.map(e => e.count);
+
+    const keywordLabels = popularKeywords.map(e => e.name);
+    const keywordData = popularKeywords.map(e => e.count);
+
+    const chartColors = [
+      'rgba(90, 154, 179, 0.7)',
+      'rgba(248, 125, 110, 0.7)',
+      'rgba(175, 152, 194, 0.7)',
+      'rgba(179, 209, 147, 0.7)',
+      'rgba(252, 225, 120, 0.7)'
+    ];
+
+    new Chart(document.getElementById('popularAi'), {
+      type: 'doughnut',
+      data: {
+        labels: aiLabels,
+        datasets: [{
+          label: 'AI 캐릭터 사용 분포',
+          data: aiData,
+          backgroundColor: chartColors.slice(0, aiLabels.length),
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              font: {
+                size: 16
+              },
+              color: '#333'
+            }
+          }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('popularKeyword'), {
+      type: 'doughnut',
+      data: {
+        labels: keywordLabels,
+        datasets: [{
+          label: '인기 키워드',
+          data: keywordData,
+          backgroundColor: chartColors.slice(0, keywordLabels.length),
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              font: {
+                size: 16
+              },
+              color: '#333'
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+
+</html>

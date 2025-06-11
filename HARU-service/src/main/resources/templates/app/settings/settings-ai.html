@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+  <title>AI 캐릭터 변경 페이지</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/settings.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div th:replace="fragments/member-sidebar :: memberSidebar"></div>
+  <script src="/js/logout.js"></script>
+
+  <div class="main">
+    <div class="main-container">
+      <form id="aiForm" action="/custom/update-custom" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div class="setting-bento">
+          <div class="bento-title">AI 캐릭터 선택</div>
+          <div id="ai-card-container" class="ai-card-container"></div>
+        </div>
+        <div class="setting-bento">
+          <div class="bento-radio-wrapper">
+            <div class="bento-title">말투 설정</div>
+            <div class="tone-options bento-radio">
+              <label class="radio-label">
+                <input type="radio" name="isFormal" value="false" class="radio-hidden">
+                <div class="radio-btn-box">
+                  <div class="radio-button"> <i class="fa-solid fa-check"></i></div>
+                  <span class="radio-text">친근하게</span>
+                </div>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="isFormal" value="true" class="radio-hidden">
+                <div class="radio-btn-box">
+                  <div class="radio-button"> <i class="fa-solid fa-check"></i></div>
+                  <span class="radio-text">정중하게</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+
+        </div>
+        <div class="setting-bento">
+          <div class="bento-radio-wrapper">
+            <div class="bento-title">답변 길이 설정</div>
+            <div class="length-options bento-radio">
+              <label class="radio-label">
+                <input type="radio" name="isLong" value="false" class="radio-hidden">
+                <div class="radio-btn-box">
+                  <div class="radio-button"> <i class="fa-solid fa-check"></i></div>
+                  <span class="radio-text">짧은 답변</span>
+                </div>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="isLong" value="true" class="radio-hidden">
+                <div class="radio-btn-box">
+                  <div class="radio-button"> <i class="fa-solid fa-check"></i></div>
+                  <span class="radio-text">긴 답변</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="button-wrapper">
+        <button type="submit" class="confirm-btn" form="aiForm">저장하기</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/sidebar.js"></script>
+  <script src="/js/settings.js"></script>
+  <script src="/js/logout.js"></script>
+</body>
+</html>

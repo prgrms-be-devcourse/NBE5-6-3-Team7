@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 화면</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/keyword-management.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+<script src="/js/logout.js"></script>
+
+<div th:replace="~{fragments/keyword-write-modal :: keywordWriteModal}"></div>
+
+<div class="main">
+  <div class="keyword-container">
+    <div class="keyword-title">키워드 관리</div>
+    <div class="keyword-buttons">
+      <div class="keyword-type">
+        <button class="segment-button active" data-type="EMOTION">감정</button>
+        <button class="segment-button" data-type="PERSON">사람</button>
+        <button class="segment-button" data-type="SITUATION">상황</button>
+      </div>
+      <div class="keyword-action">
+        <button class="action-button" style="border-color: #467750" id="active-keyword">활성화</button>
+        <button class="action-button" style="border-color: #467750" id="non-active-keyword">비활성화</button>
+        <button class="action-button" style="background-color: #467750; border-color: #467750; color: white" id="add-keyword"> +추가</button>
+      </div>
+    </div>
+    <div class="keyword-box">
+      <div class="keyword-header">
+        <div class="content-label"><span><input type="checkbox" id="selectAll"></span></div>
+        <div class="content-label">이름</div>
+        <div class="content-label">세부타입</div>
+        <div class="content-label">사용 횟수</div>
+        <div class="content-label">활성 상태</div>
+        <div class="content-label">편집</div>
+      </div>
+
+      <div class="keyword-content" id="keywordContent"></div>
+    </div>
+  </div>
+</div>
+<script src="/js/sidebar.js"></script>
+<script src="/js/admin-keyword.js"></script>
+<script src="/js/admin-keyword-modal.js" defer></script>
+</body>
+</html>

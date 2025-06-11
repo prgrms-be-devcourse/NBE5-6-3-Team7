@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+  <title>설정 페이지</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/settings.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div th:replace="fragments/member-sidebar :: memberSidebar"></div>
+  <script src="/js/logout.js"></script>
+
+  <div class="main">
+    <div class="main-container">
+      <div th:if="${message}" class="alert-banner">
+        <i class="fa-solid fa-circle-check"></i>
+        <span th:text="${message}"></span>
+      </div>
+      <div class="setting-bento">
+        <div class="bento-title">계정</div>
+        <div class="bento-btn">
+          <a href="/app/settings/email"><i class="fa-solid fa-envelope"></i><span>이메일 변경하기</span><i class="fa-solid fa-angle-right"></i></a>
+          <a href="/app/settings/password"><i class="fa-solid fa-lock"></i><span>비밀번호 변경하기</span><i class="fa-solid fa-angle-right"></i></a>
+        </div>
+      </div>
+      <div class="setting-bento">
+        <div class="bento-title">서비스</div>
+        <div class="bento-btn">
+          <a href="/app/settings/ai"><i class="fa-solid fa-robot"></i><span>AI 캐릭터 변경하기</span><i class="fa-solid fa-angle-right"></i></a>
+        </div>
+      </div>
+      <div class="leave-text-wrapper">
+        <a href="/member/leave" class="leave-text">회원탈퇴</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/sidebar.js"></script>
+  <script src="/js/logout.js"></script>
+  <script>
+    setTimeout(() => {
+      const banner = document.querySelector('.alert-banner');
+      if (banner) {
+        banner.style.opacity = '0';
+        banner.style.top = '0px'; // 위로 올라가는 느낌
+        setTimeout(() => banner.remove(), 500);
+      }
+    }, 3000);
+  </script>
+</body>
+</html>

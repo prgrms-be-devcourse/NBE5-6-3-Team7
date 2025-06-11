@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>시작하기 전</title>
+  <link rel="stylesheet" href="/css/onboarding.css">
+  <link rel="stylesheet" href="../../static/css/onboarding.css">
+</head>
+<body>
+<main class="container">
+  <section class="content">
+    <h1>시작하기 전<br><strong>몇 가지만 물어볼게요</strong></h1>
+    <p class="subtitle">답변을 바탕으로 <span th:text="${name}"></span>님에게 어울리는 AI를 찾아드려요</p>
+    <button class="start-btn" onclick="location.href='/member/onboarding-qna'">답변하기</button>
+
+    <div class="circle-container">
+      <th:block th:each="ai : ${allAi}">
+        <div class="circle">
+          <img
+              th:if="${ai.images != null and !#lists.isEmpty(ai.images)}"
+              th:src="@{${ai.images[0].renamedName}}"
+              alt="AI 썸네일"
+          />
+        </div>
+      </th:block>
+    </div>
+  </section>
+</main>
+</body>
+</html>

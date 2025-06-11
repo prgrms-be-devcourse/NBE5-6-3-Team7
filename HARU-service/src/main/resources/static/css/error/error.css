@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #E0E8E2;
+  font-family: 'Arial', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.error-container {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.error-code {
+  font-size: 13rem;
+  font-weight: bold;
+  color: #467750;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #282420;
+}

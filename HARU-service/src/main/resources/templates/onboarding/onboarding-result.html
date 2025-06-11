@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 추천 결과</title>
+  <link rel="stylesheet" href="/css/onboarding-result.css">
+  <script src="/js/onboarding-result.js" defer></script>
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+</head>
+<body>
+<main class="container">
+  <h1><span th:text="${name}"></span>님에게 어울리는 AI를 찾았어요.</h1>
+
+  <form method="post" id="aiForm" th:action="@{/member/custom-ai}">
+    <div class="ai-preview">
+      <div class="circle">
+        <img
+            th:if="${ai.images != null and !#lists.isEmpty(ai.images)}"
+            th:src="@{${ai.images[0].renamedName}}"
+            alt="AI 썸네일"
+        />
+      </div>
+      <div class="ai-name">
+        <span th:text="${ai.name}"></span>
+      </div>
+      <p class="ai-desc">
+        <span th:text="${name + '님, ' + ai.info}"></span>
+      </p>
+    </div>
+
+    <!-- hidden input으로 aiId 등 필요한 값도 함께 전송 -->
+    <input type="hidden" name="ai" th:value="${ai}" />
+    <input type="hidden" name="aiId" th:value="${ai.aiId}" />
+    <input type="hidden" name="name" th:value="${name}">
+
+    <button type="submit" class="start-btn">시작하기</button>
+  </form>
+
+  <p class="check-other" style="cursor: pointer;">다른 AI도 확인하시겠어요?</p>
+
+</main>
+</body>
+</html>

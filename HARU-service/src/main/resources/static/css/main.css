@@ -1,0 +1,30 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  display: flex;
+  min-height: 100vh;
+  background-color: #E0E8E2;
+}
+
+.main {
+  background-color: #E0E8E2;
+  padding: 30px;
+  min-height: 100vh;
+  margin-left: 60px;
+  flex: 1;
+  justify-content: center; /* 가로 중앙 정렬 */
+}
+
+.main-container{
+  max-width: 800px;
+  width: 100%;
+  margin: 30px auto;
+  height: 100%;
+  justify-content: center;
+}
+

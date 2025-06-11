@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>홈 화면</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/calendar.css">
+  <link rel="stylesheet" href="/css/card-list.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+</head>
+<body>
+
+<div th:replace="fragments/member-sidebar :: memberSidebar"></div>
+<script src="/js/logout.js"></script>
+  <script th:if="${error}">
+    alert('[[${error}]]');
+  </script>
+
+
+<div class="main">
+  <!--캘린더 표시 구역-->
+  <div class="calendar-container">
+    <div class="calendar-inner">
+      <div class="calendar-header">
+        <div class="calendar-title" id="calendar-title"></div>
+        <div class="calendar-buttons">
+          <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+          <button id="go-today">오늘</button>
+          <button id="next-month"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="calendar-grid">
+        <div class="day-label">일</div>
+        <div class="day-label">월</div>
+        <div class="day-label">화</div>
+        <div class="day-label">수</div>
+        <div class="day-label">목</div>
+        <div class="day-label">금</div>
+        <div class="day-label">토</div>
+        <!-- 날짜 셀은 JS로 렌더링 -->
+      </div>
+    </div>
+  </div>
+  <!--일기 카드 표시 구역-->
+  <div class="recent-title-box">
+    <h2 class="recent-title">최근 일기</h2>
+    <p class="recent-subtitle">최근 14개의 일기가 표시됩니다.</p>
+  </div>
+  <div th:replace="fragments/diary-card-list :: diaryCardList"></div>
+</div>
+
+
+<script src="/js/emotion-map.js"></script>
+<script src="/js/sidebar.js"></script>
+<script src="/js/calendar.js"></script>
+<script src="/js/card-list.js"></script>
+
+
+</body>
+</html>

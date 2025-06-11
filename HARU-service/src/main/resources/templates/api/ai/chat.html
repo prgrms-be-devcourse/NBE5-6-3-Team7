@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>My Day</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.1/dist/full.css" rel="stylesheet"
+        type="text/css"/>
+
+  <style>
+    .main {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      align-items: center;
+      padding: 0;
+    }
+
+    #nav-container{
+      width: 100%;
+    }
+
+    #chat-container {
+      /*flex: 1;*/
+      width: 100%;
+      /*max-width: 768px;*/
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    #input-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    #chat-form {
+      width: 100%;
+      max-width: 768px;
+      padding: 1rem;
+      gap: 1rem;
+      background-color: #E0E8E2;
+      margin-bottom: 0;
+    }
+
+    .sidebar .profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .skeleton-bubble {
+      background-color: #f3f3f3;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/member-sidebar :: memberSidebar}"></div>
+<script src="/js/logout.js"></script>
+
+<div class="main">
+  <input type="hidden" id="csrf-token" th:value="${_csrf.token}"/>
+  <input type="hidden" id="csrf-header" th:value="${_csrf.headerName}"/>
+  <input type="hidden" id="ai-img-url" th:value="@{'/uploads/' + ${imgSavePath} + ${imgRenamedName}}"/>
+
+
+  <div id="nav-container">
+    <div class="navbar bg-green-800 shadow-sm justify-center">
+      <div class="w-[80vw] max-w-[768px] flex justify-between items-center px-2">
+        <div class="flex items-center gap-2">
+          <div class="avatar">
+            <div class="w-10 rounded-full">
+              <img alt="ai avatar" th:src="@{'/uploads/'+ ${imgSavePath} + ${imgRenamedName}}"/>
+            </div>
+          </div>
+          <a id="ai-button" class="btn btn-ghost text-xl text-white" th:text="|${aiName}|">daisyUI</a>
+        </div>
+        <a class="btn btn-sm bg-transparent text-white hover:bg-white hover:text-green-800 transition-colors duration-200"
+           onclick="closeChat()">대화 종료하기</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="chat-container" class="overflow-x-auto">
+    <!-- 채팅 표시 영역 -->
+    <!-- AI 메시지 -->
+    <div class="chat chat-start md:ml-[calc(50%-384px)]">
+      <div class="chat-image avatar">
+        <div class="w-10 rounded-full">
+<!--          <img alt="ai avatar" th:src="@{/images/ai/{aiId}.png(aiId=${aiId})}"/>-->
+          <img alt="ai avatar" th:src="@{'/uploads/'+ ${imgSavePath} + ${imgRenamedName}}"/>
+        </div>
+      </div>
+      <div class="chat-header">
+        <time id="start-time" class="text-xs opacity-50">12:45</time>
+      </div>
+      <div class="chat-bubble max-w-lg bg-white text-black" th:utext="${diaryReply}">기존 일기 답변</div>
+    </div>
+
+  </div>
+
+  <div id="input-container">
+    <form id="chat-form" class="flex justify-between items-center w-[80vw] max-w-[768px] px-2">
+      <div
+          class="flex flex-grow items-center bg-white border border-gray-300 rounded px-4 py-2 shadow-sm">
+                <textarea
+                    id="user-input"
+                    class="flex-grow resize-none outline-none text-base place-holder-gray-400 bg-transparent max-h-32 overflow-y-auto"
+                    placeholder="메시지를 입력하세요"
+                    rows="2"
+                    oninput="autoResize(this)"
+                ></textarea>
+
+        <button type="submit" id="send-button"
+                class="ml-2 w-8 h-8 rounded-full bg-green-800 flex items-center justify-center hover:bg-green-700 transition-colors duration-200">
+          <i class="fas fa-arrow-up text-white"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 로딩 인디케이터 -->
+  <div id="loading-overlay"
+       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="flex flex-col items-center gap-4">
+      <span class="loading loading-spinner loading-lg text-white"></span>
+      <p class="text-white">처리 중입니다...</p>
+    </div>
+  </div>
+
+  <!-- 알림 모달 -->
+  <dialog id="alert-modal" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg" id="alert-modal-title">알림</h3>
+      <p class="py-4" id="alert-modal-message">메시지</p>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn">확인</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+</div>
+
+<script th:inline="javascript">
+  const chatHistory = [];
+  const diaryId = [[${diaryId}]]
+  const diaryDate = [[${diaryDate}]]
+  const aiId = [[${aiId}]]
+  const aiImgUrl = document.getElementById('ai-img-url').value;
+  const mainDiv = document.querySelector('.main');
+  const userInput = document.getElementById('user-input');
+  const chatForm = document.getElementById('chat-form');
+  const chatContainer = document.getElementById('chat-container');
+  const sendButton = document.getElementById('send-button');
+  const csrfToken = document.getElementById('csrf-token').value;
+  const csrfHeader = document.getElementById('csrf-header').value;
+  console.log(aiImgUrl);
+  console.log(diaryDate);
+
+  function getCurrentTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+
+  function showLoading() {
+    document.getElementById('loading-overlay').classList.remove('hidden');
+  }
+
+  function hideLoading() {
+    document.getElementById('loading-overlay').classList.add('hidden');
+  }
+
+  function showModal(title, message) {
+    const modal = document.getElementById('alert-modal');
+    document.getElementById('alert-modal-title').innerText = title;
+    document.getElementById('alert-modal-message').innerText = message;
+    modal.showModal();
+  }
+
+  userInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      if (!e.shiftKey) {
+        e.preventDefault();
+
+        setTimeout(() => {
+          chatForm.dispatchEvent(new Event('submit'));
+        }, 0);
+      }
+    }
+  })
+
+  // 채팅 전송
+  chatForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const userMessage = userInput.value.trim();
+    if (!userMessage) {
+      return;
+    }
+
+    userInput.value = '';
+    userInput.style.height = 'auto';
+
+    const currentTime = getCurrentTime();
+
+    // 사용자 말풍선 추가
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat chat-end md:mr-[calc(50%-384px)]';
+    messageDiv.innerHTML = `
+      <div class="chat-image avatar">
+        <div class="w-10 rounded-full">
+          <img src="/images/userImg.png" alt="user avatar"/>
+        </div>
+      </div>
+      <div class="chat-header">
+          <time class="text-xs opacity-50">${currentTime}</time>
+      </div>
+    `;
+
+    // 사용자 메시지 생성
+    const bubbleDiv = document.createElement('div');
+    bubbleDiv.className = "chat-bubble max-w-lg bg-green-700 text-white";
+    bubbleDiv.textContent = userMessage; // 자동 이스케이프 처리
+
+    messageDiv.appendChild(bubbleDiv);
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    // 스켈레톤 말풍선 추가
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'chat chat-start loading-skeleton md:ml-[calc(50%-384px)]';
+    loadingDiv.id = 'loading-bubble';
+    loadingDiv.innerHTML = `
+    <div class="chat-image avatar">
+      <div class="w-10 rounded-full">
+        <img alt="ai avatar" src=${aiImgUrl}/>
+      </div>
+    </div>
+    <div class="chat-header">
+    </div>
+    <div class="chat-bubble max-w-lg skeleton-bubble">
+      <span class="loading loading-dots loading-sm"></span>
+    </div>
+  `;
+
+    setTimeout(() => {
+      chatContainer.appendChild(loadingDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }, 1000);
+
+    // 서버에 요청
+    fetch('/api/ai/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken
+      },
+      body: JSON.stringify({
+        diaryId: diaryId,
+        chatHistory: chatHistory,
+        userMessage: userMessage
+      })
+    })
+    .then((response) => response.text())
+    .then((data) => {
+      // 스켈레톤 제거
+      const loadingEl = document.getElementById('loading-bubble');
+      if (loadingEl) {
+        loadingEl.remove();
+      }
+
+      // ai 말풍선 추가
+      const responseTime = getCurrentTime();
+      const responseDiv = document.createElement('div');
+      responseDiv.className = 'chat chat-start md:ml-[calc(50%-384px)]';
+      responseDiv.innerHTML = `
+        <div class="chat-image avatar">
+          <div class="w-10 rounded-full">
+            <img alt="ai avatar" src=${aiImgUrl}/>
+          </div>
+        </div>
+        <div class="chat-header">
+          <time class="text-xs opacity-50">${responseTime}</time>
+        </div>
+        <div class="chat-bubble max-w-lg bg-white text-black">${data}</div>
+      `;
+      // 대화 내역 추가
+      chatHistory.push({user: userMessage, ai: data})
+
+      // 스크롤 조정
+      chatContainer.appendChild(responseDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    })
+    .catch((error) => {
+      const loadingEl = document.getElementById('loading-bubble');
+      if (loadingEl) {
+        loadingEl.remove();
+      }
+      console.error(error);
+      alert("현재 대화가 어렵습니다. 다시 시도해 주세요.")
+    })
+  })
+
+  function autoResize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 128) + 'px'; // 최대 5줄(32px * 5 = 160)
+
+  }
+
+  function closeChat() {
+
+    userInput.disabled = true;
+    sendButton.disabled = true;
+    const currentTime = getCurrentTime();
+
+    // 사용자 -> 대화 종료하기
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat chat-end md:mr-[calc(50%-384px)]';
+    messageDiv.innerHTML = `
+      <div class="chat-image avatar">
+        <div class="w-10 rounded-full">
+          <img src="/images/userImg.png" alt="user avatar">
+        </div>
+      </div>
+      <div class="chat-header">
+          <time class="text-xs opacity-50">${currentTime}</time>
+      </div>
+      <div class="chat-bubble max-w-lg bg-green-700 text-white">대화 종료하기</div>
+    `;
+
+    // 스크롤 조정
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    // ai -> 대화내용 요약 여부 질문
+    const responseTime = getCurrentTime();
+    const responseDiv = document.createElement('div');
+    responseDiv.className = 'chat chat-start md:ml-[calc(50%-384px)]';
+    responseDiv.innerHTML = `
+        <div class="chat-image avatar">
+          <div class="w-10 rounded-full">
+            <img alt="ai avatar" src=${aiImgUrl}/>
+          </div>
+        </div>
+        <div class="chat-header">
+          <time class="text-xs opacity-50">${responseTime}</time>
+        </div>
+        <div class="chat-bubble max-w-lg bg-white text-black flex flex-col items-start gap-2">
+          <div>지금까지의 대화 내용을 요약하여 기록할까요?</div>
+          <button class="btn btn-xl bg-transparent outline--green-700 text-green-700 hover:bg-green-600 hover:text-white w-[100%]" onclick="memo()">Yes</button>
+          <button class="btn btn-xl bg-transparent text-grey-400 hover:bg-gray-500 hover:text-white w-[100%]" onclick="noMemo()">No</button>
+        </div>
+      `;
+
+    setTimeout(() => {
+      chatContainer.appendChild(responseDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }, 700);
+
+  }
+
+  function memo() {
+    showLoading();
+
+    fetch('/api/ai/chat/memo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken
+      },
+      body: JSON.stringify({
+        diaryId: diaryId,
+        chatHistory: chatHistory,
+        userMessage: ''
+      })
+    })
+    .then(response => {
+      hideLoading();
+      if (response.ok) {
+        showModal('저장 완료', '대화 내용을 답장과 함께 저장했어요!');
+        document.getElementById('alert-modal').addEventListener('close', () => {
+          window.location.href = `/diary/record?date=${diaryDate}`;
+        }, {once: true});
+      } else {
+        showModal('저장 실패', '대화 내용을 저장하지 못했어요. 다시 시도해주세요.');
+      }
+    })
+    .catch(err => {
+      hideLoading();
+      console.error(err);
+      showModal('에러', '알 수 없는 오류가 발생했습니다.')
+    })
+  }
+
+  function noMemo() {
+    showLoading();
+
+    fetch('/api/ai/chat/end', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken
+      },
+      body: JSON.stringify({
+        diaryId: diaryId,
+        chatHistory: chatHistory,
+        userMessage: ''
+      })
+    })
+    .then(response => {
+      hideLoading();
+      if (response.ok) {
+        window.location.href = `/diary/record?date=${diaryDate}`; // 처리 성공 후 리다이렉트
+      } else {
+        showModal('에러', '대화 종료 처리에 실패했습니다. 다시 시도해주세요.');
+      }
+    })
+    .catch(error => {
+      hideLoading();
+      console.error(error);
+      showModal('에러', '알 수 없는 오류가 발생했습니다.')
+    })
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('start-time').innerText = getCurrentTime();
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  })
+
+</script>
+
+</body>
+</html>

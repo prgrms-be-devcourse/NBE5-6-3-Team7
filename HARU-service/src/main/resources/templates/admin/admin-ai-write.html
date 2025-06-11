@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 화면</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/ai-management.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../../static/css/onboarding.css">
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+<script src="/js/logout.js"></script>
+
+<div th:fragment="aiWritePage" class="main" id="aiWritePage">
+  <div class="ai-write-container">
+    <div class="ai-profile">
+      <div class="ai-image">
+        <img id="thumbnail" src="" alt="AI 썸네일" style="max-width: 150px; display: none;" />
+      </div>
+      <div class="ai-image-change">
+        <button id="imageChange">사진 변경</button>
+        <input type="file" id="imageInput" accept="image/*" style="display: none;" />
+      </div>
+    </div>
+    <div class="content-form">
+      <div class="label"><span>이름</span></div>
+      <div class="name-input">
+        <input type="text" id="name-input" placeholder="입력"/>
+      </div>
+      <div class="label"><span>MBTI</span></div>
+      <div class="mbti-input">
+        <input type="text" id="mbti-input" placeholder="입력"/>
+      </div>
+      <div class="label"><span>소개글</span></div>
+      <div class="info-input">
+        <input type="text" id="info-input" placeholder="입력"/>
+      </div>
+      <div class="label"><span>시스템 프롬포트</span></div>
+      <div class="prompt-input">
+        <textarea id="prompt-input" placeholder="입력" rows="6"></textarea>
+      </div>
+    </div>
+    <div class="page-submit">
+      <button id="submitBtn">AI 캐릭터 저장하기</button>
+    </div>
+  </div>
+</div>
+<script src="/js/sidebar.js"></script>
+<script src="/js/admin-ai.js"></script>
+<script src="/js/admin-ai-write.js"></script>
+</body>
+</html>

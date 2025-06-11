@@ -1,0 +1,15 @@
+<html xmlns:th="http://www.thymeleaf.org">
+  <div class="sidebar" th:fragment="adminSidebar">
+    <div class="menu" style="margin-top: 110px">
+      <a href="/admin"><i class="fas fa-home"></i><span>홈</span></a>
+      <a href="/admin/keyword"><i class="fa fa-th-list"></i><span>키워드 관리</span></a>
+      <a href="/admin/ai"><i class="fa fa-users"></i><span>AI 캐릭터 관리</span></a>
+    </div>
+
+    <div class="logout">
+      <a href="#" onclick="logout(event)">
+        <i class="fas fa-right-from-bracket"></i><span>로그아웃</span>
+      </a>
+    </div>
+  </div>
+</html>

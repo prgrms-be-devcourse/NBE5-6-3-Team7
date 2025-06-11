@@ -1,0 +1,98 @@
+.chart-title-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  margin-top: 2%;
+}
+
+.chart-page-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 2.5%;
+}
+
+.chart-container {
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.chart-box {
+  width: 500px;
+  height: 300px;
+  border: 1px solid #282420;
+  padding: 7px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background-color: #FEFBF6;
+}
+
+.chart-title {
+  margin: 15px 0 25px 15px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.chart-box canvas {
+  margin: 15px;
+}
+
+
+.three-chart-container {
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  margin-top: 2%;
+  margin-bottom: 40px;
+}
+
+.three-chart-box {
+  width: 400px;
+  height: 220px;
+  border: 1px solid #282420;
+  padding: 7px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background-color: #FEFBF6;
+}
+
+.three-chart-title {
+  margin: 15px 0 25px 15px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.three-chart-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+}
+
+.three-chart-circle {
+  width: 120px;
+  height: 120px;
+  background-color: #F0CD6E;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.three-chart-circle img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.three-chart-content {
+  margin-left: 20px;
+  margin-right: 33px;
+  font-size: 42px;
+  font-weight: bold;
+}

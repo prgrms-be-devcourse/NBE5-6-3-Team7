@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원 탈퇴</title>
+  <link rel="stylesheet" href="/css/leave.css">
+  <script src="/js/leave.js" defer></script>
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+</head>
+<body>
+<div class="container">
+  <h1>정말 떠나실건가요?</h1>
+  <p class="subtext">
+    <span class="ai-name" th:text="${aiName}">AI 캐릭터 이름</span>가 많이 그리워할 거예요
+  </p>
+  <div class="button-group">
+    <button class="stay-btn" onclick="history.back()">남기</button>
+    <button type="button" class="leave-btn" onclick="postLeave()">떠나기</button>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>대화 방식 선택</title>
+  <link rel="stylesheet" href="/css/onboarding-qna.css">
+  <script src="/js/onboarding-qna.js" defer></script>
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+</head>
+<body>
+<main class="container">
+  <h1 id="question">
+    감정이 힘들 때<br>
+    어떤 대화 방식을 원하시나요?
+  </h1>
+  <div class="button-group">
+    <button class="option-btn" onclick="handleClick(1)">위로와 공감을 해주었으면 좋겠어요.</button>
+    <button class="option-btn" onclick="handleClick(2)">상황을 헤쳐나갈 방법을 알려줬으면 좋겠어요.</button>
+    <button class="option-btn" onclick="handleClick(3)" style="display: none;">감정을 표현하고 정리해요.</button>
+    <button class="option-btn" onclick="handleClick(4)" style="display: none;">이성적으로 정리하고 계획해요.</button>
+    <button class="option-btn" onclick="handleClick(5)" style="display: none;">정중한 말투</button>
+    <button class="option-btn" onclick="handleClick(6)" style="display: none;">친근한 말투</button>
+    <button class="option-btn" onclick="handleClick(7)" style="display: none;">짧고 핵심적</button>
+    <button class="option-btn" onclick="handleClick(8)" style="display: none;">충분한 길이</button>
+  </div>
+</main>
+</body>
+</html>

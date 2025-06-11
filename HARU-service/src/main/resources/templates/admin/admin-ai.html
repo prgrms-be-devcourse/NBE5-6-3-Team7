@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 화면</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/ai-management.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+<script src="/js/logout.js"></script>
+
+<div class="main">
+  <div class="ai-container">
+    <div class="ai-title">AI 관리</div>
+    <div class="ai-buttons">
+      <div class="ai-type"></div>
+      <div class="ai-action">
+        <button class="action-button" style="border-color: #467750" id="active-ai">활성화</button>
+        <button class="action-button" style="border-color: #467750" id="non-active-ai">비활성화</button>
+        <button class="action-button" style="background-color: #467750; border-color: #467750; color: white" id="add-ai"> +추가</button>
+      </div>
+    </div>
+    <div class="ai-box">
+      <div class="ai-header">
+        <div class="content-label"><span><input type="checkbox" id="selectAll"></span></div>
+        <div class="content-label">이름</div>
+        <div class="content-label">선택된 횟수</div>
+        <div class="content-label">활성화 상태</div>
+        <div class="content-label">편집</div>
+      </div>
+
+      <div class="ai-content" id="aiContent"></div>
+    </div>
+  </div>
+</div>
+<script src="/js/sidebar.js"></script>
+<script src="/js/admin-ai.js"></script>
+<script src="/js/admin-ai-write.js"></script>
+</body>
+</html>

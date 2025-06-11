@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>일기 상세보기</title>
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/diary-record.css">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/member-sidebar :: memberSidebar}"></div>
+
+<!--  class = main으로 바꿔서 여기에 다 있음 -->
+<main class="main">
+  <div class="container">
+    <div class="diary-container">
+      <div class="diary-header">
+        <div class="diary-date">
+          <div id="diary-emotion">
+          </div>
+          <input type="hidden" id="emotion-text" th:value="${diary.emotion}"/>
+          <h1 th:text="${#temporals.format(diary.date, 'yy.MM.dd')}">날짜</h1>
+        </div>
+
+        <div class="button-group">
+          <div class="button" onclick="editDiary()"><i class="fa-solid fa-pen"></i></div>
+          <input type="hidden" id="reply-content" th:value="${diary.reply?.content}">
+          <div class="button" onclick="deleteDiary()"><i class="fa-solid fa-trash-can"></i></div>
+          <div class="button" onclick="goBack()"><i class="fa-solid fa-arrow-left-long"></i></div>
+        </div>
+      </div>
+      <div class="diary-main">
+        <div th:if="${diary.images != null && !diary.images.isEmpty()}">
+          <div class="diary-image">
+            <div class="diary-image-wrapper">
+              <div th:each="image : ${diary.images}">
+                <img th:src="@{${image.path}}" th:alt="${image.originName}" class="diary-image-img">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="diary-text">
+          <div class="diary-text-wrapper">
+            <p th:text="${diary.content}">일기 내용</p>
+          </div>
+        </div>
+        <div th:if="${diary.keywordNames != null && !diary.keywordNames.isEmpty()}">
+          <div class="diary-keyword" th:if="${diary.keywordNames}">
+            <div class="keyword" th:each="kw : ${diary.keywordNames}"
+                 th:text="|#${kw} |"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reply-container">
+      <div class="reply-header">
+        <i class="fa-regular fa-envelope" style="font-size: 2rem; padding-right: 7px"></i>
+        <div th:if="${diary.reply != null}">
+          <div th:text="|${customAiInfo.name}의 답장이 도착했어요|" style="font-size: 1.3rem; font-weight: bold">
+            [ai 캐릭터]의 답장이 도착했어요
+          </div>
+        </div>
+        <div th:if="${diary.reply == null}">
+          <div th:text="|${customAiInfo.name}가 답장을 작성중이에요|" style="font-size: 1.3rem; font-weight: bold">
+            [ai 캐릭터]가 답장을 작성중이에요
+          </div>
+        </div>
+      </div>
+      <div class="reply-main">
+        <div class="reply-text">
+          <div class="ai-avatar">
+            <img alt="ai avatar" th:src="@{${customAiInfo.renamedPath}}">
+          </div>
+          <div class="ai-reply">
+            <div class="ai-reply-wrapper">
+              <div th:if="${diary.reply != null}">
+                <div th:utext="${replyContent}"></div>
+              </div>
+              <div th:if="${diary.reply == null}">
+                <p>소중하게 읽고 답장을 작성해드릴게요 ✏️</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- diary 생성일자가 7일 이내일 경우에만 채팅버튼 생성 -->
+        <div class="chat-btn-wrapper"
+             th:if="${diary.reply != null} and ${T(java.time.LocalDate).now().minusDays(7).isBefore(diary.getCreatedAt().toLocalDate())} and ${diary.reply.getCreatedAt() == diary.reply.getModifiedAt()}">
+          <!--        <div class="chat-btn-wrapper" th:if="${diary.reply != null}">-->
+          <div class="chat-btn" onclick="chat()">
+            <i class="fa-regular fa-message" style="margin-right: 7px"></i>
+            <div th:text="|${customAiInfo.name}와 더 많은 대화하러 가기|">[ai 캐릭터]와 더 많은 대화하러 가기</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+<script src="/js/emotion-map.js"></script>
+<script th:inline="javascript">
+  const diaryId = '[[${diary.diaryId}]]'
+  const diaryDate = [[${diary.date}]]
+  const emotionText = document.getElementById('emotion-text').value.toUpperCase();
+  const emotionDiv = document.getElementById('diary-emotion');
+  const emotionIcon = document.createElement('img');
+  emotionIcon.src = `/images/emotion/weather/${emotionImageMap[emotionText]}`
+  emotionIcon.alt = 'emotion';
+  emotionDiv.appendChild(emotionIcon);
+
+  function goBack() {
+    window.location.href = `/app`;
+  }
+
+  function editDiary() {
+    const replyContent = document.getElementById('reply-content').value;
+    if (replyContent && replyContent.trim().length > 0) {
+      alert("이미 답장이 달린 일기는 수정할 수 없습니다.");
+      return;
+    }
+    window.location.href = `/diary/edit/${diaryId}`;
+  }
+  const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+  function deleteDiary() {
+    if (confirm("정말로 삭제하시겠습니까?")) {
+      fetch(`/api/diary/${diaryId}`, {
+        method: 'DELETE',
+        headers: {
+          [csrfHeader]: csrfToken
+        },
+      })
+      .then(response => {
+        if (response.ok) {
+          alert("삭제되었습니다.");
+          window.location.href = "/app";
+        } else {
+          alert("삭제에 실패했습니다.");
+        }
+      });
+    }
+  }
+
+  function chat() {
+    window.location.href = `/ai/chat?diaryId=${diaryId}`;
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // diary-image div 요소 찾기
+    const diaryImageDiv = document.querySelector('.diary-image');
+
+    // 이미지 태그 개수 확인
+    if (diaryImageDiv) {
+      const images = diaryImageDiv.querySelectorAll('img');
+
+      // 이미지가 1개인 경우에만 center 정렬 적용, 그 외에는 해제
+      if (images.length === 1) {
+        diaryImageDiv.style.justifyContent = 'center';
+      } else {
+        diaryImageDiv.style.justifyContent = 'flex-start';
+      }
+    }
+  });
+
+</script>
+<script src="/js/sidebar.js"></script>
+<script src="/js/logout.js"></script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+.setting-bento {
+  width: 100%;
+  background-color: #FEFBF6;
+  border-radius: 12px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+}
+
+.bento-title {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #282420;
+  padding-top: 30px;
+  padding-left: 30px;
+  margin-bottom: 10px;
+  align-content: center;
+}
+
+.bento-btn {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.bento-btn a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 30px;
+  color: #282420;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.bento-btn a:hover {
+  background-color: #B3D193;
+}
+
+.bento-btn i {
+  font-size: 1.1rem;
+  color: #467750;
+}
+
+.bento-btn span {
+  flex: 1;
+  margin: 0 10px;
+  text-align: left;
+}
+
+/* form */
+.bento-form {
+  padding-top: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.bento-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bento-form input {
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.confirm-btn {
+  width: 150px;
+  height: 50px;
+  padding: 10px;
+  background-color: #467750;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.confirm-btn:hover {
+  background-color: #365c3d;
+}
+
+/* validation text */
+.validation-message {
+  font-size: 0.9rem;
+  margin-left: 5px;
+}
+
+/* alert banner */
+.alert-banner {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #467750;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+  transition: opacity 0.5s ease, top 0.5s ease;
+}
+
+.alert-banner i {
+  font-size: 1rem;
+}
+
+.error-banner {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #CA3533;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+  transition: opacity 0.5s ease, top 0.5s ease;
+}
+
+.error-banner i {
+  font-size: 1rem;
+}
+
+
+/****************/
+/*   AI CARDS   */
+/****************/
+.ai-card-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  padding: 0 30px;
+}
+
+.ai-card {
+  border: 1px solid #ADAB9F;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition: 0.2s ease;
+}
+
+.ai-card.selected {
+  border: 1px solid #467750;
+  background-color: #f3f8f4;
+}
+
+.ai-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #ADAB9F;
+  margin: 0 auto 16px;
+  overflow: hidden;
+  border: 3px solid #ADAB9F;
+}
+
+/* 선택된 AI 카드의 이미지에 초록 테두리 */
+.ai-card.selected .ai-image {
+  border: 3px solid #467750;
+}
+
+.ai-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.ai-name {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.ai-mbti {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.ai-info {
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 8px;
+}
+
+.select-button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background-color: #D9D8D5;
+  color: #333;
+}
+
+.select-button.selected {
+  background-color: #467750;
+  color: white;
+}
+
+/****************/
+/* radio button */
+/****************/
+.bento-radio-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 30px;
+  padding-left: 30px;
+  padding-right: 30px;
+  margin-bottom: 10px;
+}
+
+.bento-radio-wrapper .bento-title {
+  margin-bottom: 0;
+  padding: 0;
+  font-size: 1.5rem;
+  color: #282420;
+  white-space: nowrap;
+}
+
+.tone-options,
+.length-options {
+  width: 250px;
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  padding: 0;
+  margin: 0;
+}
+
+.radio-label {
+  width: 100px;
+  display: inline-block;
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+.radio-hidden {
+  display: none;
+}
+
+.radio-hidden:checked + .radio-button {
+  border-color: #467750;
+  background-color: #467750;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 라디오 버튼 영역 전체를 감싸는 박스 */
+.radio-btn-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px; /* 버튼과 텍스트 간격 */
+  padding: 10px 0;
+  color: #282420;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+/* 내부 라디오 박스 */
+.radio-button {
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  border: 2px solid #467750;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radio-button i {
+  display: none;
+  color: white;
+  font-size: 0.8rem;
+  line-height: 20px;
+  text-align: center;
+  width: 100%;
+}
+
+
+/* 체크된 버튼 스타일 */
+.radio-hidden:checked + .radio-btn-box {
+  border-color: #467750;
+  color: #282420;
+}
+
+.radio-hidden:checked + .radio-btn-box .radio-button i {
+  display: block;
+}
+
+/* 체크됐을 때 내부 색상 */
+.radio-hidden:checked + .radio-btn-box .radio-button {
+  background-color: #467750;
+  box-shadow: inset 0 0 0 6px #467750;
+}
+
+/* 텍스트 */
+.radio-text {
+  font-size: 0.95rem;
+}
+
+/* leave */
+.leave-text-wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.leave-text {
+  font-size: 0.8rem;
+  color : #ADAB9F;
+}

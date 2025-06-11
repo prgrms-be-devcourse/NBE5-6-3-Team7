@@ -1,0 +1,19 @@
+<!-- diary-card-list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="diaryCardList">
+  <template id="diary-card-template">
+    <div class="diary-card">
+      <div class="diary-left">
+        <img class="emotion-icon" src="" alt="emotion">
+        <div class="diary-date"></div>
+      </div>
+      <div class="diary-right"></div>
+    </div>
+  </template>
+
+  <div id="diary-card-container" class="diary-list-section"></div>
+</div>
+</body>
+</html>

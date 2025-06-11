@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #dbe5dc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  background-color: #dbe5dc;
+  padding: 40px;
+}
+
+.icon-box {
+  background-color: #406e4c;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.checkmark {
+  font-size: 100px;
+  color: white;
+}
+
+.content {
+  margin-left: 50px;
+}
+
+.content h2 {
+  font-size: 28px;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+.content p {
+  font-size: 14px;
+  color: #333;
+}

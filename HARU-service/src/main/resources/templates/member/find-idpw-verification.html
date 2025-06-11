@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>diary</title>
+</head>
+<link rel="stylesheet" href="/css/index.css">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<body>
+<main class="green-container">
+  <div class="green-visual-box" style="position: absolute">
+    <div class="green-visual-content">
+      <img src="/images/login/img_checked.png" alt="체크 이미지">
+    </div>
+  </div>
+  <div class="form-wrapper">
+    <div th:if="${message != null}" style="text-align: center;">
+      <h1 style="margin-bottom: 0.3em;">회원님의 아이디는</h1>
+      <h1 style="margin-top: 0; color: #467750; margin-bottom: 0.3em;" th:text="${message}"></h1>
+      <h1 style="margin-top: 0;">입니다.</h1>
+    </div>
+    <h1 th:if="${message == null}">비밀번호가 변경되었습니다</h1>
+
+    <button class="green-btn" type="button" style="width: 416px;" onclick="location.href='/'">로그인으로
+      돌아가기
+    </button>
+  </div>
+</main>
+</body>
+</html>

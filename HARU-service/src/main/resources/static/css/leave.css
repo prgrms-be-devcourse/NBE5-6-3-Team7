@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #dbe5dc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  text-align: center;
+}
+
+h1 {
+  font-size: 48px; /* 더 큼직하게 */
+  font-weight: 800;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.subtext {
+  color: #444;
+  font-size: 20px; /* 키움 */
+  margin-bottom: 50px; /* 여백도 키움 */
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* 버튼 간 간격 키움 */
+}
+
+button {
+  padding: 20px 48px; /* 버튼 크기 증가 */
+  font-size: 24px; /* 폰트 큼 */
+  border: 2px solid #2d5e3f;
+  border-radius: 12px;
+  background-color: #f5f5f0;
+  color: #2d5e3f;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #2d5e3f;
+  color: white;
+}

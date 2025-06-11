@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #dde7df;
+  color: #222;
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+h1 {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.6;
+  margin-bottom: 60px;
+  color: #222;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.option-btn {
+  background-color: #f6fef8;
+  border: 1px solid #417b56;
+  color: #417b56;
+  font-size: 20px;
+  padding: 18px 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  min-width: 400px;
+  transition: all 0.2s ease-in-out;
+  width: 800px;
+}
+
+.option-btn:hover {
+  background-color: #417b56;
+  color: white;
+}

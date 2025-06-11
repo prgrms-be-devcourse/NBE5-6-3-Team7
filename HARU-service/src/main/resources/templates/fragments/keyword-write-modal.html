@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="keywordWriteModal" id="keywordWriteModal" class="modal" style="display:none;">
+  <div class="modal-container">
+    <div class="modal-title" id="modal-title">
+      키워드 등록
+    </div>
+    <div class="modal-content">
+      <div class="keyword-input-name">
+        <input type="text" id="keyword-input-name" placeholder="입력"/>
+      </div>
+      <div class="keyword-input-type">
+        <select id="keyword-input-type">
+          <option value="EMOTION">감정</option>
+          <option value="PERSON">사람</option>
+          <option value="SITUATION">상황</option>
+        </select>
+      </div>
+      <div class="keyword-input-specific-type" style="display: block;">
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="specific-type" value="GOOD" checked />
+            긍정
+          </label>
+          <label>
+            <input type="radio" name="specific-type" value="BAD" />
+            부정
+          </label>
+        </div>
+      </div>
+      <div class="modal-button">
+        <button id="modal-submit">등록</button>
+        <button id="modal-close">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

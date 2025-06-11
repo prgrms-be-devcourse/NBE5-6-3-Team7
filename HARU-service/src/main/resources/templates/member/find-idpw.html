@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>diary</title>
+  <link rel="stylesheet" href="/css/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="/js/find-idpw.js" defer></script>
+</head>
+<body>
+<main class="green-container">
+  <div class="green-visual-box" style="position: absolute">
+    <div class="green-visual-content">
+      <img src="/images/login/img_search.png" alt="돋보기 이미지">
+    </div>
+  </div>
+  <div class="form-wrapper">
+    <!-- 탭 버튼 -->
+    <div class="tab-buttons">
+      <button th:class="${type != 'pw'} ? 'tab-button active' : 'tab-button disabled'" th:attr="disabled=${step == 'verify'}" id="find-id-btn">아이디 찾기</button>
+      <button th:class="${type == 'pw'} ? 'tab-button active' : 'tab-button disabled'" th:attr="disabled=${step == 'verify'}" id="find-pw-btn" >비밀번호 찾기</button>
+    </div>
+
+    <!-- 아이디 찾기 폼 -->
+    <form id="form-find-id" class="regist_form" th:action="@{/auth/auth-id}" method="post" th:style="${type == 'pw'} ? 'display:none;' : ''">
+      <div class="input-group" th:if="${step != 'verify'}">
+        <input type="email" class="inputBox" name="email" placeholder="이메일" th:value="${email}">
+      </div>
+      <input type="hidden" name="email" th:value="${email}" th:if="${step == 'verify'}">
+      <div class="input-group" th:if="${step == 'verify'}">
+        <input class="inputBox" name="code" placeholder="인증번호"/>
+      </div>
+      <button class="green-btn" type="submit">확인</button>
+    </form>
+
+    <!-- 비밀번호 찾기 폼 -->
+    <form id="form-find-pw"  class="regist_form" th:action="@{/auth/auth-pw}" method="post" th:style="${type != 'pw'} ? 'display:none;' : ''">
+      <div class="input-group" th:if="${step != 'verify'}">
+        <input type="email" class="inputBox" name="email" placeholder="이메일" th:value="${email}">
+      </div>
+      <input type="hidden" name="email" th:value="${email}" th:if="${step == 'verify'}">
+      <div class="input-group" th:if="${step != 'verify'}">
+        <input class="inputBox" name="userId" placeholder="아이디" th:value="${userId}">
+      </div>
+      <input type="hidden" name="userId" th:value="${userId}" th:if="${step == 'verify'}">
+      <div class="input-group" th:if="${step == 'verify'}">
+        <input class="inputBox" name="code" placeholder="인증번호"/>
+      </div>
+      <button class="green-btn" type="submit">확인</button>
+    </form>
+
+    <p th:if="${message}" th:text="${message}" style="color: green;"></p>
+    <p th:if="${error}" th:text="${error}" id="error-msg" style="color: red;"></p>
+  </div>
+</main>
+</body>
+</html>

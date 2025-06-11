@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #e6f0ea;
+  color: #222;
+}
+
+.container {
+  text-align: center;
+  padding: 100px 40px;
+}
+
+h1 {
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 60px;
+}
+
+.ai-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 60px;
+}
+
+.circle {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  line-height: 1.5;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ai-name {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.ai-desc {
+  font-size: 20px;
+  color: #444;
+  margin-top: 16px;
+}
+
+.start-btn {
+  background-color: white;
+  color: #417b56;
+  border: 3px solid #417b56;
+  border-radius: 12px;
+  padding: 20px 80px;
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 579px;
+}
+
+.start-btn:hover {
+  background-color: #417b56;
+  color: white;
+}
+
+.check-other {
+  font-size: 18px;
+  color: #417b56;
+  margin-top: 30px;
+  cursor: pointer;
+  text-decoration: underline;
+}

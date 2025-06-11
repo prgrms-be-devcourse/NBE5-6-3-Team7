@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+  <title>이메일 변경 페이지</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/settings.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div th:replace="fragments/member-sidebar :: memberSidebar"></div>
+  <script src="/js/logout.js"></script>
+
+  <div class="main">
+    <div class="main-container">
+      <div th:if="${message}" class="error-banner">
+        <i class="fa-solid fa-circle-xmark"></i>
+        <span th:text="${message}"></span>
+      </div>
+      <div class="setting-bento">
+        <div class="bento-title">이메일 변경</div>
+        <div class="bento-form">
+          <form id="emailForm" action="/member/settings/update-email" method="post" novalidate>
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+            <input type="email" id="emailInput" placeholder="이메일 입력" name="newEmail" required />
+            <input type="password" id="passwordInput" placeholder="비밀번호 입력" name="password" required />
+            <div id="emailMessage" class="validation-message"></div>
+          </form>
+        </div>
+      </div>
+      <div class="button-wrapper">
+        <button type="submit" class="confirm-btn" form="emailForm">변경하기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 오류 배너
+    setTimeout(() => {
+      const banner = document.querySelector('.error-banner');
+      if (banner) {
+        banner.style.opacity = '0';
+        banner.style.top = '0px'; // 위로 올라가는 느낌
+        setTimeout(() => banner.remove(), 500);
+      }
+    }, 3000);
+  </script>
+  <!--이메일 형식 검사-->
+  <script>
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput')
+    const messageBox = document.getElementById('emailMessage');
+
+    // 이메일 양식 검사
+    emailInput.addEventListener('input', () => {
+      const email = emailInput.value;
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (email === "") {
+        messageBox.textContent = "";
+        emailInput.style.borderColor = ""; // 기본 상태로
+      } else if (regex.test(email)) {
+        messageBox.textContent = "올바른 이메일 형식입니다";
+        messageBox.style.color = "green";
+        emailInput.style.borderColor = "#467750";  // 녹색 테두리
+      } else {
+        messageBox.textContent = "이메일 형식이 올바르지 않습니다";
+        messageBox.style.color = "#F87C6F";
+        emailInput.style.borderColor = "#F87C6F";  // 빨간 테두리
+      }
+    });
+
+    // 비밀번호 입력 검사
+    passwordInput.addEventListener('input', () => {
+      if (passwordInput.value.trim() !== "") {
+        passwordInput.style.borderColor = "#467750";
+      } else {
+        passwordInput.style.borderColor = ""; // 비어있으면 기본
+      }
+    });
+
+    // '변경하기' 버튼 클릭시 전체 입력 form 검사
+    const form = document.getElementById('emailForm');
+    form.addEventListener('submit', (e) => {
+      const email = emailInput.value.trim();
+      const password = form.password.value.trim();
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      // 조건: 이메일이나 비밀번호가 비었거나, 이메일 형식이 틀렸을 때
+      if (!email || !password) {
+        e.preventDefault(); // 폼 제출 막기
+        messageBox.textContent = "비어있는 입력란이 있습니다";
+        messageBox.style.color = "#F87C6F";
+        if(!email && !password){
+          emailInput.style.borderColor = "#F87C6F";
+          passwordInput.style.borderColor = "#F87C6F";
+        } else if (!password) {
+          passwordInput.style.borderColor = "#F87C6F";
+        } else {
+          emailInput.style.borderColor = "#F87C6F";
+        }
+
+      } else if (!regex.test(email)) {
+        e.preventDefault();
+        messageBox.textContent = "이메일 형식이 올바르지 않습니다";
+        messageBox.style.color = "#F87C6F";
+        emailInput.style.borderColor = "#F87C6F";
+      }
+    });
+  </script>
+  <script src="/js/sidebar.js"></script>
+  <script src="/js/logout.js"></script>
+</body>
+</html>
