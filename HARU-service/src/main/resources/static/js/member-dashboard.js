@@ -112,8 +112,8 @@ async function drawEmotionChart(period = 'monthly', date = null) {
   const range = period === 'monthly' ? getMonthRange(baseDate) : getYearRange(baseDate);
 
   let url = period === 'monthly'
-      ? `/api/diary/emotion/flow/monthly`
-      : `/api/diary/emotion/flow/yearly?year=${baseDate.getFullYear()}`;
+      ? `/api/dashboard/emotion-flow?type=MONTH`
+      : `/api/dashboard/emotion-flow?type=YEAR&year=${baseDate.getFullYear()}`;
   if (date) {
     url += (url.includes('?') ? '&' : '?') + `date=${date}`;
   }
@@ -129,7 +129,7 @@ async function drawEmotionChart(period = 'monthly', date = null) {
       moodValueMap[key] = orderedEmotions.length - idx;
     });
 
-    const diaryList = json.diaryDailyEmotionList;
+    const diaryList = json.data;
     moodData = diaryList.map(item => ({
       x: new Date(item.date),               // YYYY-MM-DD
       y: moodValueMap[item.emotion]
@@ -138,7 +138,7 @@ async function drawEmotionChart(period = 'monthly', date = null) {
 
   // 🔵 연간: 월별 평균값을 1~12월로 가공
   if (period === 'yearly') {
-    const monthlyList = json.diaryMonthlyEmotions;
+    const monthlyList = json.data;
     moodData = monthlyList.map(item => {
       const month = item.month.toString().padStart(2, '0');
       return {
