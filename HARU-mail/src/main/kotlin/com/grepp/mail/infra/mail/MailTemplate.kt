@@ -1,11 +1,11 @@
 package com.grepp.mail.infra.mail
 
-import jakarta.mail.Message
-import jakarta.mail.internet.MimeMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.ClassPathResource
 import org.springframework.mail.javamail.JavaMailSender
+import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.mail.javamail.MimeMessagePreparator
 import org.springframework.stereotype.Component
 import org.thymeleaf.TemplateEngine
@@ -20,11 +20,16 @@ class MailTemplate(
 
     suspend fun send(dto: SmtpDto) {
         withContext(Dispatchers.IO) {
-            javaMailSender.send(MimeMessagePreparator { mimeMessage: MimeMessage ->
-                mimeMessage.setFrom(dto.from)
-                mimeMessage.addRecipients(Message.RecipientType.TO, dto.to)
-                mimeMessage.subject = dto.subject
-                mimeMessage.setText(render(dto), "UTF-8", "html")
+            javaMailSender.send(MimeMessagePreparator { mimeMessage ->
+                val helper = MimeMessageHelper(mimeMessage, true, "UTF-8")
+
+                helper.setFrom(dto.from)
+                helper.setTo(dto.to)
+                helper.setSubject(dto.subject)
+                helper.setText(render(dto), true)
+
+                helper.addInline("mail-image", ClassPathResource("static/images/login/opened-mail.png")
+                );
             })
         }
     }
