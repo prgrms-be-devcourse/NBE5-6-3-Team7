@@ -1,6 +1,6 @@
 spring:
   application:
-    name: HARU-mail
+    name: mail-service
   mail:
     host: smtp.gmail.com
     username: ${SMTP_ID}
@@ -34,13 +34,13 @@ logging:
     root: info
     org:
       hibernate:
-        SQL: info
+        SQL: debug
         type:
           descriptor:
-            sql: info
+            sql: trace
       springframework:
         cloud:
-          openfeign: info
+          openfeign: trace
         client:
-          RestTemplate: info
-        security: info
+          RestTemplate: debug
+        security: debug
