@@ -3,6 +3,7 @@ package com.grepp.diary.app.controller.api.keyword;
 import com.grepp.diary.app.controller.api.keyword.payload.KeywordRankResponse;
 import com.grepp.diary.app.model.keyword.KeywordService;
 import com.grepp.diary.infra.util.date.DateUtil;
+import com.grepp.diary.infra.util.date.code.DatePeriod;
 import com.grepp.diary.infra.util.date.dto.DateRangeDto;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class KeywordApiController {
     @GetMapping("/ranking")
     public KeywordRankResponse getKeywordRanking(
         Authentication authentication,
-        @RequestParam String period,
+        @RequestParam DatePeriod period,
         @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE) LocalDate date
     ) {
         DateRangeDto range = dateUtil.toDateRangeDto(period, date);
