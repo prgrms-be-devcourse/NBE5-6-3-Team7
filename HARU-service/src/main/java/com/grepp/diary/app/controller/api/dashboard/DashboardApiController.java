@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,13 +26,13 @@ public class DashboardApiController {
     @GetMapping("/emotion-flow")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> getEmotionFlow(
-//        Authentication authentication,
+        Authentication authentication,
         @RequestParam DatePeriod type,
         @RequestParam(required = false) LocalDate date,
         @RequestParam(required = false) Integer year
     ) {
-//        String userId = authentication.getName();
-        String userId = "user01";
+        String userId = authentication.getName();
+//        String userId = "user01";
 
         if(type == DatePeriod.MONTH) {
             DateRangeDto range = dateUtil.toDateRangeDto(type, date);
