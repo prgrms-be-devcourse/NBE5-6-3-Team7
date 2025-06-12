@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 )
 public interface MailApi {
 
-    @PostMapping("send")
+    @PostMapping("verify")
     void sendMail(
         @RequestHeader(name = "x-member-id") String userId,
         @RequestHeader(name = "x-member-role") String role,
