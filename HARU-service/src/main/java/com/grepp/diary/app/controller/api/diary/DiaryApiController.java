@@ -2,12 +2,11 @@ package com.grepp.diary.app.controller.api.diary;
 
 import com.grepp.diary.app.controller.api.diary.payload.DiaryCalendarResponse;
 import com.grepp.diary.app.controller.api.diary.payload.DiaryCardResponse;
-import com.grepp.diary.app.controller.api.diary.payload.DiaryDailyEmotionResponse;
 import com.grepp.diary.app.controller.api.diary.payload.DiaryEditRequest;
 import com.grepp.diary.app.controller.api.diary.payload.DiaryEmotionCountResponse;
-import com.grepp.diary.app.controller.api.diary.payload.DiaryMonthlyEmotionResponse;
 import com.grepp.diary.app.model.diary.DiaryService;
 import com.grepp.diary.infra.util.date.DateUtil;
+import com.grepp.diary.infra.util.date.code.DatePeriod;
 import com.grepp.diary.infra.util.date.dto.DateRangeDto;
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
@@ -72,7 +71,7 @@ public class DiaryApiController {
     @GetMapping("/dashboard/count")
     public int getDiaryCount(
         Authentication authentication,
-        @RequestParam String period,
+        @RequestParam DatePeriod period,
         @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE) LocalDate date
     ){
         DateRangeDto range = dateUtil.toDateRangeDto(period, date);
@@ -81,36 +80,6 @@ public class DiaryApiController {
         String userId = authentication.getName();
 
         return diaryService.getUserDiaryCount(userId, start, end);
-    }
-
-    // 기분 흐름 데이터(월간) API
-    @GetMapping("/emotion/flow/monthly")
-    public DiaryDailyEmotionResponse getEmotionFlow(
-        Authentication authentication,
-        @RequestParam(required = false) LocalDate date
-    ) {
-        DateRangeDto range = dateUtil.toDateRangeDto("monthly", date);
-        LocalDate start = range.start();
-        LocalDate end = range.end();
-        String userId = authentication.getName();
-
-        return DiaryDailyEmotionResponse.fromEntityList(
-            diaryService.getDiariesDateBetween(userId, start, end)
-        );
-
-    }
-
-    // 기분 흐름 데이터(연간) API
-    @GetMapping("/emotion/flow/yearly")
-    public DiaryMonthlyEmotionResponse getMonthlyEmotionAvg(
-        Authentication authentication,
-        @RequestParam(required = false) int year
-    ) {
-        String userId = authentication.getName();
-
-        return DiaryMonthlyEmotionResponse.fromDtoList(
-            diaryService.getMonthlyEmotionAvgOfYear(userId, year)
-        );
     }
 
     // 특정 날에 대한 일기 유무 API
