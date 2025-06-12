@@ -8,6 +8,7 @@ import com.grepp.diary.app.model.auth.code.Role;
 import com.grepp.diary.app.model.custom.entity.Custom;
 import com.grepp.diary.app.model.custom.repository.CustomRepository;
 import com.grepp.diary.app.model.member.dto.MemberDto;
+import com.grepp.diary.app.model.member.dto.SmtpDto;
 import com.grepp.diary.app.model.member.entity.Member;
 import com.grepp.diary.app.model.member.repository.MemberRepository;
 import com.grepp.diary.infra.error.exceptions.CommonException;
@@ -15,6 +16,9 @@ import com.grepp.diary.infra.mail.MailApi;
 import com.grepp.diary.infra.response.ResponseCode;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +38,11 @@ public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
-    private final MailTemplate mailTemplate;
+//    private final MailTemplate mailTemplate;
     private final AuthService authService;
     private final AiService aiService;
     private final CustomRepository customRepository;
+    private final MailApi mailApi;
 
     @Value("${app.domain}")
     private String domain;
@@ -93,12 +98,22 @@ public class MemberService {
         if(memberRepository.existsById(dto.getUserId()))
             throw new CommonException(ResponseCode.BAD_REQUEST);
 
-        mailTemplate.setTo(dto.getEmail());
-        mailTemplate.setTemplatePath("/member/regist-verification");
-        mailTemplate.setSubject("회원가입을 환영합니다!");
-        mailTemplate.setProperties("domain", domain);
-        mailTemplate.setProperties("token", token);
-        mailTemplate.send();
+        SmtpDto mailDto = new SmtpDto();
+        mailDto.setFrom("haru");
+        mailDto.setTo(List.of(dto.getEmail()));
+        mailDto.setSubject("회원 가입을 환영합니다!");
+
+        Map<String, String> props = new HashMap<>();
+        props.put("domain", domain);
+        props.put("token", token);
+        mailDto.setProperties(props);
+        mailDto.setEventType("signup_verify");
+
+        mailApi.sendMail(
+            "user-service",
+            "ROLE_SERVER",
+            mailDto
+        );
     }
 
     public Member getMemberByUserId(String userId) {

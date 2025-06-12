@@ -2,6 +2,7 @@ package com.grepp.diary.app.model.auth;
 
 import com.grepp.diary.app.controller.web.auth.form.SigninForm;
 import com.grepp.diary.app.model.auth.domain.Principal;
+import com.grepp.diary.app.model.member.dto.SmtpDto;
 import com.grepp.diary.app.model.member.entity.Member;
 import com.grepp.diary.app.model.member.repository.MemberRepository;
 import com.grepp.diary.infra.mail.MailApi;
@@ -16,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,9 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AuthService implements UserDetailsService {
 
-    private final MailTemplate mailTemplate;
     private final Map<String, String> authCodeStorage = new HashMap<>(); // 인증번호 저장용
-    private final JavaMailSender javaMailSender;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final @Lazy RememberMeServices rememberMeServices;
@@ -89,18 +86,25 @@ public class AuthService implements UserDetailsService {
         String code = String.valueOf((int) ((Math.random() * 900000) + 100000));
         authCodeStorage.put(email, code);
 
+        SmtpDto mailDto = new SmtpDto();
+        mailDto.setFrom("haru");
+        mailDto.setTo(List.of(email));
         String subject = "Diary 인증번호 안내";
+        Map<String, String> props = new HashMap<>();
+        props.put("code", code);
         String text = "안녕하세요.\n\n" +
             "요청하신 인증번호는 아래와 같습니다.\n\n" +
             "인증번호는 [" + code + "] 입니다.\n\n" +
             "감사합니다.";
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setFrom(from);
-        message.setSubject(subject);
-        message.setText(text);
-        javaMailSender.send(message);
+        mailDto.setProperties(props);
+        mailDto.setEventType("send_code");
+
+        mailApi.sendMail(
+            "user-service",
+            "ROLE_SERVER",
+            mailDto
+        );
 
         session.setAttribute("authCode", code);
         session.setAttribute("authEmail", email);
