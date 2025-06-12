@@ -7,5 +7,6 @@ import org.springframework.boot.runApplication
 class HaruMailApplication
 
 fun main(args: Array<String>) {
+
     runApplication<HaruMailApplication>(*args)
 }
