@@ -1,0 +1,48 @@
+spring:
+  config:
+    import: optional:classpath:config.properties
+  application:
+    name: mail-service
+  mail:
+    host: smtp.gmail.com
+    username: ${SMTP_ID}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail:
+        stmp:
+          auth: true
+        smtp:
+          starttls:
+            enable: true
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      username: default
+      password: ${REDIS_PASSWORD}
+      port: 10940
+      ssl:
+        enabled: true
+
+server:
+  port: 8081
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+logging:
+  level:
+    root: info
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql: trace
+      springframework:
+        cloud:
+          openfeign: trace
+        client:
+          RestTemplate: debug
+        security: debug
