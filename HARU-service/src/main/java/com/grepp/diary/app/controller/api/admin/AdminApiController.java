@@ -3,17 +3,16 @@ package com.grepp.diary.app.controller.api.admin;
 import com.grepp.diary.app.controller.api.admin.payload.AdminAiIdRequest;
 import com.grepp.diary.app.controller.api.admin.payload.AdminAiResponse;
 import com.grepp.diary.app.controller.api.admin.payload.AdminAiWriteRequest;
-import com.grepp.diary.app.controller.api.admin.payload.AdminKeywordIdRequest;
 import com.grepp.diary.app.controller.api.admin.payload.AdminKeywordResponse;
-import com.grepp.diary.app.controller.api.admin.payload.AdminKeywordWriteRequest;
 import com.grepp.diary.app.model.ai.AiService;
 import com.grepp.diary.app.model.ai.dto.AiDto;
-import com.grepp.diary.app.model.ai.entity.Ai;
 import com.grepp.diary.app.model.custom.CustomService;
 import com.grepp.diary.app.model.keyword.KeywordService;
+import com.grepp.diary.app.model.keyword.entity.Keyword;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -43,40 +42,22 @@ public class AdminApiController {
         );
     }
 
-    @PatchMapping("keyword/active")
-    public List<Integer> modifyKeywordActive(
-        @RequestBody AdminKeywordIdRequest request
+    @PatchMapping("keyword")
+    public ResponseEntity<List<Keyword>> modifyKeyword(
+        @RequestBody List<Keyword> requests
     ) {
-        List<Integer> keywordIds = request.getKeywordIds();
+        keywordService.modifyKeyword(requests);
 
-        return keywordService.modifyKeywordActivate(keywordIds);
-    }
-
-    @PatchMapping("keyword/nonactive")
-    public List<Integer> modifyKeywordNonActive(
-        @RequestBody AdminKeywordIdRequest request
-    ) {
-        List<Integer> keywordIds = request.getKeywordIds();
-
-        return keywordService.modifyKeywordNonActivate(keywordIds);
-    }
-
-    @PatchMapping("keyword/modify")
-    public Boolean modifyKeyword(
-        @RequestBody AdminKeywordWriteRequest keywordWriteRequest
-    ) {
-        keywordService.modifyKeyword(keywordWriteRequest);
-
-        return true;
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("keyword")
-    public Boolean createKeyword(
-        @RequestBody AdminKeywordWriteRequest keywordWriteRequest
+    public ResponseEntity<Keyword> createKeyword(
+        @RequestBody Keyword request
     ) {
-        keywordService.createKeyword(keywordWriteRequest);
+        keywordService.createKeyword(request);
 
-        return true;
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -94,11 +75,6 @@ public class AdminApiController {
         @PathVariable Integer id
     ) {
         return aiService.getSingleAi(id);
-    }
-
-    @GetMapping("ai/all")
-    public List<AiDto> getAllAi() {
-        return aiService.getAllAi();
     }
 
     @PatchMapping("ai/active")
