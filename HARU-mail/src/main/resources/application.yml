@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:classpath:config.properties
   application:
     name: mail-service
   mail:
