@@ -1,6 +1,5 @@
 package com.grepp.diary.app.model.keyword;
 
-import com.grepp.diary.app.controller.api.admin.payload.AdminKeywordWriteRequest;
 import com.grepp.diary.app.model.keyword.dto.KeywordAdminDto;
 import com.grepp.diary.app.model.keyword.dto.KeywordDto;
 import com.grepp.diary.app.model.keyword.entity.Keyword;
@@ -8,6 +7,7 @@ import com.grepp.diary.app.model.keyword.repository.KeywordRepository;
 import com.querydsl.core.Tuple;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -50,43 +50,41 @@ public class KeywordService {
     }
 
     @Transactional
-    public List<Integer> modifyKeywordActivate(List<Integer> keywordIds) {
-        return keywordRepository.activeKeywords(keywordIds);
-    }
+    public List<Keyword> modifyKeyword(List<Keyword> requests) {
+        List<Keyword> results = new ArrayList<>();
 
-    @Transactional
-    public List<Integer> modifyKeywordNonActivate(List<Integer> keywordIds) {
-        return keywordRepository.nonActiveKeywords(keywordIds);
-    }
+        for (Keyword request : requests) {
 
-    @Transactional
-    public Boolean modifyKeyword(AdminKeywordWriteRequest keywordWriteRequest) {
-        Optional<Keyword> optionalKeyword = keywordRepository.findById(keywordWriteRequest.getId());
+            Optional<Keyword> optionalKeyword = keywordRepository.findById(request.getKeywordId());
 
-        if (optionalKeyword.isEmpty()) {
-            throw new RuntimeException("Keyword not found");
+            if (optionalKeyword.isEmpty()) {
+                throw new RuntimeException("Keyword not found");
+            }
+
+            Keyword keyword = optionalKeyword.get();
+            keyword.setName(request.getName());
+            keyword.setType(request.getType());
+            keyword.setIsUse(request.getIsUse());
+
+            results.add(keyword);
         }
 
-        Keyword keyword = optionalKeyword.get();
-        keyword.setName(keywordWriteRequest.getName());
-        keyword.setType(keywordWriteRequest.getKeywordType());
+        keywordRepository.saveAllAndFlush(results);
 
-        keywordRepository.save(keyword);
-
-        return true;
+        return results;
     }
 
     @Transactional
-    public Boolean createKeyword(AdminKeywordWriteRequest keywordWriteRequest) {
+    public Keyword createKeyword(Keyword request) {
         Keyword keyword = new Keyword();
 
-        keyword.setName(keywordWriteRequest.getName());
-        keyword.setType(keywordWriteRequest.getKeywordType());
-        keyword.setIsUse(true);
+        keyword.setName(request.getName());
+        keyword.setType(request.getType());
+        keyword.setIsUse(request.getIsUse());
 
         keywordRepository.save(keyword);
 
-        return true;
+        return keyword;
     }
 
     public List<KeywordDto> getTop5Keywords(String userId, LocalDate start, LocalDate end) {

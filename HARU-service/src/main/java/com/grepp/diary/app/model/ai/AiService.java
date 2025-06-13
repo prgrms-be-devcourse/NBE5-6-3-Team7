@@ -101,7 +101,7 @@ public class AiService {
     }
 
     @Transactional
-    public Boolean createAi(List<MultipartFile> images, AdminAiWriteRequest request) {
+    public Ai createAi(List<MultipartFile> images, AdminAiWriteRequest request) {
         try {
             Ai ai = new Ai();
 
@@ -123,7 +123,7 @@ public class AiService {
                 aiImgRepository.save(aiImg);
             }
 
-            return true;
+            return ai;
         } catch (IOException e) {
             throw new CommonException(ResponseCode.INTERNAL_SERVER_ERROR);
         }
