@@ -98,7 +98,7 @@ public class AdminApiController {
         return aiService.getSingleAi(id);
     }
 
-    @PatchMapping("ai/modify")
+    @PatchMapping("ai")
     public ResponseEntity<AiDto> modifyAi(
         @ModelAttribute AdminAiWriteRequest request
     ) {
