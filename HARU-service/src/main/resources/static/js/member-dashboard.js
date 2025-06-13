@@ -1,20 +1,20 @@
-const monthlyBtn = document.getElementById('monthly');
-const yearlyBtn = document.getElementById('yearly');
+const monthlyBtn = document.getElementById('MONTH');
+const yearlyBtn = document.getElementById('YEAR');
 
 monthlyBtn.addEventListener('click', () => {
   monthlyBtn.classList.add('selected');
   yearlyBtn.classList.remove('selected');
-  handlePeriodChange('monthly');
+  handlePeriodChange('MONTH');
 });
 
 yearlyBtn.addEventListener('click', () => {
   yearlyBtn.classList.add('selected');
   monthlyBtn.classList.remove('selected');
-  handlePeriodChange('yearly');
+  handlePeriodChange('YEAR');
 });
 
 function fetchDiaryCount(period, date = null) {
-  let url = `/api/diary/dashboard/count?period=${period}`;
+  let url = `/api/dashboard/diary-count?period=${period}`;
   if (date) {
     url += `&date=${date}`;
   }
@@ -30,7 +30,7 @@ function fetchDiaryCount(period, date = null) {
 }
 
 function fetchKeywordRank(period, date = null) {
-  let url = `/api/keyword/ranking?period=${period}`;
+  let url = `/api/dashboard/keyword-ranking?period=${period}`;
   if (date) {
     url += `&date=${date}`;
   }
@@ -38,7 +38,7 @@ function fetchKeywordRank(period, date = null) {
   fetch(url)
   .then(res => res.json())
   .then(data => {
-    const ranks = data.keywordRankList;
+    const ranks = data.data;
     const cardEls = document.querySelectorAll('.keyword-card');
 
     for (let i = 0; i < cardEls.length; i++) {
@@ -97,7 +97,7 @@ function getYearRange(date) {
 
 let chart;
 
-async function drawEmotionChart(period = 'monthly', date = null) {
+async function drawEmotionChart(period = 'MONTH', date = null) {
   const emotionImageMap = window.emotionImageMap;
   const ctx = document.getElementById('emotionChart').getContext('2d');
   const emotionOrder = ['VERY_GOOD', 'GOOD', 'COMMON', 'BAD', 'VERY_BAD'];
@@ -109,9 +109,9 @@ async function drawEmotionChart(period = 'monthly', date = null) {
   });
 
   const baseDate = date ? new Date(date) : new Date();
-  const range = period === 'monthly' ? getMonthRange(baseDate) : getYearRange(baseDate);
+  const range = period === 'MONTH' ? getMonthRange(baseDate) : getYearRange(baseDate);
 
-  let url = period === 'monthly'
+  let url = period === 'MONTH'
       ? `/api/dashboard/emotion-flow?type=MONTH`
       : `/api/dashboard/emotion-flow?type=YEAR&year=${baseDate.getFullYear()}`;
   if (date) {
@@ -123,7 +123,7 @@ async function drawEmotionChart(period = 'monthly', date = null) {
 
   // 🟢 월간: 감정 문자열을 숫자로 매핑
   let moodData = [];
-  if (period === 'monthly') {
+  if (period === 'MONTH') {
     const moodValueMap = {};
     orderedEmotions.forEach((key, idx) => {
       moodValueMap[key] = orderedEmotions.length - idx;
@@ -137,7 +137,7 @@ async function drawEmotionChart(period = 'monthly', date = null) {
   }
 
   // 🔵 연간: 월별 평균값을 1~12월로 가공
-  if (period === 'yearly') {
+  if (period === 'YEAR') {
     const monthlyList = json.data;
     moodData = monthlyList.map(item => {
       const month = item.month.toString().padStart(2, '0');
@@ -182,7 +182,7 @@ async function drawEmotionChart(period = 'monthly', date = null) {
           max: range.max,
           ticks: {
             color: '#333',
-            maxTicksLimit: period === 'monthly' ? 7 : 12,
+            maxTicksLimit: period === 'MONTH' ? 7 : 12,
             font: { size: 12 }
           },
           grid: { color: '#eee', drawBorder: false }
@@ -233,7 +233,7 @@ function handlePeriodChange(period) {
   fetchKeywordRank(period, todayStr);
   drawEmotionChart(period, todayStr);
 
-  const value = period === 'monthly' ? today.getMonth() + 1 : today.getFullYear();
+  const value = period === 'MONTH' ? today.getMonth() + 1 : today.getFullYear();
   renderEmotionDistribution(period, value);
 }
 
@@ -250,12 +250,12 @@ async function renderEmotionDistribution(period, value) {
     VERY_BAD: '#6A97AE'
   };
 
-  const url = `/api/diary/emotion/count?period=${period}&value=${value}`;
+  const url = `/api/dashboard/emotion-count?period=${period}&value=${value}`;
 
   try {
     const response = await fetch(url);
     const json = await response.json();
-    const emotionData = json.diaryEmotionCountList;
+    const emotionData = json.data;
 
     // API에서 받아온 감정별 카운트를 Map으로 변환
     const emotionCountMap = {};
@@ -307,6 +307,6 @@ async function renderEmotionDistribution(period, value) {
 
 // DOM
 window.addEventListener('DOMContentLoaded', () => {
-  handlePeriodChange('monthly');
+  handlePeriodChange('MONTH');
 });
 
