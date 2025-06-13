@@ -8,11 +8,14 @@ import com.grepp.diary.app.model.ai.entity.AiImg;
 import com.grepp.diary.app.model.ai.repository.AiImgRepository;
 import com.grepp.diary.app.model.ai.repository.AiRepository;
 import com.grepp.diary.app.model.common.code.ImgType;
+import com.grepp.diary.app.model.keyword.entity.Keyword;
 import com.grepp.diary.infra.error.exceptions.CommonException;
 import com.grepp.diary.infra.response.ResponseCode;
 import com.grepp.diary.infra.util.file.FileDto;
 import com.grepp.diary.infra.util.file.FileUtil;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,23 +51,35 @@ public class AiService {
     }
 
     @Transactional
-    public List<Integer> modifyAiActivate(List<Integer> aiIds) {
+    public List<Ai> modifyAiActivate(List<Integer> aiIds) {
+        List<Ai> aiList = new ArrayList<>();
+
         for (Integer id : aiIds) {
-            aiRepository.findById(id).ifPresent(ai -> ai.setIsUse(true));
+            Ai ai = aiRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("AI not found with id: " + id));
+            ai.setIsUse(true);
+            aiList.add(ai);
         }
-        return aiIds;
+
+        return aiRepository.saveAll(aiList);
     }
 
     @Transactional
-    public List<Integer> modifyAiNonActivate(List<Integer> aiIds) {
+    public List<Ai> modifyAiNonActivate(List<Integer> aiIds) {
+        List<Ai> aiList = new ArrayList<>();
+
         for (Integer id : aiIds) {
-            aiRepository.findById(id).ifPresent(ai -> ai.setIsUse(false));
+            Ai ai = aiRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("AI not found with id: " + id));
+            ai.setIsUse(false);
+            aiList.add(ai);
         }
-        return aiIds;
+
+        return aiRepository.saveAll(aiList);
     }
 
     @Transactional
-    public Boolean modifyAi(List<MultipartFile> images, AdminAiWriteRequest request) {
+    public Ai modifyAi(List<MultipartFile> images, AdminAiWriteRequest request) {
         try {
 
             Optional<Ai> optionalAi = aiRepository.findById(request.getId());
@@ -94,7 +109,7 @@ public class AiService {
                 aiImgRepository.save(aiImg);
             }
 
-            return true;
+            return ai;
         } catch (IOException e) {
             throw new CommonException(ResponseCode.INTERNAL_SERVER_ERROR);
         }
@@ -129,7 +144,6 @@ public class AiService {
         }
     }
 
-    /** 모든 AI에 대한 정보를 반환합니다.(프롬프트 제외) */
     public List<AiInfoDto> getAIList() {
         return aiRepository.getAIListDto();
     }

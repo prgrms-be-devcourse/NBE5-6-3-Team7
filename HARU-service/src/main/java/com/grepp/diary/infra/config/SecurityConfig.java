@@ -48,35 +48,35 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
         http
-//            .csrf(csrf -> csrf
-//                .ignoringRequestMatchers("/api/**", "/admin/**", "/member/**", "/diary/**", "/app/**", "/ai/**", "/auth/**")
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**", "/admin/**", "/member/**", "/diary/**", "/app/**", "/ai/**", "/auth/**")
+            )
+//            .formLogin(login -> login
+//                .loginPage("/")
+//                .loginProcessingUrl("/none")
+//                .permitAll()
 //            )
-            .formLogin(login -> login
-                .loginPage("/")
-                .loginProcessingUrl("/none")
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/auth/logout")
-                .logoutSuccessUrl("/")
-                .deleteCookies("JSESSIONID", "remember-me")
-                .invalidateHttpSession(true)
-                .permitAll()
-            )
-            .rememberMe(rememberMe -> rememberMe
-                .key(rememberMeKey)
-                .rememberMeParameter("remember-me")
-                .rememberMeServices(rememberMeServices(userDetailsService))
-            )
+//            .logout(logout -> logout
+//                .logoutUrl("/auth/logout")
+//                .logoutSuccessUrl("/")
+//                .deleteCookies("JSESSIONID", "remember-me")
+//                .invalidateHttpSession(true)
+//                .permitAll()
+//            )
+//            .rememberMe(rememberMe -> rememberMe
+//                .key(rememberMeKey)
+//                .rememberMeParameter("remember-me")
+//                .rememberMeServices(rememberMeServices(userDetailsService))
+//            )
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
-                    .requestMatchers(GET, "/", "/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/auth/login", "/auth/logout", "/auth/find_id", "/auth/find_pw", "/auth/regist/**", "/auth/regist-mail","/auth/auth-id","/auth/auth-pw").permitAll()
-                .requestMatchers("/auth/change-pw", "/auth/find-idpw","/member/leave", "/member/leave-success").permitAll()
-                .requestMatchers("/custom/**").permitAll()
-//                .anyRequest().permitAll() // 개발 중 전체 열기
-                .anyRequest().authenticated()
+//                    .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
+//                    .requestMatchers(GET, "/", "/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
+//                .requestMatchers("/auth/**").permitAll()
+//                .requestMatchers("/auth/login", "/auth/logout", "/auth/find_id", "/auth/find_pw", "/auth/regist/**", "/auth/regist-mail","/auth/auth-id","/auth/auth-pw").permitAll()
+//                .requestMatchers("/auth/change-pw", "/auth/find-idpw","/member/leave", "/member/leave-success").permitAll()
+//                .requestMatchers("/custom/**").permitAll()
+                .anyRequest().permitAll() // 개발 중 전체 열기
+//                .anyRequest().authenticated()
             );
 
         return http.build();

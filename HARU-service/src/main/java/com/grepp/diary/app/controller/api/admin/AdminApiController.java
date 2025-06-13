@@ -11,6 +11,7 @@ import com.grepp.diary.app.model.custom.CustomService;
 import com.grepp.diary.app.model.keyword.KeywordService;
 import com.grepp.diary.app.model.keyword.entity.Keyword;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -47,27 +48,27 @@ public class AdminApiController {
     public ResponseEntity<List<Keyword>> modifyKeyword(
         @RequestBody List<Keyword> requests
     ) {
-        keywordService.modifyKeyword(requests);
+        List<Keyword> results = keywordService.modifyKeyword(requests);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(results);
     }
 
     @PostMapping("keyword")
     public ResponseEntity<Keyword> createKeyword(
         @RequestBody Keyword request
     ) {
-        keywordService.createKeyword(request);
+        Keyword result = keywordService.createKeyword(request);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(result);
     }
 
     @PatchMapping("keyword/delete")
     public ResponseEntity<List<Keyword>> deleteKeyword(
         @RequestBody List<Integer> requests
     ) {
-        keywordService.deleteKeyword(requests);
+        List<Keyword> deleteKeywords = keywordService.deleteKeyword(requests);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(deleteKeywords);
     }
 
     /**
@@ -81,12 +82,13 @@ public class AdminApiController {
     }
 
     @PostMapping("ai")
-    public ResponseEntity<Ai> createAi(
+    public ResponseEntity<AiDto> createAi(
         @ModelAttribute AdminAiWriteRequest request
     ) {
-        aiService.createAi(request.getImages(), request);
+        Ai createdAi = aiService.createAi(request.getImages(), request);
+        AiDto response = AiDto.fromEntity(createdAi);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("ai/{id}")
@@ -97,12 +99,37 @@ public class AdminApiController {
     }
 
     @PatchMapping("ai/modify")
-    public Boolean modifyAi(
+    public ResponseEntity<AiDto> modifyAi(
         @ModelAttribute AdminAiWriteRequest request
     ) {
-        aiService.modifyAi(request.getImages(), request);
+        Ai modifiedAi = aiService.modifyAi(request.getImages(), request);
+        AiDto response = AiDto.fromEntity(modifiedAi);
 
-        return true;
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/ai/status")
+    public ResponseEntity<List<AiDto>> modifyAiStatus(
+        @RequestBody AdminAiStatusRequest request
+    ) {
+        List<Integer> aiIds = request.getAiIds();
+        Boolean status = request.getIsUse();
+
+        List<Ai> modifiedAis;
+
+        if (Boolean.TRUE.equals(status)) {
+            modifiedAis = aiService.modifyAiActivate(aiIds);
+        } else {
+            modifiedAis = aiService.modifyAiNonActivate(aiIds);
+        }
+
+        List<AiDto> response = modifiedAis.stream()
+            .map(AiDto::fromEntity)
+            .toList();
+
+        return ResponseEntity.ok(response);
+    }
+
     @PatchMapping("ai/delete")
     public ResponseEntity<List<AiDto>> deleteAi(
         @RequestBody List<Integer> requests
@@ -115,16 +142,5 @@ public class AdminApiController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/ai/status")
-    public List<Integer> modifyAiStatus(
-        @RequestBody  AdminAiStatusRequest request
-    ) {
-        List<Integer> aiIds = request.getAiIds();
-        Boolean status = request.getIsUse();
-
-        return status
-            ? aiService.modifyAiActivate(aiIds)
-            : aiService.modifyAiNonActivate(aiIds);
-    }
 
 }
