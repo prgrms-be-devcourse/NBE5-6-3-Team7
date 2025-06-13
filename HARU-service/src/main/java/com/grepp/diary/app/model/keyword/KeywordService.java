@@ -103,4 +103,28 @@ public class KeywordService {
             })
             .toList();
     }
+
+    @Transactional
+    public List<Keyword> deleteKeyword(List<Integer> requests) {
+        List<Keyword> results = new ArrayList<>();
+
+        for (Integer request : requests) {
+
+            Optional<Keyword> optionalKeyword = keywordRepository.findById(request);
+
+            if (optionalKeyword.isEmpty()) {
+                throw new RuntimeException("Keyword not found");
+            }
+
+            Keyword keyword = optionalKeyword.get();
+            keyword.setDeletedAt(LocalDateTime.now());
+            keyword.setIsUse(false);
+
+            results.add(keyword);
+        }
+
+        keywordRepository.saveAllAndFlush(results);
+
+        return results;
+    }
 }

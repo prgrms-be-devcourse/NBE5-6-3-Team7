@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if(imageFile) formData.append('images', imageFile);
 
     try {
-      const url = editingAiId ? '/api/admin/ai/modify' : '/api/admin/ai';
+      const url = '/api/admin/ai';
       const method = editingAiId ? 'PATCH' : 'POST';
 
       const res = await fetch(url, {
