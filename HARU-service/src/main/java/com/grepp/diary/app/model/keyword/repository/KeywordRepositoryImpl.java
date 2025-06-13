@@ -60,36 +60,6 @@ public class KeywordRepositoryImpl implements KeywordRepositoryCustom{
             .fetch();
     }
 
-    @Override
-    public List<Integer> activeKeywords(List<Integer> keywordIds) {
-        if (keywordIds == null || keywordIds.isEmpty()) {
-            return List.of();
-        }
-
-        queryFactory
-            .update(keyword)
-            .set(keyword.isUse, true)
-            .where(keyword.keywordId.in(keywordIds))
-            .execute();
-
-        return keywordIds;
-    }
-
-    @Override
-    public List<Integer> nonActiveKeywords(List<Integer> keywordIds) {
-        if (keywordIds == null || keywordIds.isEmpty()) {
-            return List.of();
-        }
-
-        queryFactory
-            .update(keyword)
-            .set(keyword.isUse, false)
-            .where(keyword.keywordId.in(keywordIds))
-            .execute();
-
-        return keywordIds;
-    }
-
     /** 시작일과 마지막일을 기준으로 해당기간동안 특정유저의 일기에서 가장 많이 사용된 키워드 5개를 반환합니다. */
     @Override
     public List<Tuple> findTop5KeywordsByUserIdAndDate(String userId, LocalDateTime start, LocalDateTime end) {
