@@ -5,13 +5,13 @@ body {
 }
 
 .green-container{
+  background-color: cornflowerblue;
   display: flex;
   align-items: center;
   height: 100vh;
   padding-left: 3vw;
   gap: 100px;
 }
-
 
 .green-visual-box {
   background-color: #467750;
@@ -23,11 +23,6 @@ body {
   justify-content: center;
   height: 80%;
   width: 45vw;
-}
-
-.green-visual-box img {
-  width: 300px;
-  max-width: 100%;
 }
 
 .form-wrapper {
@@ -109,6 +104,50 @@ form:not(.regist_form) {
 .links a {
   color: #467750;
   text-decoration: underline;
+}
+
+.box {
+  width: 275px;
+  height: 275px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /*position: absolute;*/
+}
+
+/*.box-1 {*/
+/*  top: 115px;*/
+/*  left: 101px;*/
+/*}*/
+
+/*.box-2 {*/
+/*  top: 115px;*/
+/*  left: 445px;*/
+/*}*/
+
+/*.box-3 {*/
+/*  top: 494px;*/
+/*  left: 101px;*/
+/*}*/
+
+/*.box-4 {*/
+/*  top: 494px;*/
+/*  left: 445px;*/
+/*}*/
+
+.eclipse {
+  /*position: fixed;*/
+  width: 275px;
+  height: 275px;
+  background-color: #282420;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.eclipse img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .tab-buttons {
