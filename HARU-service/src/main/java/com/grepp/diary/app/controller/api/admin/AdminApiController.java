@@ -61,6 +61,15 @@ public class AdminApiController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("keyword/delete")
+    public ResponseEntity<List<Keyword>> deleteKeyword(
+        @RequestBody List<Integer> requests
+    ) {
+        keywordService.deleteKeyword(requests);
+
+        return ResponseEntity.ok().build();
+    }
+
     /**
      * AI API
      **/

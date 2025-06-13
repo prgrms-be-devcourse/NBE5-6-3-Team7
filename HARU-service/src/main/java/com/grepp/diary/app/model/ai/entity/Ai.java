@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -41,6 +42,8 @@ public class Ai {
 
     @Column(name = "is_use")
     private Boolean isUse;
+
+    private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "ai", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Custom> customs = new ArrayList<>();
