@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminAiIdRequest {
+public class AdminAiStatusRequest {
     private List<Integer> AiIds;
+    private Boolean isUse;
 }

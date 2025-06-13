@@ -1,11 +1,12 @@
 package com.grepp.diary.app.controller.api.admin;
 
-import com.grepp.diary.app.controller.api.admin.payload.AdminAiIdRequest;
+import com.grepp.diary.app.controller.api.admin.payload.AdminAiStatusRequest;
 import com.grepp.diary.app.controller.api.admin.payload.AdminAiResponse;
 import com.grepp.diary.app.controller.api.admin.payload.AdminAiWriteRequest;
 import com.grepp.diary.app.controller.api.admin.payload.AdminKeywordResponse;
 import com.grepp.diary.app.model.ai.AiService;
 import com.grepp.diary.app.model.ai.dto.AiDto;
+import com.grepp.diary.app.model.ai.entity.Ai;
 import com.grepp.diary.app.model.custom.CustomService;
 import com.grepp.diary.app.model.keyword.KeywordService;
 import com.grepp.diary.app.model.keyword.entity.Keyword;
@@ -70,29 +71,20 @@ public class AdminApiController {
         );
     }
 
+    @PostMapping("ai")
+    public ResponseEntity<Ai> createAi(
+        @ModelAttribute AdminAiWriteRequest request
+    ) {
+        aiService.createAi(request.getImages(), request);
+
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("ai/{id}")
     public AiDto getSingleAi(
         @PathVariable Integer id
     ) {
         return aiService.getSingleAi(id);
-    }
-
-    @PatchMapping("ai/active")
-    public List<Integer> modifyAiActive(
-        @RequestBody AdminAiIdRequest request
-    ) {
-        List<Integer> aiIds = request.getAiIds();
-
-        return aiService.modifyAiActivate(aiIds);
-    }
-
-    @PatchMapping("ai/nonactive")
-    public List<Integer> modifyAiNonActive(
-        @RequestBody AdminAiIdRequest request
-    ) {
-        List<Integer> aiIds = request.getAiIds();
-
-        return aiService.modifyAiNonActivate(aiIds);
     }
 
     @PatchMapping("ai/modify")
@@ -104,13 +96,16 @@ public class AdminApiController {
         return true;
     }
 
-    @PostMapping("ai")
-    public Boolean createAi(
-        @ModelAttribute AdminAiWriteRequest request
+    @PatchMapping("/ai/status")
+    public List<Integer> modifyAiStatus(
+        @RequestBody  AdminAiStatusRequest request
     ) {
-        aiService.createAi(request.getImages(), request);
+        List<Integer> aiIds = request.getAiIds();
+        Boolean status = request.getIsUse();
 
-        return true;
+        return status
+            ? aiService.modifyAiActivate(aiIds)
+            : aiService.modifyAiNonActivate(aiIds);
     }
 
 }
