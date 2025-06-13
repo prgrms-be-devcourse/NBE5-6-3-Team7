@@ -1,5 +1,7 @@
 package com.grepp.diary.app.model.diary;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grepp.diary.app.controller.api.diary.payload.DiaryEditRequest;
 import com.grepp.diary.app.controller.web.diary.payload.DiaryRequest;
 import com.grepp.diary.app.model.ai.entity.Ai;
@@ -9,6 +11,7 @@ import com.grepp.diary.app.model.diary.code.Emotion;
 import com.grepp.diary.app.model.diary.dto.DiaryDto;
 import com.grepp.diary.app.model.diary.dto.DiaryEmotionAvgDto;
 import com.grepp.diary.app.model.diary.dto.DiaryEmotionCountDto;
+import com.grepp.diary.app.model.diary.dto.DiaryEmotionStatsDto;
 import com.grepp.diary.app.model.diary.entity.Diary;
 import com.grepp.diary.app.model.diary.entity.DiaryImg;
 import com.grepp.diary.app.model.diary.repository.DiaryImgRepository;
@@ -59,6 +62,7 @@ public class DiaryService {
     private final DiaryKeywordRepository diaryKeywordRepository;
 
     private final FileUtil fileUtil;
+    private final ObjectMapper objectMapper;
     private final ReplyRepository replyRepository;
 
     /** 시작일과 끝을 기준으로 해당 날짜 사이에 존재하는 일기들을 반환합니다. */
@@ -353,6 +357,18 @@ public class DiaryService {
 
     public Optional<Diary> findDiaryByUserIdAndDiaryId(String userId, Integer diaryId) {
         return diaryRepository.findActiveDiaryByDiaryIdWithAllRelations(userId, diaryId);
+    }
+
+    public String getEmotionStats(String userId, LocalDate date) {
+        LocalDate firstDayOfMonth = date.withDayOfMonth(1);
+        LocalDate lastDayOfMonth = date.withDayOfMonth(date.lengthOfMonth());
+        List<DiaryEmotionStatsDto> dtos = diaryRepository.findEmotionStatsByUserIdAndMonth(userId, firstDayOfMonth, lastDayOfMonth);
+
+        try {
+            return objectMapper.writeValueAsString(dtos);
+        } catch (JsonProcessingException e) {
+            return "감정 데이터 직렬화 실패";
+        }
     }
 }
 
