@@ -103,6 +103,16 @@ public class AdminApiController {
         aiService.modifyAi(request.getImages(), request);
 
         return true;
+    @PatchMapping("ai/delete")
+    public ResponseEntity<List<AiDto>> deleteAi(
+        @RequestBody List<Integer> requests
+    ) {
+        List<Ai> deletedAis = aiService.deleteAi(requests);
+        List<AiDto> response = deletedAis.stream()
+            .map(AiDto::fromEntity)
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/ai/status")

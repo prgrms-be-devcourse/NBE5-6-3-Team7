@@ -137,4 +137,27 @@ public class AiService {
     public Optional<Ai> findById(Integer id) {
         return aiRepository.findById(id);
     }
+
+    @Transactional
+    public List<Ai> deleteAi(List<Integer> requests) {
+        List<Ai> results = new ArrayList<>();
+
+        for (Integer request : requests) {
+
+            Optional<Ai> optionalAi = aiRepository.findById(request);
+
+            if (optionalAi.isEmpty()) {
+                throw new RuntimeException("Ai not found");
+            }
+
+            Ai ai = optionalAi.get();
+            ai.setDeletedAt(LocalDateTime.now());
+
+            results.add(ai);
+        }
+
+        aiRepository.saveAllAndFlush(results);
+
+        return results;
+    }
 }

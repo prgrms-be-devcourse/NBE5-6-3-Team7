@@ -1,6 +1,7 @@
 package com.grepp.diary.app.model.ai.dto;
 
 import com.grepp.diary.app.model.ai.entity.Ai;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class AiDto {
     private String prompt;
     private Boolean isUse;
     private List<AiImgDto> images;
+    private LocalDateTime deltedAt;
 
     public static AiDto fromEntity(Ai ai) {
         AiDto dto = new AiDto();
@@ -25,6 +27,7 @@ public class AiDto {
         dto.setInfo(ai.getInfo());
         dto.setPrompt(ai.getPrompt());
         dto.setIsUse(ai.getIsUse());
+        dto.setDeltedAt(ai.getDeletedAt());
 
         if (ai.getImages() != null) {
             List<AiImgDto> imageDtos = ai.getImages().stream()
