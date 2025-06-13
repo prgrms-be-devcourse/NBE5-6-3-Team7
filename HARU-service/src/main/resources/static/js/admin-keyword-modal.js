@@ -88,15 +88,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const keywordId = modal.getAttribute('data-keyword-id');
+    const isUse = modal.getAttribute('data-keyword-is-use');
     const isEdit = !!keywordId;
 
     const requestBody = {
-      id: isEdit ? Number(keywordId) : null,
-      name,
-      keywordType
+      keywordId: isEdit ? Number(keywordId) : null,
+      name: name,
+      type: keywordType,
+      isUse: isEdit ? isUse : true
     };
 
-    const url = isEdit ? '/api/admin/keyword/modify' : '/api/admin/keyword';
+    const url = '/api/admin/keyword';
     const method = isEdit ? 'PATCH' : 'POST';
 
     fetch(url, {
@@ -105,11 +107,16 @@ document.addEventListener('DOMContentLoaded', () => {
         'Content-Type': 'application/json',
         [csrfHeader]: csrfToken
       },
-      body: JSON.stringify(requestBody)
+      body: isEdit ? JSON.stringify([requestBody]) : JSON.stringify(requestBody)
     })
     .then(res => {
       if (!res.ok) throw new Error(isEdit ? '수정 실패' : '등록 실패');
-      return res.json();
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        return res.json();
+      } else {
+        return {};
+      }
     })
     .then(() => {
       modal.style.display = 'none';
@@ -144,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitBtn.textContent = '저장';
 
     modal.setAttribute('data-keyword-id', keyword.keywordId);
+    modal.setAttribute('data-keyword-is-use', keyword.isUse);
 
     nameInput.value = keyword.name;
     let generalType = typeInitial[keyword.keywordType];

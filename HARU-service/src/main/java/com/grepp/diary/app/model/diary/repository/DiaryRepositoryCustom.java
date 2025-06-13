@@ -1,5 +1,6 @@
 package com.grepp.diary.app.model.diary.repository;
 
+import com.grepp.diary.app.model.diary.dto.DiaryEmotionStatsDto;
 import com.grepp.diary.app.model.diary.entity.Diary;
 import java.time.LocalDate;
 import java.util.List;
@@ -18,4 +19,6 @@ public interface DiaryRepositoryCustom {
     Optional<Diary> findActiveDiaryByDiaryIdWithAllRelations(String userId, Integer diaryId);
 
     void deactivateDiaryByDiaryId(Integer id);
+
+    List<DiaryEmotionStatsDto> findEmotionStatsByUserIdAndMonth(String userId, LocalDate start, LocalDate end);
 }

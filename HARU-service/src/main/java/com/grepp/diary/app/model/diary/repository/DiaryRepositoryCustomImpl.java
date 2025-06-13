@@ -1,5 +1,6 @@
 package com.grepp.diary.app.model.diary.repository;
 
+import com.grepp.diary.app.model.diary.dto.DiaryEmotionStatsDto;
 import com.grepp.diary.app.model.diary.entity.Diary;
 import com.grepp.diary.app.model.diary.entity.DiaryImg;
 import com.grepp.diary.app.model.diary.entity.QDiary;
@@ -195,6 +196,25 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
                 tuple.get(diary.emotion),
                 tuple.get(1, Long.class)
             })
+            .toList();
+    }
+
+    @Override
+    public List<DiaryEmotionStatsDto> findEmotionStatsByUserIdAndMonth(String userId,
+        LocalDate start, LocalDate end) {
+        return queryFactory
+            .select(diary.emotion, diary.date)
+            .from(diary)
+            .where(
+                diary.member.userId.eq(userId), diary.date.between(start, end)
+            )
+            .orderBy(diary.date.asc())
+            .fetch()
+            .stream()
+            .map(tuple -> new DiaryEmotionStatsDto(
+                tuple.get(diary.emotion),
+                tuple.get(diary.date)
+            ))
             .toList();
     }
 }
