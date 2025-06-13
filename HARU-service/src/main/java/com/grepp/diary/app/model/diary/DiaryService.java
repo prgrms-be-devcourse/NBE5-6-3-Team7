@@ -26,6 +26,7 @@ import com.grepp.diary.app.model.reply.ReplyRepository;
 import com.grepp.diary.app.model.reply.entity.Reply;
 import com.grepp.diary.infra.error.exceptions.CommonException;
 import com.grepp.diary.infra.response.ResponseCode;
+import com.grepp.diary.infra.util.date.code.DatePeriod;
 import com.grepp.diary.infra.util.file.FileDto;
 import com.grepp.diary.infra.util.file.FileUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -334,17 +335,17 @@ public class DiaryService {
      * 기준 달 또는 연도에 작성된 일기들의 감정별 갯수를 반환합니다.
      * 사용되지 않은 감정의 경우 0으로 처리됩니다.
      * */
-    public List<DiaryEmotionCountDto> getEmotionsCount(String userId, String period, int value){
+    public List<DiaryEmotionCountDto> getEmotionsCount(String userId, DatePeriod period, int value){
         Map<Emotion, Integer> countMap = Arrays.stream(Emotion.values())
             .collect(Collectors.toMap(e -> e, e -> 0, (a, b) -> a, () -> new EnumMap<>(Emotion.class)));
 
-        if("monthly".equals(period)){
+        if(period == DatePeriod.MONTH){
             return diaryRepository.findEmotionCountByUserIdAndMonth(userId, value)
                 .stream()
                 .map(row -> new DiaryEmotionCountDto((Emotion) row[0],
                     Math.toIntExact((Long) row[1])))
                 .toList();
-        } else if("yearly".equals(period)){
+        } else if(period == DatePeriod.YEAR){
             return diaryRepository.findEmotionCountByUserIdAndYear(userId, value)
                 .stream()
                 .map(row -> new DiaryEmotionCountDto((Emotion) row[0],
