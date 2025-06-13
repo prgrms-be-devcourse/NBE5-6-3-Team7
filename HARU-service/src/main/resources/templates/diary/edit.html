@@ -78,32 +78,14 @@
             <div id="keyword-primary" class="keyword-group"></div>
 
             <!-- 하단 그룹 (secondary, 기본 숨김) -->
-            <div id="keyword-secondary" class="keyword-group secondary-group"
-                 style="display: none;"></div>
+            <div id="keyword-secondary" class="keyword-group secondary-group" style="display: none;"></div>
 
             <!-- 토글 버튼 -->
-            <button type="button" class="toggle-btn" onclick="toggleKeywordExpand(this)">+ 더보기
-            </button>
+            <button type="button" class="toggle-btn" onclick="toggleKeywordExpand(this)">+ 더보기</button>
 
             <!-- 템플릿 영역 (보이지 않게 숨겨둠) -->
-            <div id="keyword-good" style="display: none;">
-              <div th:each="keyword : ${keywordGroups.EMOTION_GOOD}" class="keyword-chip">
-                <input type="checkbox" th:id="'kw-' + ${keyword.keywordId}" th:name="keywords"
-                       th:value="${keyword.name}"
-                       th:checked="${#lists.contains(diary.keywordNames, keyword.name)}">
-                <label th:for="'kw-' + ${keyword.keywordId}" th:text="${keyword.name}"></label>
-              </div>
-            </div>
-
-            <div id="keyword-bad" style="display: none;">
-              <div th:each="keyword : ${keywordGroups.EMOTION_BAD}" class="keyword-chip">
-                <input type="checkbox" th:id="'kw-' + ${keyword.keywordId}" th:name="keywords"
-                       th:value="${keyword.name}"
-                       th:checked="${#lists.contains(diary.keywordNames, keyword.name)}">
-                <label th:for="'kw-' + ${keyword.keywordId}" th:text="${keyword.name}"></label>
-              </div>
-            </div>
-
+            <div id="keyword-good" style="display: none;"></div>
+            <div id="keyword-bad" style="display: none;"></div>
           </div>
         </div>
       </div>
@@ -116,15 +98,6 @@
           <div class="keyword-section">
             <!-- 동행 키워드들 -->
             <div id="keyword-person" class="keyword-group">
-              <div th:each="keyword : ${keywordGroups.PERSON}" class="keyword-chip">
-                <input type="checkbox"
-                       th:id="'kw-person-' + ${keyword.keywordId}"
-                       th:name="keywords"
-                       th:value="${keyword.name}"
-                       th:checked="${#lists.contains(diary.keywordNames, keyword.name)}">
-                <label th:for="'kw-person-' + ${keyword.keywordId}"
-                       th:text="${keyword.name}"></label>
-              </div>
             </div>
           </div>
         </div>
@@ -137,15 +110,6 @@
           <div class="keyword-section">
             <!-- 상황 키워드들 -->
             <div id="keyword-situation" class="keyword-group">
-              <div th:each="keyword : ${keywordGroups.SITUATION}" class="keyword-chip">
-                <input type="checkbox"
-                       th:id="'kw-situation-' + ${keyword.keywordId}"
-                       th:name="keywords"
-                       th:value="${keyword.name}"
-                       th:checked="${#lists.contains(diary.keywordNames, keyword.name)}">
-                <label th:for="'kw-situation-' + ${keyword.keywordId}"
-                       th:text="${keyword.name}"></label>
-              </div>
             </div>
           </div>
         </div>
@@ -190,8 +154,8 @@
 </body>
 
 <script src="/js/sidebar.js"></script>
-<script>
-  const form = document.querySelector('form');
+
+<script th:inline="javascript">
   const contentTextarea = document.querySelector('textarea[name="content"]');
   const charCountSpan = document.getElementById('char-count');
   const emotionInputs = document.querySelectorAll('input[type="radio"][name$="emotion"]');
@@ -201,6 +165,10 @@
 
   let currentType = 'good';
   let expanded = false;
+
+
+  const selectedKeywords = [[${keywordNames}]];
+  console.log('✅ selectKeyword:', selectedKeywords)
 
   const dateInput = document.getElementById('diary-date');
   const dateText = document.getElementById('date-text');
@@ -245,14 +213,19 @@
     }
   });
 
-  // DOM 로드 후 기본 감정 키워드 표시
   window.addEventListener('DOMContentLoaded', () => {
-    renderPrimary('good');
-    toggleBtn.innerText = '+ 더보기';
-    updateCharCount(); // 초기 글자수 세팅
+    fetch('/api/keyword/group')
+    .then(res => res.json())
+    .then(data => {
+      console.log("📦 키워드 API 응답:", data);
+      renderKeywords(data);
+      renderPrimary(currentType);
+      toggleBtn.innerText = '+ 더보기';
+      updateCharCount();
+    })
+    .catch(err => console.error('Failed to fetch keywords:', err));
   });
 
-  // 감정 선택 시 키워드 그룹 전환
   emotionInputs.forEach(input => {
     input.addEventListener('change', function () {
       const value = this.value;
@@ -269,7 +242,44 @@
     });
   });
 
-  // 키워드 렌더링 함수
+  function renderKeywords(groups) {
+    renderKeywordGroupToHidden(groups.EMOTION_GOOD, 'keyword-good', 'kw', selectedKeywords);
+    renderKeywordGroupToHidden(groups.EMOTION_BAD, 'keyword-bad', 'kw', selectedKeywords);
+    renderKeywordGroup(groups.PERSON, 'keyword-person', 'kw-person', selectedKeywords);
+    renderKeywordGroup(groups.SITUATION, 'keyword-situation', 'kw-situation', selectedKeywords);
+  }
+
+  function renderKeywordGroup(keywords, containerId, prefix, selected) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    if (!keywords) return;
+    keywords.forEach(kw => container.appendChild(createKeywordChip(kw, prefix, selected)));
+  }
+
+  function createKeywordChip(keyword, prefix, selectedKeywords = []) {
+    const chip = document.createElement('div');
+    chip.className = 'keyword-chip';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `${prefix}-${keyword.keywordId}`;
+    checkbox.name = 'keywords';
+    checkbox.value = keyword.name;
+
+    if (selectedKeywords.includes(keyword.name)) {
+      checkbox.checked = true;
+    }
+
+    const label = document.createElement('label');
+    label.htmlFor = checkbox.id;
+    label.innerText = keyword.name;
+
+    chip.appendChild(checkbox);
+    chip.appendChild(label);
+
+    return chip;
+  }
+
   function renderPrimary(type) {
     primaryContainer.innerHTML = '';
     const items = document.querySelectorAll(`#keyword-${type} .keyword-chip`);
@@ -298,6 +308,13 @@
       btn.innerText = '- 접기';
     }
     expanded = !expanded;
+  }
+
+  function renderKeywordGroupToHidden(keywords, containerId, prefix, selected) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    if (!keywords) return;
+    keywords.forEach(kw => container.appendChild(createKeywordChip(kw, prefix, selected)));
   }
 
   // 이미지 미리보기
@@ -335,14 +352,6 @@
     }
   }
 
-  window.deletedImageIds = [];
-
-  function removeImage(imageId) {
-    window.deletedImageIds.push(imageId);
-    const wrapper = document.getElementById(`img-wrapper-${imageId}`);
-    if (wrapper) wrapper.remove();
-  }
-
   // 수정된 다이어리 전송
   async function submitDiaryEdit() {
     const diaryId = document.getElementById('diaryId').value; // hidden input 필요
@@ -376,12 +385,12 @@
       formData.append("newImages", file);
     }
 
-    const diaryDate = "[[${diary.date}]]"; // 일기 수정 전 날짜
+    const diaryDate = [[${diary.date}]]; // 일기 수정 전 날짜
     const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
     try {
-      const res = await fetch("/api/diary/modify", {
+      const res = await fetch("/api/diary", {
         method: "PATCH",
         body: formData,
         headers: {
@@ -390,10 +399,10 @@
       });
       if (res.ok) {
         alert("일기가 수정되었습니다!");
-        window.location.href = `/diary/record?date=${date}`;
+        window.location.href = `/diary/details?date=${date}`;
       } else {
         alert("수정 중 오류가 발생했습니다.");
-        window.location.href = `/diary/record?date=${diaryDate}`;
+        window.location.href = `/diary/details?date=${diaryDate}`;
       }
     } catch (err) {
       console.error("수정 실패", err);
@@ -401,6 +410,6 @@
     }
   }
 </script>
-<script src="/js/logout.js"></script>
 
+<script src="/js/logout.js"></script>
 </html>

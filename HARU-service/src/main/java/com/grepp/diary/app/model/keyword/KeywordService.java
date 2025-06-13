@@ -9,6 +9,7 @@ import com.querydsl.core.Tuple;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -104,5 +105,10 @@ public class KeywordService {
                 return new KeywordDto(name, Math.toIntExact(count));
             })
             .toList();
+    }
+
+    public Map<String, List<Keyword>> findAllGroupedKeyword() {
+        List<Keyword> allKeywords = keywordRepository.findAll();
+        return allKeywords.stream().collect(Collectors.groupingBy(k -> k.getType().name()));
     }
 }

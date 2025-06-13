@@ -2,9 +2,13 @@ package com.grepp.diary.app.controller.api.keyword;
 
 import com.grepp.diary.app.controller.api.keyword.payload.KeywordRankResponse;
 import com.grepp.diary.app.model.keyword.KeywordService;
+import com.grepp.diary.app.model.keyword.entity.Keyword;
 import com.grepp.diary.infra.util.date.DateUtil;
 import com.grepp.diary.infra.util.date.dto.DateRangeDto;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -33,5 +37,10 @@ public class KeywordApiController {
         String userId = authentication.getName();
 
         return KeywordRankResponse.fromDtoList(keywordService.getTop5Keywords(userId, start, end));
+    }
+
+    @GetMapping("/group")
+    public Map<String, List<Keyword>> getAllKeywordsGrouped(){
+        return keywordService.findAllGroupedKeyword();
     }
 }

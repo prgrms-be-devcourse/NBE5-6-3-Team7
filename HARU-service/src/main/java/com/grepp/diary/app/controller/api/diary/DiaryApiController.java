@@ -125,7 +125,7 @@ public class DiaryApiController {
         return !diaryService.getDiaryAtDate(userId, date).isEmpty();
     }
 
-    @PatchMapping("/modify")
+    @PatchMapping
     public ResponseEntity<?> editDiary(
         @RequestPart("request") DiaryEditRequest request,
         @RequestPart(value = "newImages", required = false) List<MultipartFile> newImages,
