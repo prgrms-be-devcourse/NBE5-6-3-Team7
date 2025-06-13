@@ -132,9 +132,12 @@ public class AiApiController {
         String userId = authentication.getName();
         String stats = diaryService.getEmotionStats(userId, date);
         CompletableFuture<String> future = new CompletableFuture<>();
-
-        String result = aiChatService.analyzeEmotion(stats);
-        return null;
+        aiRequestQueue.addRequest(
+            new AiRequestTask(() -> {
+                return aiChatService.analyzeEmotion(stats);
+            }, future)
+        );
+        return future;
     }
 
     private String buildMemoPrompt(Diary diary, List<Message> chatHistory) {

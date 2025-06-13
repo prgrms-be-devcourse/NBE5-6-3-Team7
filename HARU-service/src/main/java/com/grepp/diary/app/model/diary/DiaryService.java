@@ -366,8 +366,9 @@ public class DiaryService {
 
         try {
             return objectMapper.writeValueAsString(dtos);
-        } catch (JsonProcessingException e) {
-            return "감정 데이터 직렬화 실패";
+        } catch (Exception e) {
+            throw new CommonException(ResponseCode.INTERNAL_SERVER_ERROR,
+                "감정 데이터 분석에 실패했습니다. 나중에 다시 시도해주세요.");
         }
     }
 }

@@ -208,6 +208,7 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
             .where(
                 diary.member.userId.eq(userId), diary.date.between(start, end)
             )
+            .orderBy(diary.date.asc())
             .fetch()
             .stream()
             .map(tuple -> new DiaryEmotionStatsDto(
