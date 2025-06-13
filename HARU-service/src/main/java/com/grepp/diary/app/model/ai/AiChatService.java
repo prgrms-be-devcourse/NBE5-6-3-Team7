@@ -40,4 +40,7 @@ public interface AiChatService {
         + "그리고 전달할 때 각 내용은 마크다운 기호는 사용하지 말고 개행문자(\\\\n)로 구분해 주세요."
         + "예를 들면 \\n\uD83D\uDCAC 대화 요약 : ~ (\\\\n) \\n\uD83D\uDC8C 일기 답변 : ~ ")
     String memoWithOriginalReply(String prompt);
+
+    @SystemMessage
+    String analyzeEmotion(String stats);
 }

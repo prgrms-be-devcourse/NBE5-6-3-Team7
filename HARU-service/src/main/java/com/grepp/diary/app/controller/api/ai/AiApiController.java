@@ -12,13 +12,16 @@ import com.grepp.diary.app.model.chat.ChatService;
 import com.grepp.diary.app.model.custom.entity.Custom;
 import com.grepp.diary.app.model.diary.DiaryService;
 import com.grepp.diary.app.model.diary.dto.DiaryDto;
+import com.grepp.diary.app.model.diary.dto.DiaryEmotionStatsDto;
 import com.grepp.diary.app.model.diary.entity.Diary;
 import com.grepp.diary.app.model.member.entity.Member;
 import com.grepp.diary.infra.util.xss.XssProtectionUtils;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -119,6 +122,19 @@ public class AiApiController {
         log.info("Updated chat count {} for diaryId {}", chatCount, diaryId);
 
         return "Updated chat count";
+    }
+
+    @GetMapping("stats/emotion")
+    public CompletableFuture<String> getEmotionStats(
+        @RequestParam LocalDate date,
+        Authentication authentication
+    ) {
+        String userId = authentication.getName();
+        String stats = diaryService.getEmotionStats(userId, date);
+        CompletableFuture<String> future = new CompletableFuture<>();
+
+        String result = aiChatService.analyzeEmotion(stats);
+        return null;
     }
 
     private String buildMemoPrompt(Diary diary, List<Message> chatHistory) {
