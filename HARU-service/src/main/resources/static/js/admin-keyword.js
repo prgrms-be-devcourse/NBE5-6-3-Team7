@@ -150,4 +150,31 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(err => alert(err.message));
   }
+
+  document.getElementById('delete-keyword')?.addEventListener('click', () => {
+    const keywordIds = getCheckedKeywordIds();
+    if (keywordIds.length === 0) {
+      alert('선택된 키워드가 없습니다.');
+      return;
+    }
+
+    fetch('/api/admin/keyword/delete', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken
+      },
+      body: JSON.stringify(keywordIds)
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('삭제 실패');
+      return res.json();
+    })
+    .then(() => {
+      alert('삭제 완료');
+      const activeType = document.querySelector('.segment-button.active')?.innerText.trim();
+      fetchKeywords(getKeywordTypeParam(activeType));
+    })
+    .catch(err => alert(err.message));
+  });
 });

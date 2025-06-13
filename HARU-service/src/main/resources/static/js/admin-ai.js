@@ -101,6 +101,29 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch(err => alert(err.message));
   }
 
+  document.getElementById('delete-ai')?.addEventListener('click', () => {
+    const aiIds = getCheckedAiIds();
+    if (aiIds.length === 0) return alert('선택된 캐릭터가 없습니다.');
+
+    fetch('/api/admin/ai/delete', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken
+      },
+      body: JSON.stringify(aiIds)
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('삭제 실패');
+      return res.json();
+    })
+    .then(() => {
+      alert('삭제 완료');
+      fetchAis();
+    })
+    .catch(err => alert(err.message));
+  });
+
   window.fetchAis = fetchAis;
   window.renderAis = renderAis;
 });

@@ -118,6 +118,7 @@ public class KeywordService {
 
             Keyword keyword = optionalKeyword.get();
             keyword.setDeletedAt(LocalDateTime.now());
+            keyword.setIsUse(false);
 
             results.add(keyword);
         }

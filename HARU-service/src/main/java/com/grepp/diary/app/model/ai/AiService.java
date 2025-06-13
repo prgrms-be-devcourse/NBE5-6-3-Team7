@@ -152,6 +152,7 @@ public class AiService {
 
             Ai ai = optionalAi.get();
             ai.setDeletedAt(LocalDateTime.now());
+            ai.setIsUse(false);
 
             results.add(ai);
         }

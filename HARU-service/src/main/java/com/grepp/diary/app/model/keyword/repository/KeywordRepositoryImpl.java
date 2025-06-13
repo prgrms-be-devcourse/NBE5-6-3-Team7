@@ -50,11 +50,12 @@ public class KeywordRepositoryImpl implements KeywordRepositoryCustom{
                 keyword.name,
                 keyword.isUse,
                 keyword.type,
-                Expressions.numberTemplate(Integer.class, "coalesce(count({0}), 0)", diaryKeyword.diaryKeywordId)
+                Expressions.numberTemplate(Integer.class, "coalesce(count({0}), 0)", diaryKeyword.diaryKeywordId),
+                keyword.deletedAt
             ))
             .from(keyword)
             .leftJoin(diaryKeyword).on(diaryKeyword.keywordId.eq(keyword))
-            .where(keyword.type.in(matchedTypes))
+            .where(keyword.type.in(matchedTypes), keyword.deletedAt.isNull())
             .groupBy(keyword.keywordId)
             .orderBy(diaryKeyword.count().desc())
             .fetch();
