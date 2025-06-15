@@ -190,10 +190,6 @@ document.getElementById("confirm-btn").addEventListener("click", () => {
     window.onDateChange(selectedYear, selectedMonth);
   }
 
-  // 데모용 결과 표시
-  document.getElementById('result').textContent =
-      `선택된 날짜: ${selectedYear}년 ${selectedMonth}월`;
-
   closeModal();
 });
 
