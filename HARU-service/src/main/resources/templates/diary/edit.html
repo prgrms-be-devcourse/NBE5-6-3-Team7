@@ -168,7 +168,6 @@
 
 
   const selectedKeywords = [[${keywordNames}]];
-  console.log('✅ selectKeyword:', selectedKeywords)
 
   const dateInput = document.getElementById('diary-date');
   const dateText = document.getElementById('date-text');
@@ -217,7 +216,6 @@
     fetch('/api/keyword/group')
     .then(res => res.json())
     .then(data => {
-      console.log("📦 키워드 API 응답:", data);
       renderKeywords(data);
       renderPrimary(currentType);
       toggleBtn.innerText = '+ 더보기';
