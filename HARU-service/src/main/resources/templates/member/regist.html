@@ -14,19 +14,18 @@
       <div class="box-wrapper">
         <div class="box-1">
           <div class="eclipse">
-            <!-- TODO ai 이미지 경로 받아와서 설정 -->
-            <img src="/images/ai/1.png" alt="AI 이미지1"/>
+            <img src="" alt="AI 이미지1"/>
           </div>
           <div class="eclipse">
-            <img src="/images/ai/2.png" alt="AI 이미지2"/>
+            <img src="" alt="AI 이미지2"/>
           </div>
         </div>
         <div class="box-2">
           <div class="eclipse">
-            <img src="/images/ai/3.png" alt="AI 이미지3"/>
+            <img src="" alt="AI 이미지3"/>
           </div>
           <div class="eclipse">
-            <img src="/images/ai/4.png" alt="AI 이미지4"/>
+            <img src="" alt="AI 이미지4"/>
           </div>
         </div>
       </div>
@@ -61,4 +60,22 @@
   </div>
 </main>
 </body>
+<script>
+  fetch("/api/ai/list/img")
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+    const imgPaths = data.map(dto => {
+      return '/uploads/' + dto.savePath + dto.renamedName
+    });
+    console.log(imgPaths);
+    const imgElements = document.querySelectorAll(".eclipse img");
+    imgElements.forEach((img, index) => {
+      img.src = imgPaths[index];
+    })
+  })
+  .catch(error => {
+    console.error("AI 이미지 목록 불러오기 실패:", error)
+  })
+</script>
 </html>

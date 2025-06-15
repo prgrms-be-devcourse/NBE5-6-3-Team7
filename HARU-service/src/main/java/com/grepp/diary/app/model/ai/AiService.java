@@ -177,10 +177,6 @@ public class AiService {
         return results;
     }
 
-    public List<AiImgDto> getAiImgList() {
-        return aiImgRepository.findAll().stream().map(AiImgDto::fromEntity).toList();
-    }
-
     public List<AiWithPathDto> getImgPathList() {
         return aiImgRepository.getAiImgInfoActivated();
     }
