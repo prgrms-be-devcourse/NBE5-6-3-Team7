@@ -15,45 +15,6 @@ const dateChangeBtn = document.getElementById('date-change-btn');
 
 let prevDateValue = dateInput.value;
 
-// 날짜 변경 버튼 클릭 시 date input 표시
-dateChangeBtn.addEventListener('click', () => {
-  prevDateValue = dateInput.value; //변경 전 날짜
-  dateInput.style.display = 'inline-block';
-  dateInput.focus();
-});
-
-// 날짜 선택 시 화면에 한글로 표시
-dateInput.addEventListener('change', async() => {
-
-  const dateParam = dateInput.value;
-  try {
-    const res = await fetch(`/api/diary/check?date=${dateParam}`);
-    const exists = await res.json();
-
-    if (exists) {
-      alert("이미 해당 날짜에 작성된 일기가 있습니다. 다른 날짜를 선택하세요.");
-      dateInput.value = prevDateValue; // 날짜 롤백
-      // 날짜 텍스트도 원래대로 되돌림
-      const prevDate = new Date(prevDateValue);
-      const options = { month: 'long', day: 'numeric', weekday: 'short' };
-      dateText.textContent = prevDate.toLocaleDateString('ko-KR', options);
-    } else {
-      // 날짜 텍스트 업데이트
-      const date = new Date(dateParam);
-      const options = { month: 'long', day: 'numeric', weekday: 'short' };
-      dateText.textContent = date.toLocaleDateString('ko-KR', options);
-      prevDateValue = dateParam; // prevDateValue도 갱신
-    }
-    dateInput.style.display = 'none';
-  } catch (err) {
-    alert("서버와 통신 중 오류가 발생했습니다.");
-    dateInput.value = prevDateValue; // 오류 발생 시에도 롤백
-    dateInput.style.display = 'none';
-  }
-
-});
-
-
 console.log('emotionInputs:', emotionInputs);
 emotionInputs.forEach(input => {
   console.log(input.name, input.checked);
