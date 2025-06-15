@@ -135,13 +135,13 @@
   color: #89C07E;
   font-weight: bold;
   margin-top: 10px;
-  gap: 8px;
+  gap: 10px;
 }
 
 .keyword {
-  margin-right: 10px;
   white-space: nowrap;
-  max-width: 120px;
+  padding: 4px 8px;
+  display: inline-block;
 }
 
 .reply-header {

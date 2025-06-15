@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class DiaryController {
 
     private final DiaryService diaryService;
-    private final KeywordService keywordService;
     private final CustomService customService;
     private final XssProtectionUtils xssUtils;
 
@@ -49,13 +48,9 @@ public class DiaryController {
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
         Model model
     ) {
-        LocalDate targetDate = (date != null) ? date : LocalDate.now();
-        model.addAttribute("diaryDate", targetDate);
-        model.addAttribute("diaryRequest", new DiaryRequest());
-        List<Keyword> allKeywords = keywordService.findAllKeywordEntities();
-        Map<String, List<Keyword>> grouped = allKeywords.stream()
-                                                        .collect(Collectors.groupingBy(k -> k.getType().name()));
-        model.addAttribute("keywordGroups", grouped);
+        DiaryRequest diaryRequest = new DiaryRequest();
+        diaryRequest.setDate((date != null) ? date : LocalDate.now());
+        model.addAttribute("diaryRequest", diaryRequest);
 
         return "diary/write-diary";
     }
@@ -76,7 +71,7 @@ public class DiaryController {
         }
     }
 
-    @GetMapping("/record")
+    @GetMapping("/details")
     public String showDiaryRecordPage(
         Model model,
         @RequestParam("date")
@@ -110,11 +105,9 @@ public class DiaryController {
     @GetMapping("/edit/{id}")
     public String showDiaryEditPage(@PathVariable Integer id, Model model,
         @AuthenticationPrincipal UserDetails user
-
     ) {
         String userId = user.getUsername();
         Optional<Diary> diaryExist = diaryService.findDiaryByUserIdAndDiaryId(userId, id);
-
         model.addAttribute("diary", DiaryRecordDto.fromEntity(diaryExist.get()));
 
         // 선택했던 키워드들
@@ -124,10 +117,6 @@ public class DiaryController {
                                          .collect(Collectors.toList());
         model.addAttribute("keywordNames", keywordNames);
 
-        List<Keyword> allKeywords = keywordService.findAllKeywordEntities();
-        Map<String, List<Keyword>> grouped = allKeywords.stream()
-                                                        .collect(Collectors.groupingBy(k -> k.getType().name()));
-        model.addAttribute("keywordGroups", grouped);
         return "diary/edit";
     }
 }

@@ -391,7 +391,7 @@
       if (response.ok) {
         showModal('저장 완료', '대화 내용을 답장과 함께 저장했어요!');
         document.getElementById('alert-modal').addEventListener('close', () => {
-          window.location.href = `/diary/record?date=${diaryDate}`;
+          window.location.href = `/diary/details?date=${diaryDate}`;
         }, {once: true});
       } else {
         showModal('저장 실패', '대화 내용을 저장하지 못했어요. 다시 시도해주세요.');
@@ -422,7 +422,7 @@
     .then(response => {
       hideLoading();
       if (response.ok) {
-        window.location.href = `/diary/record?date=${diaryDate}`; // 처리 성공 후 리다이렉트
+        window.location.href = `/diary/details?date=${diaryDate}`; // 처리 성공 후 리다이렉트
       } else {
         showModal('에러', '대화 종료 처리에 실패했습니다. 다시 시도해주세요.');
       }

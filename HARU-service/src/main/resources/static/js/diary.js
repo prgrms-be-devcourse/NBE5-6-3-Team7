@@ -9,6 +9,8 @@ const toggleBtn = document.querySelector('.toggle-btn');
 let currentType = 'good';
 let expanded = false;
 
+let keywordData = {};
+
 const dateInput = document.getElementById('diary-date');
 const dateText = document.getElementById('date-text');
 const dateChangeBtn = document.getElementById('date-change-btn');
@@ -77,11 +79,18 @@ form.addEventListener('submit', function (e) {
   }
 });
 
-// DOM 로드 후 기본 감정 키워드 표시
+// 키워드 데이터 가져오기
 window.addEventListener('DOMContentLoaded', () => {
-  renderPrimary('good');
-  toggleBtn.innerText = '+ 더보기';
-  updateCharCount(); // 초기 글자수 세팅
+  fetch('/api/keyword/group')
+  .then(res => res.json())
+  .then(data => {
+    keywordData = data;
+    renderKeywords(data);
+    renderPrimary(currentType);
+    toggleBtn.innerText = '+ 더보기';
+    updateCharCount(); // 초기 글자수 세팅
+  })
+  .catch(err => console.error('Failed to fetch keywords:', err));
 });
 
 // 감정 선택 시 키워드 그룹 전환
@@ -101,6 +110,13 @@ emotionInputs.forEach(input => {
   });
 });
 
+// 키워드 렌더링 통합 함수
+function renderKeywords(keywordGroups) {
+  renderKeywordGroupToHidden(keywordGroups.EMOTION_GOOD, 'keyword-good', 'kw');     // 🔧 숨김 영역
+  renderKeywordGroupToHidden(keywordGroups.EMOTION_BAD, 'keyword-bad', 'kw');       // 🔧 숨김 영역
+  renderKeywordGroup(keywordGroups.PERSON, 'kw-person-wrapper', 'kw-person');       // 🔧 일반 렌더링
+  renderKeywordGroup(keywordGroups.SITUATION, 'kw-situation-wrapper', 'kw-situation');
+}
 // 키워드 렌더링 함수
 function renderPrimary(type) {
   primaryContainer.innerHTML = '';
@@ -131,6 +147,53 @@ function toggleKeywordExpand(btn) {
   }
   expanded = !expanded;
 }
+
+// 숨김 영역에 렌더링 (primary/secondary toggle용)
+function renderKeywordGroupToHidden(keywords, containerId, prefix) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  if (!keywords) return;
+
+  keywords.forEach(keyword => {
+    const chip = createKeywordChip(keyword, prefix);
+    container.appendChild(chip);
+  });
+}
+
+// 일반 렌더링 (직접 표시)
+function renderKeywordGroup(keywords, containerId, prefix) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  if (!keywords) return;
+
+  keywords.forEach(keyword => {
+    const chip = createKeywordChip(keyword, prefix);
+    container.appendChild(chip);
+  });
+}
+
+// 공통 키워드 chip 생성 함수
+function createKeywordChip(keyword, prefix) {
+  const chip = document.createElement('div');
+  chip.className = 'keyword-chip';
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = `${prefix}-${keyword.keywordId}`;
+  checkbox.name = 'keywords';
+  checkbox.value = keyword.name;
+
+  const label = document.createElement('label');
+  label.htmlFor = checkbox.id;
+  label.innerText = keyword.name;
+
+  chip.appendChild(checkbox);
+  chip.appendChild(label);
+
+  return chip;
+}
+
+
 
 // 이미지 미리보기
 function previewImages(event) {
