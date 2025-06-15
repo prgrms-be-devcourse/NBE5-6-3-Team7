@@ -15,7 +15,7 @@
 <body>
 
 <div th:replace="fragments/member-sidebar :: memberSidebar"></div>
-<div th:replace="fragments/changeDate :: fragment"></div>
+<div th:replace="fragments/change-date-modal :: fragment"></div>
 <script src="/js/logout.js"></script>
 <script th:if="${error}">
   alert('[[${error}]]');
