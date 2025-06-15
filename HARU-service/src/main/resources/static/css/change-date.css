@@ -99,8 +99,18 @@
   font-size: 18px;
 }
 
-.wheel-picker-item:hover {
+.wheel-picker-item:hover:not(.padding-item) {
   background: rgba(70, 119, 80, 0.1);
+}
+
+/* 패딩 아이템 스타일 */
+.wheel-picker-item.padding-item {
+  cursor: default;
+  pointer-events: none;
+}
+
+.wheel-picker-item.padding-item:hover {
+  background: none;
 }
 
 /* 중앙 하이라이트 영역 */
