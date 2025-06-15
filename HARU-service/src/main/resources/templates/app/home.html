@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/css/sidebar.css">
   <link rel="stylesheet" href="/css/calendar.css">
   <link rel="stylesheet" href="/css/card-list.css">
+  <link rel="stylesheet" href="/css/changeDate.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
@@ -14,10 +15,11 @@
 <body>
 
 <div th:replace="fragments/member-sidebar :: memberSidebar"></div>
+<div th:replace="fragments/changeDate :: fragment"></div>
 <script src="/js/logout.js"></script>
-  <script th:if="${error}">
-    alert('[[${error}]]');
-  </script>
+<script th:if="${error}">
+  alert('[[${error}]]');
+</script>
 
 
 <div class="main">
@@ -25,7 +27,10 @@
   <div class="calendar-container">
     <div class="calendar-inner">
       <div class="calendar-header">
-        <div class="calendar-title" id="calendar-title"></div>
+        <div class="calendar-title-wrapper">
+          <div class="calendar-title" id="calendar-title"></div>
+          <i class="fa-solid fa-caret-down calendar-caret-icon"></i>
+        </div>
         <div class="calendar-buttons">
           <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
           <button id="go-today">오늘</button>
@@ -57,7 +62,19 @@
 <script src="/js/sidebar.js"></script>
 <script src="/js/calendar.js"></script>
 <script src="/js/card-list.js"></script>
+<script src="/js/changeDate.js"></script>
+<script>
+  // 모달 열기시 현재 캘린더 상태(year/month)를 전달
+  document.querySelector('.calendar-title-wrapper').addEventListener('click', () => {
+    openDateModal(currentDate);  // calendar.js의 currentDate 사용
+  });
 
-
+  window.onDateChange = async function(year, month) {
+    // calendar.js에서 정의된 전역 함수와 변수 사용
+    currentDate = new Date(year, month - 1);
+    await fetchEmotionData(year, month);
+    closeModal();
+  };
+</script>
 </body>
 </html>

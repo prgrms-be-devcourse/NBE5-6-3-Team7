@@ -1,0 +1,192 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background-color: #FEFBF6;
+  border-radius: 12px;
+  padding: 30px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.show .modal-content {
+  transform: translateY(0) scale(1);
+}
+
+.calendar-icon {
+  font-size: 30px;
+  color: #282420;
+  margin-bottom: 12px;
+}
+
+.modal-content h3 {
+  color: #282420;
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.wheel-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 25px 0;
+  height: 180px;
+}
+
+.custom-wheel-picker {
+  width: 80px;
+  position: relative;
+}
+
+.wheel-picker-container {
+  height: 180px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.wheel-picker-list {
+  height: 100%;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  position: relative;
+}
+
+.wheel-picker-list::-webkit-scrollbar {
+  display: none;
+}
+
+.wheel-picker-item {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.wheel-picker-item.selected {
+  color: #467750;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.wheel-picker-item:hover {
+  background: rgba(70, 119, 80, 0.1);
+}
+
+/* 중앙 하이라이트 영역 */
+.wheel-picker-highlight {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 36px;
+  background: rgba(70, 119, 80, 0.1);
+  border: 1px solid rgba(70, 119, 80, 0.2);
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 25px;
+  gap: 15px;
+}
+
+.modal-buttons button {
+  flex: 1;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+#cancel-btn {
+  background-color: #D9D8D5;
+  color: #282420;
+}
+
+#cancel-btn:hover {
+  background-color: #CCC;
+}
+
+#confirm-btn {
+  background-color: #467750;
+  color: white;
+}
+
+#confirm-btn:hover {
+  background-color: #3A6142;
+}
+
+/* 데모를 위한 추가 스타일 */
+.demo-container body {
+  margin: 0;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+}
+
+.demo-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.demo-btn {
+  background: #467750;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.demo-btn:hover {
+  background: #3A6142;
+}
+
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
