@@ -1,0 +1,33 @@
+<!-- fragments/change-date-modal.html -->
+<div class="modal-overlay" id="full-date-modal" th:fragment="fragment">
+  <div class="modal-content">
+    <i class="fa-solid fa-calendar-days calendar-icon"></i>
+    <h3>날짜 변경</h3>
+
+    <div class="wheel-container">
+      <div class="custom-wheel-picker">
+        <div class="wheel-picker-container">
+          <div class="wheel-picker-highlight"></div>
+          <div class="wheel-picker-list" id="year-picker"></div>
+        </div>
+      </div>
+      <div class="custom-wheel-picker">
+        <div class="wheel-picker-container">
+          <div class="wheel-picker-highlight"></div>
+          <div class="wheel-picker-list" id="month-picker"></div>
+        </div>
+      </div>
+      <div class="custom-wheel-picker">
+        <div class="wheel-picker-container">
+          <div class="wheel-picker-highlight"></div>
+          <div class="wheel-picker-list" id="date-picker"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-buttons">
+      <button id="cancel-btn">취소</button>
+      <button id="confirm-btn">완료</button>
+    </div>
+  </div>
+</div>
