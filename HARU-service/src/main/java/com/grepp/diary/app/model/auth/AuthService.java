@@ -3,6 +3,7 @@ package com.grepp.diary.app.model.auth;
 import com.grepp.diary.app.controller.web.auth.form.SigninForm;
 import com.grepp.diary.app.model.auth.domain.Principal;
 import com.grepp.diary.app.model.auth.token.RefreshTokenRepository;
+import com.grepp.diary.app.model.auth.token.UserBlackListRepository;
 import com.grepp.diary.app.model.auth.token.dto.AccessTokenDto;
 import com.grepp.diary.app.model.auth.token.dto.TokenDto;
 import com.grepp.diary.app.model.auth.token.entity.RefreshToken;
@@ -26,7 +27,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,6 +45,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final UserBlackListRepository userBlackListRepository;
 
     public UserDetails loadUserByUsername(String username) {
 
@@ -98,6 +99,7 @@ public class AuthService {
         mailDto.setFrom("haru");
         mailDto.setTo(List.of(email));
         String subject = "Diary 인증번호 안내";
+        mailDto.setSubject(subject);
         Map<String, String> props = new HashMap<>();
         props.put("code", code);
 
@@ -118,8 +120,8 @@ public class AuthService {
     }
 
     public TokenDto processTokenSignin(String username) {
-//        // 블랙리스트에서 제거
-//        userBlackListRepository.deleteById(username);
+        // 블랙리스트에서 제거
+        userBlackListRepository.deleteById(username);
 
         AccessTokenDto dto = jwtProvider.generateAccessToken(username);
         RefreshToken refreshToken = new RefreshToken(username, dto.getId());
