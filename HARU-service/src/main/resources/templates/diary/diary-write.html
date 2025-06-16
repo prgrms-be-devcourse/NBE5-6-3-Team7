@@ -5,7 +5,7 @@
   <title>일기 작성</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/sidebar.css">
-  <link rel="stylesheet" th:href="@{/css/diary.css}">
+  <link rel="stylesheet" href="/css/diary.css">
   <link rel="stylesheet" href="/css/change-date.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -13,14 +13,22 @@
 <body>
   <div th:replace="fragments/member-sidebar :: memberSidebar"></div>
   <div th:replace="fragments/change-full-date-modal :: fragment"></div>
+  <!-- 프로그레스 바 -->
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
 
   <div class="main">
+    <!-- 헤더 섹션 -->
+    <div class="diary-header">
+      <h1 class="diary-title">오늘의 일기</h1>
+      <p class="diary-subtitle">당신의 소중한 하루를 기록해보세요</p>
+    </div>
 
     <div class="container">
-      <h2>오늘의 일기를 작성해 볼까요?</h2>
-
       <form th:action="@{/diary}" method="post" enctype="multipart/form-data" th:object="${diaryRequest}">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <!-- 날짜 선택 -->
         <div class="form-box">
           <div class="date-display">
             <input
