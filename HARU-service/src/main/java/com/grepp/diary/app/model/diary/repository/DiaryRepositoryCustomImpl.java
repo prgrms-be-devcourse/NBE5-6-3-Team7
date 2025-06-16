@@ -5,18 +5,28 @@ import com.grepp.diary.app.model.diary.entity.Diary;
 import com.grepp.diary.app.model.diary.entity.DiaryImg;
 import com.grepp.diary.app.model.diary.entity.QDiary;
 import com.grepp.diary.app.model.diary.entity.QDiaryImg;
+import com.grepp.diary.app.model.keyword.code.KeywordType;
+import com.grepp.diary.app.model.keyword.dto.KeywordInfoDto;
 import com.grepp.diary.app.model.keyword.entity.DiaryKeyword;
 import com.grepp.diary.app.model.keyword.entity.QDiaryKeyword;
 import com.grepp.diary.app.model.keyword.entity.QKeyword;
 import com.grepp.diary.app.model.reply.dto.ReplyAdminDto;
 import com.grepp.diary.app.model.reply.entity.QReply;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.group.Group;
+import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -205,22 +215,52 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
     }
 
     @Override
-    public List<DiaryEmotionStatsDto> findEmotionStatsByUserIdAndMonth(String userId,
+    public List<DiaryEmotionStatsDto> findEmotionStatsByUserIdAndDate(String userId,
         LocalDate start, LocalDate end) {
-        return queryFactory
-            .select(diary.emotion, diary.date)
+
+        List<Tuple> result = queryFactory
+            .select(
+                diary.diaryId,
+                diary.emotion,
+                diary.date,
+                keyword.name,
+                keyword.type
+            )
             .from(diary)
+            .leftJoin(diary.keywords, diaryKeyword)
+            .leftJoin(diaryKeyword.keywordId, keyword)
             .where(
-                diary.member.userId.eq(userId), diary.date.between(start, end)
+                diary.member.userId.eq(userId),
+                diary.date.between(start, end)
             )
             .orderBy(diary.date.asc())
-            .fetch()
-            .stream()
-            .map(tuple -> new DiaryEmotionStatsDto(
-                tuple.get(diary.emotion),
-                tuple.get(diary.date)
-            ))
-            .toList();
+            .fetch();
+
+        Map<Integer, DiaryEmotionStatsDto> diaryMap = new LinkedHashMap<>();
+
+        for (Tuple tuple : result) {
+            Integer diaryId = tuple.get(diary.diaryId);
+            DiaryEmotionStatsDto dto = diaryMap.get(diaryId);
+
+            // 아직 데이터를 할당하지 않았을 때
+            if (dto == null) {
+                dto = new DiaryEmotionStatsDto();
+                dto.setDiaryId(diaryId);
+                dto.setEmotion(tuple.get(diary.emotion));
+                dto.setDate(tuple.get(diary.date));
+                dto.setKeywordInfoDtos(new ArrayList<>());
+                diaryMap.put(diaryId, dto);
+            }
+
+            // 키워드 주입
+            String keywordName = tuple.get(keyword.name);
+            KeywordType keywordType = tuple.get(keyword.type);
+            if (keywordName != null && keywordType != null) {
+                dto.getKeywordInfoDtos().add(new KeywordInfoDto(keywordName, keywordType));
+            }
+        }
+
+        return new ArrayList<>(diaryMap.values());
     }
 
     @Override
