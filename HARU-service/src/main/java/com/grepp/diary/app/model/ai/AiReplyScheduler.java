@@ -32,8 +32,9 @@ public class AiReplyScheduler {
     private final XssProtectionUtils xssUtils;
 
     // 자동 실행 메서드
-    @Scheduled(cron = "0 0 3 * * *")
-//    @Scheduled(cron = "0 */5 * * * *")
+//    @Scheduled(cron = "0 0 3 * * *")
+    @Scheduled(cron = "0 */5 * * * *")
+//    @Scheduled(fixedRate = 5000)  // 5초 마다
     public void autoReplyProcess() {
         log.info("Starting the diary reply process");
         initiateReplyProcess();

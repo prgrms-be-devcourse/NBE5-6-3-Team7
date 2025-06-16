@@ -1,5 +1,6 @@
 package com.grepp.diary.app.model.diary.repository;
 
+import static org.junit.jupiter.api.Assertions.*;
 import com.grepp.diary.app.model.diary.dto.DiaryEmotionStatsDto;
 import java.time.LocalDate;
 import java.util.List;

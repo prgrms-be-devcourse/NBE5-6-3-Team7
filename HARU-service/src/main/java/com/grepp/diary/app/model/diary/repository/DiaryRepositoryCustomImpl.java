@@ -218,6 +218,7 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
     public List<DiaryEmotionStatsDto> findEmotionStatsByUserIdAndDate(String userId,
         LocalDate start, LocalDate end) {
 
+        // 조회 데이터를 튜플로 먼저 저장
         List<Tuple> result = queryFactory
             .select(
                 diary.diaryId,
@@ -230,19 +231,19 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
             .leftJoin(diary.keywords, diaryKeyword)
             .leftJoin(diaryKeyword.keywordId, keyword)
             .where(
-                diary.member.userId.eq(userId),
-                diary.date.between(start, end)
+                diary.member.userId.eq(userId), diary.date.between(start, end)
             )
             .orderBy(diary.date.asc())
             .fetch();
 
         Map<Integer, DiaryEmotionStatsDto> diaryMap = new LinkedHashMap<>();
 
+        // 튜플 리스트를 순회하며 dto 생성
         for (Tuple tuple : result) {
             Integer diaryId = tuple.get(diary.diaryId);
             DiaryEmotionStatsDto dto = diaryMap.get(diaryId);
 
-            // 아직 데이터를 할당하지 않았을 때
+            // 키워드는 여러 개이므로 먼저 해당하는 일기가 있는지 확인
             if (dto == null) {
                 dto = new DiaryEmotionStatsDto();
                 dto.setDiaryId(diaryId);
