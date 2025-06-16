@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const replyContent = document.getElementById('replyContent');
-
   let dateRangeInput = document.getElementById('dateRangeInput');
   let period = '1month';
   let type = 'all';
-
   let replyMap = new Map();
 
   const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
@@ -12,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetchDiaryAndReply(period, type);
 
+  // 드랍다운 action (기간)
   setupDropdown('period-button', 'period-dropdown', 'period-selected', (value) => {
     if (value == 'custom') {
       fp.clear();
@@ -23,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     period = value;
     fetchDiaryAndReply(period, type);
   });
-
+  // 드랍다운 action (답변 상태)
   setupDropdown('status-button', 'status-dropdown', 'status-selected', (value) => {
     type = value;
     fetchDiaryAndReply(period, type);
@@ -76,11 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  document.getElementById('selectAll')?.addEventListener('change', function () {
-    const checkboxes = document.querySelectorAll('.item-checkbox');
-    checkboxes.forEach(cb => cb.checked = this.checked);
-  });
-
+  // 데이터 반환 함수
   function fetchDiaryAndReply(period, type) {
     const customDate = document.getElementById('dateRangeInput').value;
     const url = `/api/admin/reply?period=${period}&status=${type}&customDate=${customDate}`;
@@ -88,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(url)
     .then(response => response.json())
     .then(data => {
-      console.log('데이터:', data.ReplyInfos);
       renderDiaryAndReply(data.ReplyInfos)
     })
     .catch(err => {
@@ -97,12 +91,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // 데이터 표현 함수
   function renderDiaryAndReply(items) {
     replyMap.clear();
 
     replyContent.innerHTML = '';
     if (!items || items.length === 0) {
-      replyContent.innerHTML = '<p>데이터가 없습니다.</p>';
       return;
     }
 
@@ -168,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.fetchDiaryAndReply = fetchDiaryAndReply;
   window.renderDiaryAndReply = renderDiaryAndReply;
 
+  // 데이트 피커 상수
   const fp = flatpickr(dateRangeInput, {
     mode: "range",
     dateFormat: "Y-m-d",
