@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -126,5 +127,10 @@ public class KeywordService {
         keywordRepository.saveAllAndFlush(results);
 
         return results;
+    }
+
+    public Map<String, List<Keyword>> findAllGroupedKeyword() {
+        List<Keyword> allKeywords = keywordRepository.findAll();
+        return allKeywords.stream().collect(Collectors.groupingBy(k -> k.getType().name()));
     }
 }
