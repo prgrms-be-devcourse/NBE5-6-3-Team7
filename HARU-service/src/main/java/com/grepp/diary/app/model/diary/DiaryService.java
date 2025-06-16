@@ -1,6 +1,5 @@
 package com.grepp.diary.app.model.diary;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grepp.diary.app.controller.api.diary.payload.DiaryEditRequest;
 import com.grepp.diary.app.controller.web.diary.payload.DiaryRequest;
@@ -365,9 +364,8 @@ public class DiaryService {
     }
 
     public String getEmotionStats(String userId, LocalDate date) {
-        LocalDate firstDayOfMonth = date.withDayOfMonth(1);
-        LocalDate lastDayOfMonth = date.withDayOfMonth(date.lengthOfMonth());
-        List<DiaryEmotionStatsDto> dtos = diaryRepository.findEmotionStatsByUserIdAndMonth(userId, firstDayOfMonth, lastDayOfMonth);
+        LocalDate startDate = date.minusDays(14);
+        List<DiaryEmotionStatsDto> dtos = diaryRepository.findEmotionStatsByUserIdAndDate(userId, startDate, date);
 
         try {
             return objectMapper.writeValueAsString(dtos);
@@ -375,6 +373,12 @@ public class DiaryService {
             throw new CommonException(ResponseCode.INTERNAL_SERVER_ERROR,
                 "감정 데이터 분석에 실패했습니다. 나중에 다시 시도해주세요.");
         }
+    }
+
+    public Object getDiaryDate(Integer diaryId) {
+        Diary diary = diaryRepository.findById(diaryId).orElse(null);
+        assert diary != null;
+        return diary.getDate();
     }
 
     public List<ReplyAdminDto> getDiaryAndReplyStatus(String period, String customDate, String status) {
