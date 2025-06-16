@@ -125,6 +125,7 @@ public class AiApiController {
 
     @GetMapping("stats/emotion")
     public CompletableFuture<String> getEmotionStats(
+//        @RequestParam String userId,
         @RequestParam LocalDate date,
         Authentication authentication
     ) {
