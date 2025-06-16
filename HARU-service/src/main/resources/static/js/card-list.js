@@ -40,7 +40,7 @@ async function loadRecentDiaries() {
     // 상세 페이지로 이동 이벤트 추가
     card.addEventListener("click", () => {
       const dateParam = diary.date;
-      window.location.href = `/diary/record?date=${dateParam}`;
+      window.location.href = `/diary/details?date=${dateParam}`;
     });
 
     container.appendChild(clone);

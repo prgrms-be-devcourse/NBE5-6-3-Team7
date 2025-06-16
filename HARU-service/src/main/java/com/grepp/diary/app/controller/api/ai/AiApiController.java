@@ -7,12 +7,12 @@ import com.grepp.diary.app.controller.api.ai.payload.Message;
 import com.grepp.diary.app.model.ai.AiChatService;
 import com.grepp.diary.app.model.ai.AiService;
 import com.grepp.diary.app.model.ai.AiReplyScheduler;
+import com.grepp.diary.app.model.ai.dto.AiWithPathDto;
 import com.grepp.diary.app.model.ai.entity.Ai;
 import com.grepp.diary.app.model.chat.ChatService;
 import com.grepp.diary.app.model.custom.entity.Custom;
 import com.grepp.diary.app.model.diary.DiaryService;
 import com.grepp.diary.app.model.diary.dto.DiaryDto;
-import com.grepp.diary.app.model.diary.dto.DiaryEmotionStatsDto;
 import com.grepp.diary.app.model.diary.entity.Diary;
 import com.grepp.diary.app.model.member.entity.Member;
 import com.grepp.diary.infra.util.xss.XssProtectionUtils;
@@ -21,14 +21,13 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -187,6 +186,12 @@ public class AiApiController {
     @GetMapping("/list")
     private AiListResponse getAiInfoList() {
         return AiListResponse.fromDtoList(aiService.getAIList());
+    }
+
+    @GetMapping("/list/img")
+    private ResponseEntity<List<AiWithPathDto>> getAiImgPathList() {
+        List<AiWithPathDto> dtos = aiService.getImgPathList();
+        return ResponseEntity.ok(dtos);
     }
 
 }

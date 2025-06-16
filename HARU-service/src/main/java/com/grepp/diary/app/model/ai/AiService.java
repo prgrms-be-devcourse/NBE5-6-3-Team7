@@ -1,14 +1,15 @@
 package com.grepp.diary.app.model.ai;
 
 import com.grepp.diary.app.controller.api.admin.payload.AdminAiWriteRequest;
+import com.grepp.diary.app.model.ai.dto.AiImgDto;
 import com.grepp.diary.app.model.ai.dto.AiInfoDto;
 import com.grepp.diary.app.model.ai.dto.AiDto;
+import com.grepp.diary.app.model.ai.dto.AiWithPathDto;
 import com.grepp.diary.app.model.ai.entity.Ai;
 import com.grepp.diary.app.model.ai.entity.AiImg;
 import com.grepp.diary.app.model.ai.repository.AiImgRepository;
 import com.grepp.diary.app.model.ai.repository.AiRepository;
 import com.grepp.diary.app.model.common.code.ImgType;
-import com.grepp.diary.app.model.keyword.entity.Keyword;
 import com.grepp.diary.infra.error.exceptions.CommonException;
 import com.grepp.diary.infra.response.ResponseCode;
 import com.grepp.diary.infra.util.file.FileDto;
@@ -174,5 +175,9 @@ public class AiService {
         aiRepository.saveAllAndFlush(results);
 
         return results;
+    }
+
+    public List<AiWithPathDto> getImgPathList() {
+        return aiImgRepository.getAiImgInfoActivated();
     }
 }
