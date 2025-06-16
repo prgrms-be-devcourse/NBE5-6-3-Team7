@@ -364,9 +364,8 @@ public class DiaryService {
     }
 
     public String getEmotionStats(String userId, LocalDate date) {
-        LocalDate firstDayOfMonth = date.withDayOfMonth(1);
-        LocalDate lastDayOfMonth = date.withDayOfMonth(date.lengthOfMonth());
-        List<DiaryEmotionStatsDto> dtos = diaryRepository.findEmotionStatsByUserIdAndMonth(userId, firstDayOfMonth, lastDayOfMonth);
+        LocalDate startDate = date.minusDays(14);
+        List<DiaryEmotionStatsDto> dtos = diaryRepository.findEmotionStatsByUserIdAndDate(userId, startDate, date);
 
         try {
             return objectMapper.writeValueAsString(dtos);
