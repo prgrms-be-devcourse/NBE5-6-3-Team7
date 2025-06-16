@@ -1,4 +1,4 @@
-package com.grepp.diary.app.model.member.dto;
+package com.grepp.diary.app.model.mail.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

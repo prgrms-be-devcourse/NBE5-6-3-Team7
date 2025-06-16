@@ -5,18 +5,28 @@ import com.grepp.diary.app.model.diary.entity.Diary;
 import com.grepp.diary.app.model.diary.entity.DiaryImg;
 import com.grepp.diary.app.model.diary.entity.QDiary;
 import com.grepp.diary.app.model.diary.entity.QDiaryImg;
+import com.grepp.diary.app.model.keyword.code.KeywordType;
+import com.grepp.diary.app.model.keyword.dto.KeywordInfoDto;
 import com.grepp.diary.app.model.keyword.entity.DiaryKeyword;
 import com.grepp.diary.app.model.keyword.entity.QDiaryKeyword;
 import com.grepp.diary.app.model.keyword.entity.QKeyword;
 import com.grepp.diary.app.model.reply.dto.ReplyAdminDto;
 import com.grepp.diary.app.model.reply.entity.QReply;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.group.Group;
+import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -205,22 +215,53 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
     }
 
     @Override
-    public List<DiaryEmotionStatsDto> findEmotionStatsByUserIdAndMonth(String userId,
+    public List<DiaryEmotionStatsDto> findEmotionStatsByUserIdAndDate(String userId,
         LocalDate start, LocalDate end) {
-        return queryFactory
-            .select(diary.emotion, diary.date)
+
+        // 조회 데이터를 튜플로 먼저 저장
+        List<Tuple> result = queryFactory
+            .select(
+                diary.diaryId,
+                diary.emotion,
+                diary.date,
+                keyword.name,
+                keyword.type
+            )
             .from(diary)
+            .leftJoin(diary.keywords, diaryKeyword)
+            .leftJoin(diaryKeyword.keywordId, keyword)
             .where(
                 diary.member.userId.eq(userId), diary.date.between(start, end)
             )
             .orderBy(diary.date.asc())
-            .fetch()
-            .stream()
-            .map(tuple -> new DiaryEmotionStatsDto(
-                tuple.get(diary.emotion),
-                tuple.get(diary.date)
-            ))
-            .toList();
+            .fetch();
+
+        Map<Integer, DiaryEmotionStatsDto> diaryMap = new LinkedHashMap<>();
+
+        // 튜플 리스트를 순회하며 dto 생성
+        for (Tuple tuple : result) {
+            Integer diaryId = tuple.get(diary.diaryId);
+            DiaryEmotionStatsDto dto = diaryMap.get(diaryId);
+
+            // 키워드는 여러 개이므로 먼저 해당하는 일기가 있는지 확인
+            if (dto == null) {
+                dto = new DiaryEmotionStatsDto();
+                dto.setDiaryId(diaryId);
+                dto.setEmotion(tuple.get(diary.emotion));
+                dto.setDate(tuple.get(diary.date));
+                dto.setKeywordInfoDtos(new ArrayList<>());
+                diaryMap.put(diaryId, dto);
+            }
+
+            // 키워드 주입
+            String keywordName = tuple.get(keyword.name);
+            KeywordType keywordType = tuple.get(keyword.type);
+            if (keywordName != null && keywordType != null) {
+                dto.getKeywordInfoDtos().add(new KeywordInfoDto(keywordName, keywordType));
+            }
+        }
+
+        return new ArrayList<>(diaryMap.values());
     }
 
     @Override
@@ -248,6 +289,12 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
             .from(diary)
             .leftJoin(reply).on(reply.diary.eq(diary))
             .where(dateCondition, statusCondition)
+            .orderBy(
+                new CaseBuilder()
+                    .when(reply.createdAt.isNull()).then(0)
+                    .otherwise(1).asc(),
+                reply.createdAt.desc().nullsLast()
+            )
             .fetch();
     }
 

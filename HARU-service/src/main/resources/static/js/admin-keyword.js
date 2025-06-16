@@ -67,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     keywordContent.innerHTML = '';
     if (!keywords || keywords.length === 0) {
-      keywordContent.innerHTML = '<p>키워드가 없습니다.</p>';
       return;
     }
 

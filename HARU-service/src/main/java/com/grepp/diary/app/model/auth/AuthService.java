@@ -7,7 +7,7 @@ import com.grepp.diary.app.model.auth.token.UserBlackListRepository;
 import com.grepp.diary.app.model.auth.token.dto.AccessTokenDto;
 import com.grepp.diary.app.model.auth.token.dto.TokenDto;
 import com.grepp.diary.app.model.auth.token.entity.RefreshToken;
-import com.grepp.diary.app.model.member.dto.SmtpDto;
+import com.grepp.diary.app.model.mail.dto.SmtpDto;
 import com.grepp.diary.app.model.member.entity.Member;
 import com.grepp.diary.app.model.member.repository.MemberRepository;
 import com.grepp.diary.infra.auth.token.JwtProvider;
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -46,6 +47,9 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserBlackListRepository userBlackListRepository;
+
+    @Value("${app.domain}")
+    private String domain;
 
     public UserDetails loadUserByUsername(String username) {
 
@@ -98,9 +102,9 @@ public class AuthService {
         SmtpDto mailDto = new SmtpDto();
         mailDto.setFrom("haru");
         mailDto.setTo(List.of(email));
-        String subject = "Diary 인증번호 안내";
-        mailDto.setSubject(subject);
+        mailDto.setSubject("Diary 인증번호 안내");
         Map<String, String> props = new HashMap<>();
+        props.put("domain", domain);
         props.put("code", code);
 
         mailDto.setProperties(props);

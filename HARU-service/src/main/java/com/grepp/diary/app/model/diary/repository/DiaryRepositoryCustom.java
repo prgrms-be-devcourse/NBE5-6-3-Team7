@@ -22,7 +22,7 @@ public interface DiaryRepositoryCustom {
 
     void deactivateDiaryByDiaryId(Integer id);
 
-    List<DiaryEmotionStatsDto> findEmotionStatsByUserIdAndMonth(String userId, LocalDate start, LocalDate end);
+    List<DiaryEmotionStatsDto> findEmotionStatsByUserIdAndDate(String userId, LocalDate start, LocalDate end);
 
     List<ReplyAdminDto> findByDateRangeAndStatus(LocalDateTime startDate, LocalDateTime endDate, String status);
 }
