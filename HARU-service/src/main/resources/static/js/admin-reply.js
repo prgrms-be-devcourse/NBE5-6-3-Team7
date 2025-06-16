@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let replyMap = new Map();
 
+  const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
   fetchDiaryAndReply(period, type);
 
   setupDropdown('period-button', 'period-dropdown', 'period-selected', (value) => {
@@ -25,6 +28,15 @@ document.addEventListener('DOMContentLoaded', () => {
     type = value;
     fetchDiaryAndReply(period, type);
   });
+  // 체크박스 전체 선택
+  document.getElementById('selectAll')?.addEventListener('change', function () {
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+  });
+
+  document.getElementById('send-reply')?.addEventListener('click', () => {
+    sendReplies(getCheckedItemIds())
+  })
 
   function setupDropdown(buttonId, dropdownId, spanId, onSelect) {
     const button = document.getElementById(buttonId);
@@ -105,11 +117,52 @@ document.addEventListener('DOMContentLoaded', () => {
         <span>${item.diaryId}</span>
         <span>${item.date}</span>
         <span>${item.diaryCreatedAt}</span>
-        <span>${item.replyCreatedAt}</span>
+        <span>${item.replyCreatedAt ? item.replyCreatedAt : '대기'}</span>
         <span>${item.replyCreatedAt ? 'O' : 'X'}</span>
       `;
       replyContent.appendChild(div);
     })
+  }
+
+  function getCheckedItemIds() {
+    const checked = document.querySelectorAll('.item-checkbox:checked');
+    return Array.from(checked).map(cb => {
+      return parseInt(cb.getAttribute('data-id'))
+    });
+  }
+
+  function sendReplies() {
+    const itemIds = getCheckedItemIds();
+    const loadModal = document.getElementById("loadingModal");
+
+    if (itemIds.length === 0) {
+      alert('답변 관리할 일기를 선택해주세요.');
+      return;
+    }
+    loadModal.style.display = 'flex';
+
+    fetch('/api/ai/reply', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken
+      },
+      body: JSON.stringify(itemIds)
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('답장 실패');
+      return res.json();
+    })
+    .then(() => {
+      alert('답장 완료');
+      fetchDiaryAndReply(period, type);
+    })
+    .catch(err => {
+      alert(err.message);
+    })
+    .finally(() => {
+      loadModal.style.display = 'none';
+    });
   }
 
   window.fetchDiaryAndReply = fetchDiaryAndReply;

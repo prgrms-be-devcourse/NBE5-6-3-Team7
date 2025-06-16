@@ -12,10 +12,10 @@ import com.grepp.diary.app.model.reply.dto.ReplyAdminDto;
 import com.grepp.diary.app.model.reply.entity.QReply;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -248,6 +248,12 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
             .from(diary)
             .leftJoin(reply).on(reply.diary.eq(diary))
             .where(dateCondition, statusCondition)
+            .orderBy(
+                new CaseBuilder()
+                    .when(reply.createdAt.isNull()).then(0)
+                    .otherwise(1).asc(),
+                reply.createdAt.desc().nullsLast()
+            )
             .fetch();
     }
 
