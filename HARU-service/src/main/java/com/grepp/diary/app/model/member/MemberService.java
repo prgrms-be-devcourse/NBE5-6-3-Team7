@@ -8,7 +8,7 @@ import com.grepp.diary.app.model.auth.code.Role;
 import com.grepp.diary.app.model.custom.entity.Custom;
 import com.grepp.diary.app.model.custom.repository.CustomRepository;
 import com.grepp.diary.app.model.member.dto.MemberDto;
-import com.grepp.diary.app.model.member.dto.SmtpDto;
+import com.grepp.diary.app.model.mail.dto.SmtpDto;
 import com.grepp.diary.app.model.member.entity.Member;
 import com.grepp.diary.app.model.member.repository.MemberRepository;
 import com.grepp.diary.infra.error.exceptions.CommonException;
