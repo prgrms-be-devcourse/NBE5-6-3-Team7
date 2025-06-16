@@ -261,4 +261,9 @@ public class MemberService {
     public boolean isExist(String email) {
         return memberRepository.findMemberByEmail(email).isPresent();
     }
+
+    public String getEmail(String userId) {
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+        return member.getEmail();
+    }
 }
