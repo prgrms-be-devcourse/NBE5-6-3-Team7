@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Content-Type': 'application/json',
         // [csrfHeader]: csrfToken
       },
-      body: JSON.stringify({ aiIds })
+      body: JSON.stringify(requestBody)
     })
     .then(res => {
       if (!res.ok) throw new Error(isUse ? '활성화 실패' : '비활성화 실패');

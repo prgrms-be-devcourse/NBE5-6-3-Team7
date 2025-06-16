@@ -70,12 +70,14 @@ public class SecurityConfig {
             .exceptionHandling(eh -> eh.authenticationEntryPoint(jwtAuthenticationEntryPoint))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/csrf-token").permitAll()
-                .requestMatchers(GET, "/", "/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
+                .requestMatchers(GET, "/", "/css/**", "/js/**", "/images/**", "/assets/**", "/uploads/**").permitAll()
                 .requestMatchers(
                     "/auth/**",
                     "/member/leave", "/member/leave-success",
                     "/custom/**"
                 ).permitAll()
+                .requestMatchers("/mail/verify").permitAll()
+                .requestMatchers("/api/ai/list/img").permitAll()
                 .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
