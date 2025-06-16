@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const aiContent = document.getElementById('aiContent');
 
-  const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+  // const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+  // const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
   if (aiContent) {
     fetchAis();
@@ -86,9 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
+        // [csrfHeader]: csrfToken
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify({ aiIds })
     })
     .then(res => {
       if (!res.ok) throw new Error(isUse ? '활성화 실패' : '비활성화 실패');
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
+        // [csrfHeader]: csrfToken
       },
       body: JSON.stringify(aiIds)
     })

@@ -4,12 +4,16 @@ import com.grepp.diary.app.controller.api.admin.payload.AdminAiStatusRequest;
 import com.grepp.diary.app.controller.api.admin.payload.AdminAiResponse;
 import com.grepp.diary.app.controller.api.admin.payload.AdminAiWriteRequest;
 import com.grepp.diary.app.controller.api.admin.payload.AdminKeywordResponse;
+import com.grepp.diary.app.controller.api.admin.payload.AdminReplyResponse;
 import com.grepp.diary.app.model.ai.AiService;
 import com.grepp.diary.app.model.ai.dto.AiDto;
 import com.grepp.diary.app.model.ai.entity.Ai;
 import com.grepp.diary.app.model.custom.CustomService;
+import com.grepp.diary.app.model.diary.DiaryService;
 import com.grepp.diary.app.model.keyword.KeywordService;
 import com.grepp.diary.app.model.keyword.entity.Keyword;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +38,11 @@ public class AdminApiController {
     private final KeywordService keywordService;
     private final AiService aiService;
     private final CustomService customService;
+    private final DiaryService diaryService;
 
+    /**
+     * KEYWORD API
+     **/
     @GetMapping("keyword")
     public AdminKeywordResponse getAllKeywords(
         @RequestParam String type
@@ -142,5 +150,19 @@ public class AdminApiController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * REPLY API
+     **/
+    @GetMapping("reply")
+    public AdminReplyResponse getAllReplies(
+        @RequestParam(name = "period", required = false, defaultValue = "1month") String period,
+        @RequestParam(name = "customDate", required = false, defaultValue = "") String customDate,
+        @RequestParam(name = "status", required = false, defaultValue = "all") String status
+    ) {
+
+        return AdminReplyResponse.fromDtoList(
+            diaryService.getDiaryAndReplyStatus(period, customDate, status)
+        );
+    }
 
 }

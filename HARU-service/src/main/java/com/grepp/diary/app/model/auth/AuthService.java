@@ -100,10 +100,6 @@ public class AuthService {
         String subject = "Diary 인증번호 안내";
         Map<String, String> props = new HashMap<>();
         props.put("code", code);
-        String text = "안녕하세요.\n\n" +
-            "요청하신 인증번호는 아래와 같습니다.\n\n" +
-            "인증번호는 [" + code + "] 입니다.\n\n" +
-            "감사합니다.";
 
         mailDto.setProperties(props);
         mailDto.setEventType("send_code");
