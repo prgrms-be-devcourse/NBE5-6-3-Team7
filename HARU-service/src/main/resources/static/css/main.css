@@ -6,9 +6,9 @@
 
 body {
   font-family: 'Noto Sans KR', sans-serif;
-  display: flex;
+  background: linear-gradient(135deg, #E0E8E2 0%, #f0f4f1 100%);
   min-height: 100vh;
-  background-color: #E0E8E2;
+  transition: all 0.3s ease;
 }
 
 .main {
