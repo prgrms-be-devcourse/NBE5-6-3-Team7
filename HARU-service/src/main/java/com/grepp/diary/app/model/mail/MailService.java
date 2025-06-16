@@ -22,7 +22,7 @@ public class MailService {
 
     private final MemberService memberService;
 
-    public void sendMailOnReply(String userId) {
+    public void sendMailOnReply(String userId, Object diaryDate) {
         String email = memberService.getEmail(userId);
 
         SmtpDto smtpDto = new SmtpDto();
@@ -33,6 +33,7 @@ public class MailService {
         props.put("domain", domain);
         props.put("username", "test");
         props.put("character", "test");
+        props.put("date", String.valueOf(diaryDate));
         smtpDto.setProperties(props);
         smtpDto.setEventType("on_reply");
 

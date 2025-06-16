@@ -14,12 +14,11 @@
 
 <div style="text-align: center; padding: 60px 20px; background-color: #E0E8E2">
   <div th:utext = "${username} + ' 님의 일기에' + ${character} + ' 이(가) 답장을 남겼어요<br>아래의 버튼을 클릭해 확인해보세요'" style="color: #282420; padding-bottom: 20px;">
-
   </div>
-  <div
+  <a th:href="|${domain}/diary/details?date=${date}|"
        style="background-color: #467750; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 18px; font-weight: bold; display: inline-block;">
     확인하러 가기
-  </div>
+  </a>
 </div>
 
 </body>

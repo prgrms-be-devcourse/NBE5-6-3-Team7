@@ -1,6 +1,5 @@
 package com.grepp.diary.app.model.diary;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grepp.diary.app.controller.api.diary.payload.DiaryEditRequest;
 import com.grepp.diary.app.controller.web.diary.payload.DiaryRequest;
@@ -371,6 +370,12 @@ public class DiaryService {
             throw new CommonException(ResponseCode.INTERNAL_SERVER_ERROR,
                 "감정 데이터 분석에 실패했습니다. 나중에 다시 시도해주세요.");
         }
+    }
+
+    public Object getDiaryDate(Integer diaryId) {
+        Diary diary = diaryRepository.findById(diaryId).orElse(null);
+        assert diary != null;
+        return diary.getDate();
     }
 }
 

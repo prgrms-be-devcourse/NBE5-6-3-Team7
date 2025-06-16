@@ -87,7 +87,7 @@ public class AiReplyScheduler {
 
                 log.info("Processed diary id: {}", diaryId);
                 diaryService.registReply(diaryId, replyContent);
-                mailService.sendMailOnReply(dto.getUserId());
+                mailService.sendMailOnReply(dto.getUserId(), diaryService.getDiaryDate(dto.getDiaryId()));
 
                 Thread.sleep(300); // 개별 요청 사이에도 약간의 텀
             } catch (Exception e) {
