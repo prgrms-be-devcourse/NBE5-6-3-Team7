@@ -22,6 +22,7 @@ import com.grepp.diary.app.model.keyword.repository.KeywordRepository;
 import com.grepp.diary.app.model.member.entity.Member;
 import com.grepp.diary.app.model.member.repository.MemberRepository;
 import com.grepp.diary.app.model.reply.ReplyRepository;
+import com.grepp.diary.app.model.reply.dto.ReplyAdminDto;
 import com.grepp.diary.app.model.reply.entity.Reply;
 import com.grepp.diary.infra.error.exceptions.CommonException;
 import com.grepp.diary.infra.response.ResponseCode;
@@ -33,6 +34,9 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -377,5 +381,50 @@ public class DiaryService {
         assert diary != null;
         return diary.getDate();
     }
+
+    public List<ReplyAdminDto> getDiaryAndReplyStatus(String period, String customDate, String status) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate;
+        LocalDateTime endDate = now;
+
+        switch (period) {
+            case "1year" -> startDate = now.minusYears(1);
+            case "custom" -> {
+                if (customDate == null || !customDate.contains("~")) {
+                    throw new IllegalArgumentException("올바르지 않은 기간을 선택했습니다" + customDate);
+                }
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                String[] dates = customDate.split("~");
+
+                try {
+                    LocalDate start = LocalDate.parse(dates[0].trim(), formatter);
+                    LocalDate end = LocalDate.parse(dates[1].trim(), formatter);
+                    startDate = start.atStartOfDay();
+                    endDate = end.atTime(LocalTime.MAX);
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("날짜 형식이 잘못되었습니다.", e);
+                }
+            }
+            default -> {
+                int months = extractMonths(period);
+                startDate = now.minusMonths(months);
+            }
+        }
+
+        return diaryRepository.findByDateRangeAndStatus(startDate, endDate, status);
+    }
+
+    public int extractMonths(String period) {
+        if (period != null && period.contains("month")) {
+            try {
+                return Integer.parseInt(period.replace("month", ""));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("기간 파싱 오류 : " + period);
+            }
+        }
+        return 1;
+    }
+
 }
 
