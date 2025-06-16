@@ -6,11 +6,13 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/sidebar.css">
   <link rel="stylesheet" th:href="@{/css/diary.css}">
+  <link rel="stylesheet" href="/css/change-date.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <div th:replace="fragments/member-sidebar :: memberSidebar"></div>
+  <div th:replace="fragments/change-full-date-modal :: fragment"></div>
 
   <div class="main">
 
@@ -148,7 +150,14 @@
   <script src="/js/logout.js"></script>
   <script src="/js/diary.js"></script>
   <script src="/js/sidebar.js"></script>
-
+  <script src="/js/change-full-date.js"></script>
+  <script>
+    document.querySelector('.date-change').addEventListener('click', () => {
+      const input = document.getElementById('diary-date');
+      const baseDate = input.value ? new Date(input.value) : new Date();
+      openDateModal(baseDate);
+    });
+  </script>
 
 </body>
 </html>

@@ -6,12 +6,14 @@
   <link rel="stylesheet" th:href="@{/css/diary.css}">
   <link rel="stylesheet" href="/css/sidebar.css">
   <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/change-date.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
 </head>
 <body>
   <div th:replace="~{fragments/member-sidebar :: memberSidebar}"></div>
+  <div th:replace="fragments/change-full-date-modal :: fragment"></div>
   <script src="/js/logout.js"></script>
 
   <!-- 날짜 표기 (예: 5월 12일 월요일) -->
@@ -151,6 +153,14 @@
       </div>
     </div>
   </main>
+  <script src="/js/change-full-date.js"></script>
+  <script>
+    document.querySelector('.date-change').addEventListener('click', () => {
+      const input = document.getElementById('diary-date');
+      const baseDate = input.value ? new Date(input.value) : new Date();
+      openDateModal(baseDate);
+    });
+  </script>
 </body>
 
 <script src="/js/sidebar.js"></script>
@@ -160,5 +170,4 @@
   const diaryDate = [[${diary.date}]]; // 일기 수정 전 날짜
 </script>
 
-<script src="/js/logout.js"></script>
 </html>
