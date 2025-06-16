@@ -24,4 +24,13 @@ class MailController(
     ){
         mailService.send(request)
     }
+
+    @PostMapping("on-reply")
+    fun sendOnReply(
+        @RequestBody
+        @Valid
+        request: SmtpRequest
+    ) {
+        mailService.send(request)
+    }
 }

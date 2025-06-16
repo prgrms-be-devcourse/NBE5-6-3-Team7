@@ -2,7 +2,7 @@ package com.grepp.diary.app.model.auth;
 
 import com.grepp.diary.app.controller.web.auth.form.SigninForm;
 import com.grepp.diary.app.model.auth.domain.Principal;
-import com.grepp.diary.app.model.member.dto.SmtpDto;
+import com.grepp.diary.app.model.mail.dto.SmtpDto;
 import com.grepp.diary.app.model.member.entity.Member;
 import com.grepp.diary.app.model.member.repository.MemberRepository;
 import com.grepp.diary.infra.mail.MailApi;
@@ -112,6 +112,4 @@ public class AuthService implements UserDetailsService {
             session.setAttribute("authUserId", userId);
         }
     }
-
-
 }
