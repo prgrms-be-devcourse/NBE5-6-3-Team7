@@ -19,12 +19,25 @@
   margin-bottom: 10px;
 }
 
+.calendar-title-wrapper {
+  grid-column: 1 / 4; /* 기존 calendar-title의 grid-column과 동일하게 설정 */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
 .calendar-title {
-  grid-column: 1 / 4; /* 좌측 3칸 차지 */
-  text-align: left;
   font-size: 2.0rem;
   font-weight: bold;
-  padding-left: 30px;
+}
+
+.calendar-caret-icon {
+  font-size: 1.2rem;
+  color: #282420;
+  margin-bottom: 4px;
+  margin-left: 5px;
 }
 
 .calendar-buttons {
