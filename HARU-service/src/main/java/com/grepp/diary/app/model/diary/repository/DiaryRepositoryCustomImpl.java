@@ -8,9 +8,14 @@ import com.grepp.diary.app.model.diary.entity.QDiaryImg;
 import com.grepp.diary.app.model.keyword.entity.DiaryKeyword;
 import com.grepp.diary.app.model.keyword.entity.QDiaryKeyword;
 import com.grepp.diary.app.model.keyword.entity.QKeyword;
+import com.grepp.diary.app.model.reply.dto.ReplyAdminDto;
 import com.grepp.diary.app.model.reply.entity.QReply;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -217,4 +222,33 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
             ))
             .toList();
     }
+
+    @Override
+    public List<ReplyAdminDto> findByDateRangeAndStatus(LocalDateTime startDate, LocalDateTime endDate, String status) {
+
+        BooleanExpression dateCondition = diary.createdAt.between(startDate, endDate);
+        BooleanExpression statusCondition = null;
+
+        if (status.equals("replied")) {
+            statusCondition = reply.createdAt.isNotNull();
+        } else if (status.equals("unreplied")) {
+            statusCondition = reply.createdAt.isNull();
+        }
+
+        return queryFactory
+            .select(Projections.constructor(
+                ReplyAdminDto.class,
+                diary.member.userId,
+                diary.diaryId,
+                diary.date,
+                diary.createdAt,
+                reply.createdAt,
+                reply.createdAt.isNotNull()
+            ))
+            .from(diary)
+            .leftJoin(reply).on(reply.diary.eq(diary))
+            .where(dateCondition, statusCondition)
+            .fetch();
+    }
+
 }
