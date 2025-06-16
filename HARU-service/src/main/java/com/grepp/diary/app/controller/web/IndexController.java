@@ -15,10 +15,8 @@ public class IndexController {
 
     @GetMapping("/")
     public String index(Model model) {
-        if (!model.containsAttribute("signinForm")) {
-            model.addAttribute("signinForm", new SigninForm());
-        }
 
+        model.addAttribute("signinForm", new SigninForm());
         // 로그인된 사용자면 /app으로 리다이렉트
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {

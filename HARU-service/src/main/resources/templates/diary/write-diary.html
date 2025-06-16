@@ -18,7 +18,7 @@
       <h2>오늘의 일기를 작성해 볼까요?</h2>
 
       <form th:action="@{/diary}" method="post" enctype="multipart/form-data" th:object="${diaryRequest}">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<!--        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
         <div class="form-box">
           <div class="date-display">
             <input

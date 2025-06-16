@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+<!--  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>-->
 </head>
 <body>
   <div th:replace="~{fragments/member-sidebar :: memberSidebar}"></div>
@@ -376,16 +376,22 @@
       formData.append("newImages", file);
     }
 
+<<<<<<< Updated upstream
     const diaryDate = "[[${diary.date}]]"; // 일기 수정 전 날짜
     const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+=======
+    const diaryDate = [[${diary.date}]]; // 일기 수정 전 날짜
+    // const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+    // const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+>>>>>>> Stashed changes
 
     try {
       const res = await fetch("/api/diary/modify", {
         method: "PATCH",
         body: formData,
         headers: {
-          [csrfHeader]: csrfToken
+          // [csrfHeader]: csrfToken
         },
       });
       if (res.ok) {

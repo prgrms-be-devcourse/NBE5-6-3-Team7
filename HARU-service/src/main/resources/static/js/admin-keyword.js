@@ -2,8 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const keywordContent = document.getElementById('keywordContent');
   const defaultType = 'EMOTION';
 
-  const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+  // const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+  // const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? match[2] : null;
+  }
+  // const csrfToken = getCookie('XSRF-TOKEN');
+  // const csrfHeader = 'X-XSRF-TOKEN';
 
   fetchKeywords(defaultType);
 
@@ -106,12 +112,53 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
+        // [csrfHeader]: csrfToken
       },
+<<<<<<< Updated upstream
       body: JSON.stringify({ keywordIds })
     })
     .then(res => {
       if (!res.ok) throw new Error('활성화 실패');
+=======
+      body: JSON.stringify(requestBody)
+      credentials: 'include',
+      body: JSON.stringify({ keywordIds })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error(isUse ? '활성화 실패' : '비활성화 실패');
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return res.json();
+      }
+      return null;
+    })
+    .then(() => {
+      alert(isUse ? '활성화 완료' : '비활성화 완료');
+      const activeType = document.querySelector('.segment-button.active')?.innerText.trim();
+      fetchKeywords(getKeywordTypeParam(activeType));
+    })
+    .catch(err => alert(err.message));
+  }
+
+  document.getElementById('delete-keyword')?.addEventListener('click', () => {
+    const keywordIds = getCheckedKeywordIds();
+    if (keywordIds.length === 0) {
+      alert('선택된 키워드가 없습니다.');
+      return;
+    }
+
+    fetch('/api/admin/keyword/delete', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        // [csrfHeader]: csrfToken
+      },
+      body: JSON.stringify(keywordIds)
+      credentials: 'include',
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('삭제 실패');
+>>>>>>> Stashed changes
       return res.json();
     })
     .then(() => {

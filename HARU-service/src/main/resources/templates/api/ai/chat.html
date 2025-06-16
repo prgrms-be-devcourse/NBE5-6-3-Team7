@@ -68,8 +68,8 @@
 <script src="/js/logout.js"></script>
 
 <div class="main">
-  <input type="hidden" id="csrf-token" th:value="${_csrf.token}"/>
-  <input type="hidden" id="csrf-header" th:value="${_csrf.headerName}"/>
+<!--  <input type="hidden" id="csrf-token" th:value="${_csrf.token}"/>-->
+<!--  <input type="hidden" id="csrf-header" th:value="${_csrf.headerName}"/>-->
   <input type="hidden" id="ai-img-url" th:value="@{'/uploads/' + ${imgSavePath} + ${imgRenamedName}}"/>
 
 
@@ -163,8 +163,8 @@
   const chatForm = document.getElementById('chat-form');
   const chatContainer = document.getElementById('chat-container');
   const sendButton = document.getElementById('send-button');
-  const csrfToken = document.getElementById('csrf-token').value;
-  const csrfHeader = document.getElementById('csrf-header').value;
+  // const csrfToken = document.getElementById('csrf-token').value;
+  // const csrfHeader = document.getElementById('csrf-header').value;
   console.log(aiImgUrl);
   console.log(diaryDate);
 
@@ -265,13 +265,14 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
+        // [csrfHeader]: csrfToken
       },
       body: JSON.stringify({
         diaryId: diaryId,
         chatHistory: chatHistory,
         userMessage: userMessage
-      })
+      }),
+      credentials: "include"
     })
     .then((response) => response.text())
     .then((data) => {
@@ -378,13 +379,15 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
+        // [csrfHeader]: csrfToken
       },
       body: JSON.stringify({
         diaryId: diaryId,
         chatHistory: chatHistory,
         userMessage: ''
-      })
+      }),
+      credentials: "include"
+
     })
     .then(response => {
       hideLoading();
@@ -411,13 +414,15 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
+        // [csrfHeader]: csrfToken
       },
       body: JSON.stringify({
         diaryId: diaryId,
         chatHistory: chatHistory,
         userMessage: ''
-      })
+      }),
+      credentials: "include"
+
     })
     .then(response => {
       hideLoading();

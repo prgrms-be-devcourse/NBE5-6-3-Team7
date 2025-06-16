@@ -2,12 +2,17 @@ package com.grepp.diary.app.model.auth;
 
 import com.grepp.diary.app.controller.web.auth.form.SigninForm;
 import com.grepp.diary.app.model.auth.domain.Principal;
+import com.grepp.diary.app.model.auth.token.RefreshTokenRepository;
+import com.grepp.diary.app.model.auth.token.dto.AccessTokenDto;
+import com.grepp.diary.app.model.auth.token.dto.TokenDto;
+import com.grepp.diary.app.model.auth.token.entity.RefreshToken;
 import com.grepp.diary.app.model.member.dto.SmtpDto;
 import com.grepp.diary.app.model.member.entity.Member;
 import com.grepp.diary.app.model.member.repository.MemberRepository;
+import com.grepp.diary.infra.auth.token.JwtProvider;
+import com.grepp.diary.infra.auth.token.code.GrantType;
 import com.grepp.diary.infra.mail.MailApi;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,32 +20,32 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@Service("authService")
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
-public class AuthService implements UserDetailsService {
+public class AuthService {
 
     private final Map<String, String> authCodeStorage = new HashMap<>(); // 인증번호 저장용
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final @Lazy RememberMeServices rememberMeServices;
     private final MailApi mailApi;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtProvider jwtProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    @Override
     public UserDetails loadUserByUsername(String username) {
 
         Member member = memberRepository.findById(username)
@@ -58,7 +63,7 @@ public class AuthService implements UserDetailsService {
         return Principal.createPrincipal(member, authorities);
     }
 
-    public void verifyPasswordAndLogin(SigninForm signinForm, HttpServletRequest request, HttpServletResponse response) {
+    public TokenDto verifyPasswordAndLogin(SigninForm signinForm, HttpServletRequest request) {
 
         // 1. 사용자 데이터 조회
         UserDetails userDetails = loadUserByUsername(signinForm.getUserId());
@@ -68,17 +73,20 @@ public class AuthService implements UserDetailsService {
             throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
         }
 
-        // 3. 강제 인증 설정
-        UsernamePasswordAuthenticationToken authToken =
-            new UsernamePasswordAuthenticationToken(userDetails, null,
-                userDetails.getAuthorities());
+        // 3. 인증 설정
+//        UsernamePasswordAuthenticationToken authToken =
+//            new UsernamePasswordAuthenticationToken(userDetails, null,
+//                userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(signinForm.getUserId(), signinForm.getPassword());
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         request.getSession()
             .setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
-        rememberMeServices.loginSuccess(request, response, authToken);
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return processTokenSignin(signinForm.getUserId());
     }
 
 
@@ -113,5 +121,20 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    public TokenDto processTokenSignin(String username) {
+//        // 블랙리스트에서 제거
+//        userBlackListRepository.deleteById(username);
 
+        AccessTokenDto dto = jwtProvider.generateAccessToken(username);
+        RefreshToken refreshToken = new RefreshToken(username, dto.getId());
+        refreshTokenRepository.save(refreshToken);
+
+        return TokenDto.builder()
+            .accessToken(dto.getToken())
+            .refreshToken(refreshToken.getToken())
+            .atExpiresIn(jwtProvider.getAtExpiration())
+            .rtExpiresIn(jwtProvider.getRtExpiration())
+            .grantType(GrantType.BEARER)
+            .build();
+    }
 }

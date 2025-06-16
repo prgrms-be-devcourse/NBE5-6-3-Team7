@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     'SITUATION': 'SITUATION',
   };
 
-  const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+  // const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+  // const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
   openModalBtn.addEventListener('click', () => {
     modal.style.display = 'flex';
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
       method,
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
+        // [csrfHeader]: csrfToken
       },
       body: JSON.stringify(requestBody)
     })
