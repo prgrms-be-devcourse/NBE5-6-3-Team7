@@ -1,5 +1,7 @@
 package com.grepp.diary.app.model.diary;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grepp.diary.app.controller.api.diary.payload.DiaryEditRequest;
 import com.grepp.diary.app.controller.web.diary.payload.DiaryRequest;
 import com.grepp.diary.app.model.ai.entity.Ai;
@@ -9,6 +11,7 @@ import com.grepp.diary.app.model.diary.code.Emotion;
 import com.grepp.diary.app.model.diary.dto.DiaryDto;
 import com.grepp.diary.app.model.diary.dto.DiaryEmotionAvgDto;
 import com.grepp.diary.app.model.diary.dto.DiaryEmotionCountDto;
+import com.grepp.diary.app.model.diary.dto.DiaryEmotionStatsDto;
 import com.grepp.diary.app.model.diary.entity.Diary;
 import com.grepp.diary.app.model.diary.entity.DiaryImg;
 import com.grepp.diary.app.model.diary.repository.DiaryImgRepository;
@@ -23,6 +26,7 @@ import com.grepp.diary.app.model.reply.ReplyRepository;
 import com.grepp.diary.app.model.reply.entity.Reply;
 import com.grepp.diary.infra.error.exceptions.CommonException;
 import com.grepp.diary.infra.response.ResponseCode;
+import com.grepp.diary.infra.util.date.code.DatePeriod;
 import com.grepp.diary.infra.util.file.FileDto;
 import com.grepp.diary.infra.util.file.FileUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -59,6 +63,7 @@ public class DiaryService {
     private final DiaryKeywordRepository diaryKeywordRepository;
 
     private final FileUtil fileUtil;
+    private final ObjectMapper objectMapper;
     private final ReplyRepository replyRepository;
 
     /** 시작일과 끝을 기준으로 해당 날짜 사이에 존재하는 일기들을 반환합니다. */
@@ -330,17 +335,17 @@ public class DiaryService {
      * 기준 달 또는 연도에 작성된 일기들의 감정별 갯수를 반환합니다.
      * 사용되지 않은 감정의 경우 0으로 처리됩니다.
      * */
-    public List<DiaryEmotionCountDto> getEmotionsCount(String userId, String period, int value){
+    public List<DiaryEmotionCountDto> getEmotionsCount(String userId, DatePeriod period, int value){
         Map<Emotion, Integer> countMap = Arrays.stream(Emotion.values())
             .collect(Collectors.toMap(e -> e, e -> 0, (a, b) -> a, () -> new EnumMap<>(Emotion.class)));
 
-        if("monthly".equals(period)){
+        if(period == DatePeriod.MONTH){
             return diaryRepository.findEmotionCountByUserIdAndMonth(userId, value)
                 .stream()
                 .map(row -> new DiaryEmotionCountDto((Emotion) row[0],
                     Math.toIntExact((Long) row[1])))
                 .toList();
-        } else if("yearly".equals(period)){
+        } else if(period == DatePeriod.YEAR){
             return diaryRepository.findEmotionCountByUserIdAndYear(userId, value)
                 .stream()
                 .map(row -> new DiaryEmotionCountDto((Emotion) row[0],
@@ -353,6 +358,19 @@ public class DiaryService {
 
     public Optional<Diary> findDiaryByUserIdAndDiaryId(String userId, Integer diaryId) {
         return diaryRepository.findActiveDiaryByDiaryIdWithAllRelations(userId, diaryId);
+    }
+
+    public String getEmotionStats(String userId, LocalDate date) {
+        LocalDate firstDayOfMonth = date.withDayOfMonth(1);
+        LocalDate lastDayOfMonth = date.withDayOfMonth(date.lengthOfMonth());
+        List<DiaryEmotionStatsDto> dtos = diaryRepository.findEmotionStatsByUserIdAndMonth(userId, firstDayOfMonth, lastDayOfMonth);
+
+        try {
+            return objectMapper.writeValueAsString(dtos);
+        } catch (Exception e) {
+            throw new CommonException(ResponseCode.INTERNAL_SERVER_ERROR,
+                "감정 데이터 분석에 실패했습니다. 나중에 다시 시도해주세요.");
+        }
     }
 }
 

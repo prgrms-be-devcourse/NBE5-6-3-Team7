@@ -27,8 +27,8 @@
                 name="date"
                 class="date-input"
                 style="display: none;"
-                th:value="${diaryDate}"> <!-- 서버에서 LocalDate를 yyyy-MM-dd로 변환해서 전달해야 함 -->
-            <div class="date-text" id="date-text" th:text="${#temporals.format(diaryDate, 'Y년 M월 d일 E요일')}"></div>
+                th:value="${diaryRequest.date}"> <!-- 서버에서 LocalDate를 yyyy-MM-dd로 변환해서 전달해야 함 -->
+            <div class="date-text" id="date-text" th:text="${#temporals.format(diaryRequest.date, 'Y년 M월 d일 E요일')}"></div>
             <button type="button" class="date-change" id="date-change-btn">날짜 변경</button>
           </div>
         </div>
@@ -73,25 +73,13 @@
               <!-- 토글 버튼 -->
               <button type="button" class="toggle-btn" onclick="toggleKeywordExpand(this)">+ 더보기</button>
 
-              <!-- 템플릿 영역 (보이지 않게 숨겨둠) -->
-              <div id="keyword-good" style="display: none;">
-                <div th:each="keyword : ${keywordGroups.EMOTION_GOOD}" class="keyword-chip">
-                  <input type="checkbox" th:id="'kw-' + ${keyword.keywordId}" th:name="keywords" th:value="${keyword.name}">
-                  <label th:for="'kw-' + ${keyword.keywordId}" th:text="${keyword.name}"></label>
-                </div>
-              </div>
-
-              <div id="keyword-bad" style="display: none;">
-                <div th:each="keyword : ${keywordGroups.EMOTION_BAD}" class="keyword-chip">
-                  <input type="checkbox" th:id="'kw-' + ${keyword.keywordId}" th:name="keywords" th:value="${keyword.name}">
-                  <label th:for="'kw-' + ${keyword.keywordId}" th:text="${keyword.name}"></label>
-                </div>
-              </div>
+              <!-- 숨김 영역 -->
+              <div id="keyword-good" style="display: none;"></div>
+              <div id="keyword-bad" style="display: none;"></div>
 
             </div>
           </div>
         </div>
-
 
         <!-- 누구와 함께 -->
         <div class="form-box">
@@ -99,14 +87,8 @@
             <label>누구와 함께였나요? (선택)</label>
             <div class="keyword-section">
               <!-- 동행 키워드들 -->
-              <div class="keyword-group">
-                <div th:each="keyword : ${keywordGroups.PERSON}" class="keyword-chip">
-                  <input type="checkbox"
-                         th:id="'kw-person-' + ${keyword.keywordId}"
-                         th:name="keywords"
-                         th:value="${keyword.name}">
-                  <label th:for="'kw-person-' + ${keyword.keywordId}" th:text="${keyword.name}"></label>
-                </div>
+              <div id="kw-person-wrapper" class="keyword-group">
+
               </div>
             </div>
           </div>
@@ -118,14 +100,8 @@
             <label>어떤 상황이었나요? (선택)</label>
             <div class="keyword-section">
               <!-- 상황 키워드들 -->
-              <div class="keyword-group">
-                <div th:each="keyword : ${keywordGroups.SITUATION}" class="keyword-chip">
-                  <input type="checkbox"
-                         th:id="'kw-situation-' + ${keyword.keywordId}"
-                         th:name="keywords"
-                         th:value="${keyword.name}">
-                  <label th:for="'kw-situation-' + ${keyword.keywordId}" th:text="${keyword.name}"></label>
-                </div>
+              <div id="kw-situation-wrapper" class="keyword-group">
+
               </div>
             </div>
           </div>
@@ -141,7 +117,6 @@
             </div>
           </div>
         </div>
-
 
         <!-- 이미지 업로드 - Form 안에서 images 리스트 전송 -->
         <div class="form-box">

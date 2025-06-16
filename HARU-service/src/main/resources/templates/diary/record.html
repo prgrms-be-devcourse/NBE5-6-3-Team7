@@ -105,7 +105,7 @@
 <script src="/js/emotion-map.js"></script>
 <script th:inline="javascript">
   const diaryId = '[[${diary.diaryId}]]'
-  const diaryDate = [[${diary.date}]]
+  // const diaryDate = [[${diary.date}]]
   const emotionText = document.getElementById('emotion-text').value.toUpperCase();
   const emotionDiv = document.getElementById('diary-emotion');
   const emotionIcon = document.createElement('img');
@@ -118,11 +118,6 @@
   }
 
   function editDiary() {
-    const replyContent = document.getElementById('reply-content').value;
-    if (replyContent && replyContent.trim().length > 0) {
-      alert("이미 답장이 달린 일기는 수정할 수 없습니다.");
-      return;
-    }
     window.location.href = `/diary/edit/${diaryId}`;
   }
   // const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');

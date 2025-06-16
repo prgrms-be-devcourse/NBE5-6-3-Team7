@@ -50,44 +50,15 @@ public class KeywordRepositoryImpl implements KeywordRepositoryCustom{
                 keyword.name,
                 keyword.isUse,
                 keyword.type,
-                Expressions.numberTemplate(Integer.class, "coalesce(count({0}), 0)", diaryKeyword.diaryKeywordId)
+                Expressions.numberTemplate(Integer.class, "coalesce(count({0}), 0)", diaryKeyword.diaryKeywordId),
+                keyword.deletedAt
             ))
             .from(keyword)
             .leftJoin(diaryKeyword).on(diaryKeyword.keywordId.eq(keyword))
-            .where(keyword.type.in(matchedTypes))
+            .where(keyword.type.in(matchedTypes), keyword.deletedAt.isNull())
             .groupBy(keyword.keywordId)
             .orderBy(diaryKeyword.count().desc())
             .fetch();
-    }
-
-    @Override
-    public List<Integer> activeKeywords(List<Integer> keywordIds) {
-        if (keywordIds == null || keywordIds.isEmpty()) {
-            return List.of();
-        }
-
-        queryFactory
-            .update(keyword)
-            .set(keyword.isUse, true)
-            .where(keyword.keywordId.in(keywordIds))
-            .execute();
-
-        return keywordIds;
-    }
-
-    @Override
-    public List<Integer> nonActiveKeywords(List<Integer> keywordIds) {
-        if (keywordIds == null || keywordIds.isEmpty()) {
-            return List.of();
-        }
-
-        queryFactory
-            .update(keyword)
-            .set(keyword.isUse, false)
-            .where(keyword.keywordId.in(keywordIds))
-            .execute();
-
-        return keywordIds;
     }
 
     /** 시작일과 마지막일을 기준으로 해당기간동안 특정유저의 일기에서 가장 많이 사용된 키워드 5개를 반환합니다. */

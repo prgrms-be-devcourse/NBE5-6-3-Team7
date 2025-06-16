@@ -147,6 +147,7 @@
       <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
       <version>1.0.0-beta3</version>
     </dependency>
+<<<<<<< HEAD
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-mongodb-atlas</artifactId>
@@ -191,6 +192,8 @@
       <artifactId>spring-boot-starter-data-redis</artifactId>
     </dependency>
 >>>>>>> Stashed changes
+=======
+>>>>>>> origin/dev
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

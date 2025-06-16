@@ -10,10 +10,6 @@ public interface KeywordRepositoryCustom {
 
     List<KeywordAdminDto> findKeywordsByType(String keywordType);
 
-    List<Integer> activeKeywords(List<Integer> keywordIds);
-
-    List<Integer> nonActiveKeywords(List<Integer> keywordIds);
-
     List<Tuple> findTop5KeywordsByUserIdAndDate(String userId, LocalDateTime start, LocalDateTime end);
 
 }

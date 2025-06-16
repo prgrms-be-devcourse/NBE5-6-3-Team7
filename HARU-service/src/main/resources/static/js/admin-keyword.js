@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // const csrfToken = getCookie('XSRF-TOKEN');
   // const csrfHeader = 'X-XSRF-TOKEN';
 
+  let keywordMap = new Map();
+
   fetchKeywords(defaultType);
 
   // 감정, 사람, 상황 선택
@@ -67,6 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 반환 데이터 뿌려주는 용도
   function renderKeywords(keywords) {
+    keywordMap.clear();
+
     keywordContent.innerHTML = '';
     if (!keywords || keywords.length === 0) {
       keywordContent.innerHTML = '<p>키워드가 없습니다.</p>';
@@ -74,6 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     keywords.forEach((keyword, index) => {
+      keywordMap.set(keyword.keywordId, keyword);
+
       const div = document.createElement('div');
       div.className = 'keyword-item';
       div.innerHTML = `
@@ -82,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <span>${keyword.name}</span>
         <span>${keywordString[keyword.keywordType] || keyword.keywordType}</span>
         <span>${keyword.count}</span>
-        <span>${keyword.isUse ? 'O' : 'X'}</span>
+        <span id="data-keyword-is-use">${keyword.isUse ? 'O' : 'X'}</span>
         <span><i class="fa fa-pencil edit-keyword" style="cursor: pointer;"></i></span>
     `;
       keywordContent.appendChild(div);
@@ -102,9 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-
-// 활성화 버튼
   document.getElementById('active-keyword')?.addEventListener('click', () => {
+<<<<<<< HEAD
     const keywordIds = getCheckedKeywordIds();
     if (keywordIds.length === 0) return alert('선택된 키워드가 없습니다.');
 
@@ -167,31 +172,80 @@ document.addEventListener('DOMContentLoaded', () => {
       fetchKeywords(getKeywordTypeParam(activeType));
     })
     .catch(err => alert(err.message));
+=======
+    toggleKeywordActivation(true);
+>>>>>>> origin/dev
   });
 
-// 비활성화 버튼
   document.getElementById('non-active-keyword')?.addEventListener('click', () => {
-    const keywordIds = getCheckedKeywordIds();
-    if (keywordIds.length === 0) return alert('선택된 키워드가 없습니다.');
+    toggleKeywordActivation(false);
+  });
 
-    fetch('/api/admin/keyword/nonactive', {
+  function toggleKeywordActivation(isUse) {
+    const keywordIds = getCheckedKeywordIds();
+    if (keywordIds.length === 0) {
+      alert('선택된 키워드가 없습니다.');
+      return;
+    }
+
+    const requestBody = keywordIds.map(id => {
+      const original = keywordMap.get(id);
+      return {
+        keywordId: id,
+        name: original.name,
+        type: original.keywordType,
+        isUse: isUse
+      };
+    });
+
+    fetch('/api/admin/keyword', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         [csrfHeader]: csrfToken
       },
-      body: JSON.stringify({ keywordIds })
+      body: JSON.stringify(requestBody)
     })
     .then(res => {
-      if (!res.ok) throw new Error('비활성화 실패');
+      if (!res.ok) throw new Error(isUse ? '활성화 실패' : '비활성화 실패');
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return res.json();
+      }
+      return null;
+    })
+    .then(() => {
+      alert(isUse ? '활성화 완료' : '비활성화 완료');
+      const activeType = document.querySelector('.segment-button.active')?.innerText.trim();
+      fetchKeywords(getKeywordTypeParam(activeType));
+    })
+    .catch(err => alert(err.message));
+  }
+
+  document.getElementById('delete-keyword')?.addEventListener('click', () => {
+    const keywordIds = getCheckedKeywordIds();
+    if (keywordIds.length === 0) {
+      alert('선택된 키워드가 없습니다.');
+      return;
+    }
+
+    fetch('/api/admin/keyword/delete', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken
+      },
+      body: JSON.stringify(keywordIds)
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('삭제 실패');
       return res.json();
     })
     .then(() => {
-      alert('비활성화 완료');
+      alert('삭제 완료');
       const activeType = document.querySelector('.segment-button.active')?.innerText.trim();
       fetchKeywords(getKeywordTypeParam(activeType));
     })
     .catch(err => alert(err.message));
   });
-
 });
