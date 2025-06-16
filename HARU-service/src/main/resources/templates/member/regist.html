@@ -64,11 +64,9 @@
   fetch("/api/ai/list/img")
   .then(response => response.json())
   .then(data => {
-    console.log(data);
     const imgPaths = data.map(dto => {
       return '/uploads/' + dto.savePath + dto.renamedName
     });
-    console.log(imgPaths);
     const imgElements = document.querySelectorAll(".eclipse img");
     imgElements.forEach((img, index) => {
       img.src = imgPaths[index];
