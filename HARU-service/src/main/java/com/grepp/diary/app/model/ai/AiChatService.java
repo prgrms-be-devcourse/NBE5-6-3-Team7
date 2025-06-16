@@ -1,8 +1,11 @@
 package com.grepp.diary.app.model.ai;
 
 import dev.langchain4j.service.SystemMessage;
+import dev.langchain4j.service.UserMessage;
+import dev.langchain4j.service.V;
 import dev.langchain4j.service.spring.AiService;
 import dev.langchain4j.service.spring.AiServiceWiringMode;
+import org.springframework.cache.annotation.Cacheable;
 
 @AiService(
     wiringMode = AiServiceWiringMode.EXPLICIT,
@@ -34,6 +37,7 @@ public interface AiChatService {
         + "내용을 구분할 때 이모지를 필요할 때만 사용해 주세요. ")
     String memo(String prompt);
 
+    @Cacheable(value = "emotionStatsCache", key = "#userId + '_' + T(java.time.LocalDate).now()")
     @SystemMessage("""
     당신은 감정 분석과 정서적 피드백을 제공하는 따뜻한 전문가입니다. 사용자가 작성한 일기 데이터를 바탕으로 다음을 수행합니다:
     
@@ -45,5 +49,5 @@ public interface AiChatService {
     
     분석은 부드럽고 사려 깊게, 감정을 평가하거나 단정하지 말고, 따뜻하게 사용자를 이해하고 위로하는 어조로 작성해주세요.
     """)
-    String analyzeEmotion(String stats);
+    String analyzeEmotion(@UserMessage String stats, @V(value = "userId") String userId);
 }
