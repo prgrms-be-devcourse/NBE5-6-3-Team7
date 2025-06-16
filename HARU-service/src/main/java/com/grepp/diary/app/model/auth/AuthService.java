@@ -40,6 +40,9 @@ public class AuthService implements UserDetailsService {
     private final @Lazy RememberMeServices rememberMeServices;
     private final MailApi mailApi;
 
+    @Value("${app.domain}")
+    private String domain;
+
     @Override
     public UserDetails loadUserByUsername(String username) {
 
@@ -89,13 +92,10 @@ public class AuthService implements UserDetailsService {
         SmtpDto mailDto = new SmtpDto();
         mailDto.setFrom("haru");
         mailDto.setTo(List.of(email));
-        String subject = "Diary 인증번호 안내";
+        mailDto.setSubject("Diary 인증번호 안내");
         Map<String, String> props = new HashMap<>();
+        props.put("domain", domain);
         props.put("code", code);
-        String text = "안녕하세요.\n\n" +
-            "요청하신 인증번호는 아래와 같습니다.\n\n" +
-            "인증번호는 [" + code + "] 입니다.\n\n" +
-            "감사합니다.";
 
         mailDto.setProperties(props);
         mailDto.setEventType("send_code");
