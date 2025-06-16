@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/sidebar.css">
   <link rel="stylesheet" href="/css/admin-reply-management.css">
+  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_green.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
 </head>
@@ -18,28 +19,30 @@
     <div class="reply-buttons">
       <div class="reply-action">
         <div class="dropdown-wrapper">
-          <button class="dropdown-button" id="period-button">
-            <span id="period-selected">1개월</span>
-            <i class="fa fa-angle-down" aria-hidden="true"></i>
-          </button>
-          <div class="dropdown" id="period-dropdown">
-            <button data-value="1개월">1개월</button>
-            <button data-value="3개월">3개월</button>
-            <button data-value="6개월">6개월</button>
-            <button data-value="1년">1년</button>
-          </div>
-        </div>
-        <div class="dropdown-wrapper">
           <button class="dropdown-button" id="status-button">
             <span id="status-selected">전체</span>
             <i class="fa fa-angle-down" aria-hidden="true"></i>
           </button>
           <div class="dropdown" id="status-dropdown">
-            <button data-value="전체">전체</button>
-            <button data-value="답장o">답장o</button>
-            <button data-value="답장x">답장x</button>
+            <button data-value="all">전체</button>
+            <button data-value="replied">O</button>
+            <button data-value="unreplied">X</button>
           </div>
         </div>
+        <div class="dropdown-wrapper">
+          <button class="dropdown-button" id="period-button">
+            <span id="period-selected">1개월</span>
+            <i class="fa fa-angle-down" aria-hidden="true"></i>
+          </button>
+          <div class="dropdown" id="period-dropdown">
+            <button data-value="1month">1개월</button>
+            <button data-value="3month">3개월</button>
+            <button data-value="6month">6개월</button>
+            <button data-value="1year">1년</button>
+            <button data-value="custom">직접 설정</button>
+          </div>
+        </div>
+        <input type="text" id="dateRangeInput" name="daterangepicker" style="display:none;"/>
       </div>
       <div class="reply-action">
         <button class="action-button" style="background-color: #467750; border-color: #467750; color: white" id="add-reply">재전송</button>
@@ -60,7 +63,11 @@
     </div>
   </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+<script>
+  flatpickr.localize(flatpickr.l10ns.ko);
+</script>
 <script src="/js/logout.js"></script>
 <script src="/js/sidebar.js"></script>
 <script src="/js/admin-reply.js"></script>
