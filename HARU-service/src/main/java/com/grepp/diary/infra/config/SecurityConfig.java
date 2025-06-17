@@ -72,7 +72,7 @@ public class SecurityConfig {
                     .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
                     .requestMatchers(GET, "/", "/css/**", "/js/**", "/images/**", "/assets/**", "/uploads/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers("/auth/login", "/auth/logout", "/auth/find_id", "/auth/find_pw", "/auth/regist/**", "/auth/regist-mail","/auth/auth-id","/auth/auth-pw").permitAll()
+                    .requestMatchers("/auth/login", "/auth/logout", "/auth-idpw","/auth-idpw-verification", "/auth/regist/**", "/auth/regist-mail","/auth/auth-id","/auth/auth-pw").permitAll()
                     .requestMatchers("/auth/change-pw", "/auth/find-idpw","/member/leave", "/member/leave-success").permitAll()
                     .requestMatchers("/custom/**").permitAll()
                     .requestMatchers("/api/ai/list/img").permitAll()
