@@ -14,7 +14,6 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -81,14 +80,23 @@ public class JwtProvider {
                    .expiresIn(atExpiresIn.getTime())
                    .build();
     }
-    
-    public Authentication genreateAuthentication(String accessToken){
+
+    public Authentication genreateAuthentication(String accessToken) {
         Claims claims = parseClaim(accessToken);
-        List<? extends GrantedAuthority> authorities = userDetailsService.findAuthorities(claims.getSubject());
-        Principal principal = new Principal(claims.getSubject(),"", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+
+        // 캐시에 저장된 값이 SimpleGrantedAuthority가 아니라면 역직렬화 에러 발생
+        // 따라서 캐시나 직접 DB에서 권한을 조회해서 SimpleGrantedAuthority 리스트를 구성해야 함
+        List<SimpleGrantedAuthority> authorities = userDetailsService.findAuthorities(claims.getSubject());
+
+        Principal principal = new Principal(claims.getSubject(), "", authorities);
+        return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
-    
+
+
+
+
+
+
     public Claims parseClaim(String accessToken) {
         try{
             return Jwts.parser().verifyWith(getSecretKey()).build()

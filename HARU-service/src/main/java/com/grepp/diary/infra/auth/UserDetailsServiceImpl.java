@@ -2,9 +2,7 @@ package com.grepp.diary.infra.auth;
 
 import com.grepp.diary.app.model.auth.domain.Principal;
 import com.grepp.diary.app.model.member.entity.Member;
-
 import com.grepp.diary.app.model.member.repository.MemberRepository;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,34 +22,39 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     
     private final MemberRepository memberRepository;
 
+    @Cacheable("user-authorities")
+    public List<SimpleGrantedAuthority> findAuthorities(String username) {
+        Member member = memberRepository.findById(username)
+            .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        return List.of(new SimpleGrantedAuthority(member.getRole().name()));
+    }
+
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findById(username)
-                            .orElseThrow(() -> new UsernameNotFoundException(username));
+            .orElseThrow(() -> new UsernameNotFoundException(username));
+
         List<SimpleGrantedAuthority> authorities = findAuthorities(username);
         return Principal.createPrincipal(member, authorities);
     }
-    
-    @Cacheable("user-authorities")
-    public List<SimpleGrantedAuthority> findAuthorities(String username){
-        Member member = memberRepository.findById(username)
-                            .orElseThrow(() -> new UsernameNotFoundException(username));
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(member.getRole().name()));
 
-        return authorities;
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

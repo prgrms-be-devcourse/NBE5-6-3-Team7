@@ -79,9 +79,6 @@ public class AuthService {
         }
 
         // 3. 인증 설정
-//        UsernamePasswordAuthenticationToken authToken =
-//            new UsernamePasswordAuthenticationToken(userDetails, null,
-//                userDetails.getAuthorities());
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(signinForm.getUserId(), signinForm.getPassword());
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
