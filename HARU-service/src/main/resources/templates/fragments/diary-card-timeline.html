@@ -1,19 +1,26 @@
 <!-- diary-card-timeline.html -->
 <div th:fragment="diaryCardTemplate">
   <template id="diary-card-timeline-template">
-    <div class="diary-card">
-      <div class="diary-left">
+    <div class="timeline-item">
+      <div class="diary-card">
         <div class="diary-header">
-          <img class="emotion-icon" src="" alt="emotion" />
-          <span class="diary-date">날짜</span>
+          <div class="diary-header-left">
+            <img class="emotion-icon" src="" alt="emotion" />
+            <div class="diary-date-badge">날짜</div>
+          </div>
+          <div class="diary-actions">
+<!--            <button class="action-btn"><i class="fas fa-heart"></i></button>-->
+            <button class="action-btn"><i class="fas fa-bookmark"></i></button>
+            <button class="action-btn"><i class="fas fa-share"></i></button>
+          </div>
         </div>
-        <div class="diary-content">
-          일기 내용이 여기에 표시됩니다.
-        </div>
-      </div>
-      <div class="diary-right">
-        <div class="image-wrapper">
-          <img class="diary-image" src="" alt="diary image" />
+        <div class="diary-content-wrapper">
+          <div class="diary-content">
+            일기 내용이 여기에 표시됩니다.
+          </div>
+          <div class="diary-image-wrapper">
+            <img class="diary-image" src="" alt="diary image" />
+          </div>
         </div>
       </div>
     </div>

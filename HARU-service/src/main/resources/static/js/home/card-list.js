@@ -47,5 +47,5 @@ async function loadRecentDiaries() {
   });
 }
 document.addEventListener("DOMContentLoaded", () => {
-  loadRecentDiaries();
+    loadRecentDiaries();
 });
