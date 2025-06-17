@@ -2,6 +2,7 @@ let currentPage = 0;
 let isLoading = false;
 const PAGE_SIZE = 30;
 let currentMonth = null;
+let currentFilter = 'all'
 
 document.addEventListener("DOMContentLoaded", () => {
   loadNextPage();
@@ -19,20 +20,51 @@ document.addEventListener("DOMContentLoaded", () => {
   // 필터 버튼 이벤트
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
+      // 이미 활성화된 필터를 클릭할 경우 무시
+      if (this.classList.contains('active')) {
+        return;
+      }
+
+      // 모든 버튼에서 active 클래스 제거
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       this.classList.add('active');
-      console.log('필터:', this.textContent);
-      // 여기에 필터링 로직 추가
+
+      // 필터 타입 설정
+      const filterText = this.textContent.trim();
+      if (filterText === '전체') {
+        currentFilter = 'all';
+      } else if (filterText === '이동') {
+        currentFilter = 'travel';
+      } else if (filterText === '사진 있는 일기') {
+        currentFilter = 'with_image';
+      }
+
+      console.log('필터 변경: ', currentFilter);
+
+      // 필터 변경 시 초기화 및 리로드
+      resetTimeline();
+      loadNextPage();
     });
   });
 });
+
+// 타임라인 초기화 함수
+function resetTimeline() {
+  currentPage = 0;
+  currentMonth = null;
+  isLoading = false;
+
+  // 타임라인 컨테이너 내용 비우기
+  const container = document.getElementById("timeline-container")
+  container.innerHTML = '';
+}
 
 async function loadNextPage() {
   isLoading = true;
 
   try {
     const response = await fetch(
-        `/api/diary/cards?page=${currentPage}`
+        `/api/diary/cards?page=${currentPage}&filter=${currentFilter}`
     );
     const data = await response.json();
     const diaries = data.diaryCards || [];
