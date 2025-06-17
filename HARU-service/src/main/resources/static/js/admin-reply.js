@@ -99,23 +99,52 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!items || items.length === 0) {
       return;
     }
+    let activeCheckboxCount = 0;
 
     items.forEach((item, index) => {
       replyMap.set(item.diaryId, item);
 
       const div = document.createElement('div');
       div.className = 'reply-item';
+
+      const isDisabled = !!item.replyCreatedAt;
+      if (!isDisabled) activeCheckboxCount++;
+
       div.innerHTML = `
-        <span><input type="checkbox" class="item-checkbox" data-id="${item.diaryId}" id="checkbox-${index}"></span>
+        <span><input type="checkbox" class="item-checkbox" data-id="${item.diaryId}" id="checkbox-${index}" ${isDisabled ? 'disabled' : ''}></span>
         <span>${item.userId}</span>
         <span>${item.diaryId}</span>
         <span>${item.date}</span>
         <span>${item.diaryCreatedAt}</span>
-        <span>${item.replyCreatedAt ? item.replyCreatedAt : '대기'}</span>
+        <span>${item.replyCreatedAt ? item.replyCreatedAt : '-'}</span>
         <span>${item.replyCreatedAt ? 'O' : 'X'}</span>
       `;
       replyContent.appendChild(div);
     })
+
+    const selectAll = document.getElementById('selectAll');
+    if (selectAll) {
+      selectAll.disabled = activeCheckboxCount === 0;
+      selectAll.checked = false;
+    }
+
+    bindSelectAllCheckbox();
+  }
+
+  function bindSelectAllCheckbox() {
+    const selectAll = document.getElementById('selectAll');
+    if (!selectAll) return;
+
+    selectAll.addEventListener('change', function () {
+      const checkboxes = document.querySelectorAll('.item-checkbox');
+      checkboxes.forEach(cb => {
+        if (!cb.disabled) {
+          cb.checked = selectAll.checked;
+        } else {
+          cb.checked = false;
+        }
+      });
+    });
   }
 
   function getCheckedItemIds() {
