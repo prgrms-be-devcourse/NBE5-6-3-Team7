@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/css/home/calendar.css">
   <link rel="stylesheet" href="/css/home/card-list.css">
   <link rel="stylesheet" href="/css/change-date.css">
-  <link rel="stylesheet" href="/css/analysis.css">
+  <link rel="stylesheet" href="/css/home/analysis.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
@@ -67,8 +67,11 @@
           <h3 class="card-title">[[${name}]] 님의 감정 분석</h3>
           <input type="hidden" id="username" th:value="${name}">
         </div>
-        <div class="card-content">
-          분석결과
+        <div class="card-content" id="mood-analysis">
+          <div class="analysis-loading">
+            <i class="fas fa-spinner"></i>
+            <span>감정 분석 기능을 사용하려면 먼저 일기를 작성해주세요!</span>
+          </div>
         </div>
       </div>
 
