@@ -63,6 +63,23 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
     }
 
     @Override
+    public List<Diary> findRecentDiariesHavingImages(String userId, Pageable pageable) {
+        return queryFactory
+            .selectFrom(diary)
+            .leftJoin(diary.images, diaryImg).fetchJoin() // Diary.images → DiaryImg에서 mappedBy되어야 함
+            .where(
+                diary.member.userId.eq(userId),
+                diary.isUse.isTrue(),
+                diaryImg.isUse.isTrue() // 이미지 사용 중인 일기만
+            )
+            .orderBy(diary.date.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .distinct() // 중복 Diary 제거 (fetchJoin 시 유용)
+            .fetch();
+    }
+
+    @Override
     public Optional<Diary> findActiveDiaryByDateWithAllRelations(String userId, LocalDate targetDate) {
         Diary diaryWithImages = queryFactory
             .selectFrom(diary)
