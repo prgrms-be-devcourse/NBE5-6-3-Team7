@@ -8,38 +8,141 @@
 <!--  <script src="/js/login.js" defer></script>-->
 </head>
 <body>
-<main class="green-container">
-  <div class="green-visual-box">
-    <div class="green-visual-content">
-      <img src="/images/login/img.png" alt="로그인 이미지">
-    </div>
-  </div>
-  <div class="form-wrapper">
-    <h1>환영합니다</h1>
-    <form method="post" th:action="@{/auth/login}" th:object="${signinForm}">
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-      <div class="input-group">
-        <i class="fas fa-user"></i>
-        <input type="text" th:field="*{userId}" placeholder="ID">
-      </div>
-      <div class="input-group">
-        <i class="fas fa-lock"></i>
-        <input type="password" th:field="*{password}" placeholder="PASSWORD">
+  <!-- 배경 장식 요소들 -->
+  <div class="bg-decoration"></div>
+  <div class="bg-decoration"></div>
+  <div class="bg-decoration"></div>
+
+  <div class="main-container">
+    <!-- 왼쪽 비주얼 섹션 -->
+    <div class="visual-section">
+      <div class="logo-section">
+        <div class="logo-icon">
+          <i class="fas fa-heart"></i>
+        </div>
+        <h1 class="brand-title">HARU</h1>
+        <p class="brand-subtitle">당신의 마음을 기록하고<br>성장하는 공간</p>
       </div>
 
-        <label style="display: flex; align-items: center; gap: 6px;">
-          <input type="checkbox" name="remember-me">
-          자동 로그인
-        </label>
+      <div class="features">
+        <div class="feature-item">
+          <i class="fas fa-pen-fancy"></i>
+          <span>일상의 감정을 자유롭게 기록</span>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-chart-line"></i>
+          <span>감정 패턴 분석 및 인사이트</span>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-robot"></i>
+          <span>AI 맞춤형 조언 및 피드백</span>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-shield-alt"></i>
+          <span>안전한 개인정보 보호</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="welcome-text">
+        <h2 class="welcome-title">다시 만나서 반가워요</h2>
+        <p class="welcome-subtitle">계속해서 감정 여행을 함께해요</p>
+      </div>
+      <form method="post" th:action="@{/auth/login}" th:object="${signinForm}" class="login-form">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" th:field="*{userId}" placeholder="아이디를 입력하세요" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" th:field="*{password}" placeholder="비밀번호를 입력하세요" required>
+        </div>
 
-      <div class="notice" th:if="${error}" th:text="${error}"></div>
-      <button class="green-btn" type="submit">로그인</button>
-    </form>
-    <div class="links">
-      <a onclick="location.href='/auth/regist'">회원가입</a>
-      <a onclick="location.href='/auth/find-idpw'" class="idpw">ID/PW 찾기</a>
+        <div class="remember-section">
+          <label class="custom-checkbox">
+            <input type="checkbox" name="remember-me">
+            <span class="checkmark">
+            <i class="fas fa-check" style="display: none;"></i>
+          </span>
+            자동 로그인
+          </label>
+        </div>
+
+        <!-- 에러 메시지 영역 -->
+        <div class="error-message" th:if="${error}" th:text="${error}">
+        </div>
+
+        <button class="login-button" type="submit" id="loginBtn">
+          <span class="button-text">로그인</span>
+          <div class="loading">
+            <div class="spinner"></div>
+            <span>로그인 중...</span>
+          </div>
+        </button>
+      </form>
+      <div class="links">
+        <a onclick="location.href='/auth/regist'">회원가입</a>
+        <a onclick="location.href='/auth/find-idpw'" class="idpw">ID/PW 찾기</a>
+      </div>
     </div>
   </div>
-</main>
+
+  <script>
+    // 체크박스 애니메이션
+    document.querySelectorAll('.custom-checkbox input').forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const checkmark = this.nextElementSibling.querySelector('i');
+        if (this.checked) {
+          checkmark.style.display = 'block';
+        } else {
+          checkmark.style.display = 'none';
+        }
+      });
+    });
+
+    // 폼 제출 애니메이션
+    document.getElementById('loginBtn').addEventListener('click', function(e) {
+      const buttonText = this.querySelector('.button-text');
+      const loading = this.querySelector('.loading');
+
+      buttonText.style.display = 'none';
+      loading.classList.add('active');
+      this.disabled = true;
+
+      // 실제 제출 전에 잠시 로딩 표시 (데모용)
+      setTimeout(() => {
+        // 실제로는 폼이 제출됨
+        this.closest('form').submit();
+      }, 800);
+    });
+
+    // 입력 필드 포커스 애니메이션
+    document.querySelectorAll('.input-group input').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'scale(1.02)';
+      });
+
+      input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'scale(1)';
+      });
+    });
+
+    // 에러 메시지 표시 함수 (데모용)
+    function showError(message) {
+      const errorDiv = document.getElementById('errorMessage');
+      errorDiv.querySelector('span').textContent = message;
+      errorDiv.style.display = 'flex';
+
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 5000);
+    }
+
+    // 페이지 로드 애니메이션
+    window.addEventListener('load', function() {
+      document.querySelector('.main-container').style.animation = 'fadeInUp 0.8s ease forwards';
+    });
+  </script>
 </body>
 </html>
