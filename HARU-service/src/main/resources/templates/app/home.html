@@ -64,7 +64,8 @@
           <div class="card-icon mood">
             <i class="fas fa-heart"></i>
           </div>
-          <h3 class="card-title">감정 분석</h3>
+          <h3 class="card-title">[[${name}]] 님의 감정 분석</h3>
+          <input type="hidden" id="username" th:value="${name}">
         </div>
         <div class="card-content">
           분석결과

@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const mm = String(today.getMonth() + 1).padStart(2, '0');
   const dd = String(today.getDate()).padStart(2, '0');
   const formattedDate = `${yyyy}-${mm}-${dd}`;
+  const username = document.getElementById('username').value;
 
   // 로딩 메시지 + 커서 span 추가
   contentEl.innerHTML = `
@@ -14,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <span class="blinking-cursor">|</span>
     `;
 
-  fetch(`/api/ai/stats/emotion?date=${formattedDate}`)
+  fetch(`/api/ai/stats/emotion?date=${formattedDate}&username=${encodeURIComponent(username)}`)
   .then(response => {
     if (!response.ok) {
       throw new Error("서버 오류");
