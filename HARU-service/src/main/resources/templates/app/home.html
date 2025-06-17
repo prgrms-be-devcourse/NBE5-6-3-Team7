@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/home/calendar.css">
   <link rel="stylesheet" href="/css/home/card-list.css">
   <link rel="stylesheet" href="/css/change-date.css">
+  <link rel="stylesheet" href="/css/analysis.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
@@ -54,6 +55,25 @@
     </div>
   </div>
 
+  <!-- 분석 섹션 -->
+  <div class="analysis-section">
+    <div class="analysis-cards">
+
+      <div class="analysis-card">
+        <div class="card-header">
+          <div class="card-icon mood">
+            <i class="fas fa-heart"></i>
+          </div>
+          <h3 class="card-title">감정 분석</h3>
+        </div>
+        <div class="card-content">
+          분석결과
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- 최근 일기 섹션 -->
   <div class="recent-section">
     <div class="recent-title-box">
@@ -72,6 +92,7 @@
 <script src="/js/home/calendar.js"></script>
 <script src="/js/home/card-list.js"></script>
 <script src="/js/change-date.js"></script>
+<script src="/js/home/analysis.js"></script>
 <script>
   // 모달 열기시 현재 캘린더 상태(year/month)를 전달
   document.querySelector('.calendar-title-wrapper').addEventListener('click', () => {
