@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <span>${item.diaryId}</span>
         <span>${item.date}</span>
         <span>${item.diaryCreatedAt}</span>
-        <span>${item.replyCreatedAt ? item.replyCreatedAt : '대기'}</span>
+        <span>${item.replyCreatedAt ? item.replyCreatedAt : '-'}</span>
         <span>${item.replyCreatedAt ? 'O' : 'X'}</span>
       `;
       replyContent.appendChild(div);
