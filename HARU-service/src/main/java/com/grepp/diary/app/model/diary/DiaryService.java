@@ -367,6 +367,10 @@ public class DiaryService {
         LocalDate startDate = date.minusDays(14);
         List<DiaryEmotionStatsDto> dtos = diaryRepository.findEmotionStatsByUserIdAndDate(userId, startDate, date);
 
+        if (dtos == null || dtos.isEmpty()) {
+            return "NO_RECENT_DIARY";
+        }
+
         try {
             return objectMapper.writeValueAsString(dtos);
         } catch (Exception e) {
