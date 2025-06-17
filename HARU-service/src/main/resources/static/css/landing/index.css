@@ -192,6 +192,12 @@ body {
   gap: 20px;
 }
 
+.regist_form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .input-group {
   position: relative;
 }
@@ -226,6 +232,29 @@ body {
 }
 
 .input-group input::placeholder {
+  color: #9ca3af;
+}
+
+.inputBox {
+  width: 100%;
+  padding: 16px 16px 16px 50px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.inputBox:focus {
+  outline: none;
+  border-color: #89c07e;
+  box-shadow: 0 0 0 3px rgba(137, 192, 126, 0.1);
+  background: white;
+  transform: translateY(-1px);
+}
+
+.inputBox::placeholder {
   color: #9ca3af;
 }
 
@@ -306,6 +335,29 @@ body {
   transform: translateY(0);
 }
 
+.green-btn {
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(137, 192, 126, 0.3);
+  width: 100%;
+}
+
+.green-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(137, 192, 126, 0.4);
+}
+
+.green-btn:active {
+  transform: translateY(0);
+}
+
 .links,
 .links-section {
   margin-top: 30px;
@@ -333,6 +385,44 @@ body {
 .auth-links a:hover {
   background: rgba(137, 192, 126, 0.1);
   transform: translateY(-1px);
+}
+
+/* 탭 버튼 스타일 */
+.tab-buttons {
+  display: flex;
+  margin-bottom: 30px;
+  background: #f3f4f6;
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+  color: #6b7280;
+}
+
+.tab-button.active {
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(137, 192, 126, 0.3);
+}
+
+.tab-button.disabled {
+  opacity: 0.5;
+}
+
+.tab-button:not(.disabled):hover:not(.active) {
+  background: rgba(137, 192, 126, 0.1);
+  color: #4a7c59;
 }
 
 /* 반응형 디자인 */
@@ -368,6 +458,11 @@ body {
   .bg-decoration {
     display: none;
   }
+
+  .tab-button {
+    font-size: 0.9rem;
+    padding: 10px 16px;
+  }
 }
 
 /* 로딩 애니메이션 */
@@ -392,6 +487,10 @@ body {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
