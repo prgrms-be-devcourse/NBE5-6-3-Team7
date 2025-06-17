@@ -98,8 +98,11 @@ public class DiaryService {
      * 일기들은 포함된 이미지와 함께 반환됩니다.
      * 일기들을 하나의 페이지에 표시하기 위해 사용됩니다.
      * */
-    public List<Diary> getDiariesWithImages(String userId, int page, int size) {
+    public List<Diary> getDiariesWithImages(String userId, int page, int size, String filter) {
         Pageable limit = PageRequest.of(page, size);
+        if (filter.equals("with_image")) {
+            return diaryRepository.findRecentDiariesHavingImages(userId, limit);
+        }
         return diaryRepository.findRecentDiariesWithImages(userId, limit);
     }
 

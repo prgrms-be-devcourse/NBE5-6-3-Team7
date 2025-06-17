@@ -52,12 +52,13 @@ public class DiaryApiController {
     public DiaryCardResponse getDiaryCards( // 기본적으로는 최근 작성된 14개의 일기를 가져옵니다.
         Authentication authentication,
         @RequestParam(defaultValue="0") int page,
-        @RequestParam(defaultValue = "14") int size
+        @RequestParam(defaultValue = "14") int size,
+        @RequestParam(defaultValue = "all") String filter
     ) {
         String userId = authentication.getName();
 
         return DiaryCardResponse.fromEntityList(
-            diaryService.getDiariesWithImages(userId, page, size)
+            diaryService.getDiariesWithImages(userId, page, size, filter)
         );
     }
 
