@@ -30,7 +30,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         
         OAuth2User user = (OAuth2User) authentication.getPrincipal();
         OAuth2UserInfo userInfo = OAuth2UserInfo.create(request.getRequestURI(), user);
-        TokenDto dto = authService.processTokenSignin(userInfo.getName());
+        boolean rememberMe = "on".equals(request.getParameter("remember-me"));
+        TokenDto dto = authService.processTokenSignin(userInfo.getName(), rememberMe);
         
         ResponseCookie accessTokenCookie = TokenCookieFactory.create(TokenType.ACCESS_TOKEN.name(),
             dto.getAccessToken(), dto.getAtExpiresIn());

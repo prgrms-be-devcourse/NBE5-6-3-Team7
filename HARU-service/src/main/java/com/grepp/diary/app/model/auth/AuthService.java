@@ -3,6 +3,7 @@ package com.grepp.diary.app.model.auth;
 import com.grepp.diary.app.controller.web.auth.form.SigninForm;
 import com.grepp.diary.app.model.auth.domain.Principal;
 import com.grepp.diary.app.model.auth.token.RefreshTokenRepository;
+import com.grepp.diary.app.model.auth.token.RefreshTokenService;
 import com.grepp.diary.app.model.auth.token.UserBlackListRepository;
 import com.grepp.diary.app.model.auth.token.dto.AccessTokenDto;
 import com.grepp.diary.app.model.auth.token.dto.TokenDto;
@@ -47,6 +48,7 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserBlackListRepository userBlackListRepository;
+    private final RefreshTokenService refreshTokenService;
 
     @Value("${app.domain}")
     private String domain;
@@ -88,7 +90,8 @@ public class AuthService {
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return processTokenSignin(signinForm.getUserId());
+        boolean rememberMe = "on".equals(request.getParameter("remember-me"));
+        return processTokenSignin(signinForm.getUserId(), rememberMe);
     }
 
 
@@ -120,19 +123,23 @@ public class AuthService {
         }
     }
 
-    public TokenDto processTokenSignin(String username) {
+    public TokenDto processTokenSignin(String username, boolean rememberMe) {
         // 블랙리스트에서 제거
         userBlackListRepository.deleteById(username);
 
         AccessTokenDto dto = jwtProvider.generateAccessToken(username);
+
+        // 리멤버 미 체크 여부에 따라 만료 시간 결정
+        long rtExpiration = rememberMe ? 60L * 60 * 24 * 30 : 60L * 60 * 24;
+
         RefreshToken refreshToken = new RefreshToken(username, dto.getId());
-        refreshTokenRepository.save(refreshToken);
+        refreshTokenService.saveWithExpiration(refreshToken, rtExpiration);
 
         return TokenDto.builder()
             .accessToken(dto.getToken())
             .refreshToken(refreshToken.getToken())
             .atExpiresIn(jwtProvider.getAtExpiration())
-            .rtExpiresIn(jwtProvider.getRtExpiration())
+            .rtExpiresIn(rtExpiration)
             .grantType(GrantType.BEARER)
             .build();
     }
