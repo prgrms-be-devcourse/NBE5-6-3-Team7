@@ -136,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // [csrfHeader]: csrfToken
       },
       body: JSON.stringify(itemIds)
     })

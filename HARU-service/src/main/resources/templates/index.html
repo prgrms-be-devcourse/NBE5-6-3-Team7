@@ -17,10 +17,6 @@
   <div class="form-wrapper">
     <h1>환영합니다</h1>
     <form method="post" th:action="@{/auth/login}" th:object="${signinForm}">
-<!--      <input type="hidden"-->
-<!--             th:if="${_csrf != null}"-->
-<!--             th:name="${_csrf.parameterName}"-->
-<!--             th:value="${_csrf.token}" />-->
       <div class="input-group">
         <i class="fas fa-user"></i>
         <input type="text" th:field="*{userId}" placeholder="ID">

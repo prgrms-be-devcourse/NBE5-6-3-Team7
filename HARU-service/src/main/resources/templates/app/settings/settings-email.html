@@ -2,7 +2,6 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-<!--  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>-->
   <title>이메일 변경 페이지</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/sidebar.css">
@@ -24,7 +23,6 @@
         <div class="bento-title">이메일 변경</div>
         <div class="bento-form">
           <form id="emailForm" action="/member/settings/update-email" method="post" novalidate>
-<!--            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />-->
 
             <input type="email" id="emailInput" placeholder="이메일 입력" name="newEmail" required />
             <input type="password" id="passwordInput" placeholder="비밀번호 입력" name="password" required />

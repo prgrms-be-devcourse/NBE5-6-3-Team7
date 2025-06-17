@@ -2,7 +2,6 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-<!--  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>-->
   <title>AI 캐릭터 변경 페이지</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/sidebar.css">
@@ -17,7 +16,6 @@
   <div class="main">
     <div class="main-container">
       <form id="aiForm" action="/custom/update-custom" method="post">
-<!--        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
         <div class="setting-bento">
           <div class="bento-title">AI 캐릭터 선택</div>
           <div id="ai-card-container" class="ai-card-container"></div>
