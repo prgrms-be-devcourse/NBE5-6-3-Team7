@@ -3,114 +3,234 @@
   top: 0;
   left: 0;
   height: 100vh;
-  width: 60px;
-  background-color: #282420;
-  transition: width 0.3s ease;
+  width: 70px;
+  background: linear-gradient(180deg, #2a2521 0%, #1f1d1a 100%);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   z-index: 1000;
-}
-
-.sidebar .menu a.active,
-.sidebar .menu a.active i,
-.sidebar .menu a.active span {
-  color: #467750;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar:hover {
-  width: 200px;
+  width: 240px;
 }
 
+/* 프로필 섹션 */
 .sidebar .profile {
   text-align: center;
-  margin-top: 40px;
-  margin-bottom: 40px;
+  padding: 40px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.sidebar .profile img {
-  width: 40px;
-  height: 40px;
+.sidebar .profile .avatar {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, #89C07E, #467750);
   border-radius: 50%;
-  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  color: white;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(137, 192, 126, 0.3);
 }
 
+.sidebar:hover .profile .avatar {
+  transform: scale(1.1);
+}
+
+/* 메뉴 섹션 개선 */
 .sidebar .menu {
+  flex: 1;
+  padding: 10px 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  flex-grow: 1;
+  gap: 8px;
 }
 
-.sidebar .menu a {
+.sidebar .menu-item {
+  position: relative;
+  margin: 0 10px;
+}
+
+.sidebar .menu-item a {
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding: 12px 15px;
   text-decoration: none;
   color: #D9D8D5;
-  font-weight: bold;
-  padding: 8px;
-  width: 100%;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.sidebar .menu a i {
-  width: 24px;
-  font-size: 18px;
+.sidebar .menu-item a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #89C07E, #467750);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 12px;
 }
 
-.sidebar .menu a span {
-  margin-left: 10px;
-  white-space: nowrap;
-  display: none;
+.sidebar .menu-item a:hover::before,
+.sidebar .menu-item a.active::before {
+  opacity: 1;
 }
 
-.sidebar:hover .menu {
-  align-items: flex-start; /* hover 시 왼쪽 정렬로 전환 */
-}
-
-.sidebar:hover .menu a {
-  justify-content: flex-start; /* hover 시 왼쪽으로 아이콘 + 텍스트 정렬 */
-  padding-left: 20px;
-}
-
-.sidebar:hover .menu a span {
-  display: inline;
-}
-
-/* 로그아웃 버튼 스타일 추가 */
-
-.sidebar .logout {
-  margin-bottom: 20px;
+.sidebar .menu-item a i {
+  width: 20px;
+  height: 20px;
+  font-size: 16px;
   display: flex;
+  align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
 }
 
-.sidebar:hover .logout {
-  justify-content: flex-start;
-  padding-left: 20px;
+.sidebar .menu-item a span {
+  margin-left: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar:hover .menu-item a span {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sidebar .menu-item a:hover,
+.sidebar .menu-item a.active {
+  color: white;
+  transform: translateX(2px);
+  box-shadow: 0 4px 15px rgba(137, 192, 126, 0.3);
+}
+
+/* 툴팁 */
+.sidebar .menu-item .tooltip {
+  position: absolute;
+  left: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.sidebar .menu-item .tooltip::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 4px solid transparent;
+  border-right-color: rgba(0, 0, 0, 0.8);
+}
+
+.sidebar:not(:hover) .menu-item:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 로그아웃 섹션 개선 */
+.sidebar .logout {
+  padding: 20px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 72px; /* 최소 높이 고정 */
 }
 
 .sidebar .logout a {
   display: flex;
   align-items: center;
+  padding: 12px 15px;
   text-decoration: none;
-  color: #D9D8D5;
-  font-weight: bold;
+  color: #ff6b6b;
+  border-radius: 12px;
+  height: 40px;
+  min-height: 40px;
+  transition: all 0.3s ease;
+}
+
+.sidebar .logout a:hover {
+  background: rgba(255, 107, 107, 0.1);
+  transform: translateX(2px);
 }
 
 .sidebar .logout a i {
-  width: 24px;
-  font-size: 18px;
+  width: 20px;
+  font-size: 16px;
 }
 
 .sidebar .logout a span {
-  margin-left: 10px;
+  margin-left: 15px;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+  width: 0;
+  overflow: hidden;
+  display: inline-block;
   white-space: nowrap;
-  display: none;
 }
 
 .sidebar:hover .logout a span {
-  display: inline;
+  opacity: 1;
+  transform: translateX(0);
+  width: auto;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+  }
+
+  .sidebar:hover {
+    width: 200px;
+  }
+}
+
+/* 활성 페이지 표시 */
+.sidebar .menu-item.active .tooltip {
+  background: #89C07E;
+}
+
+.sidebar .menu-item.active .tooltip::before {
+  border-right-color: #89C07E;
+}
+
+/* 애니메이션 최적화 */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar *,
+  .sidebar *::before,
+  .sidebar *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

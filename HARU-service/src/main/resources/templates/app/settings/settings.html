@@ -16,19 +16,37 @@
 
   <div class="main">
     <div class="main-container">
+      <!-- 배너 메시지 -->
       <div th:if="${message}" class="alert-banner">
         <i class="fa-solid fa-circle-check"></i>
         <span th:text="${message}"></span>
       </div>
+
+      <!-- 페이지 헤더 -->
+      <div class="page-header">
+        <h1 class="page-title">설정</h1>
+        <p class="page-subtitle">계정 및 서비스 설정을 관리하세요</p>
+      </div>
+
+      <!-- 계정 설정 카드 -->
       <div class="setting-bento">
-        <div class="bento-title">계정</div>
+        <div class="bento-title">
+          <i class="fa-solid fa-user"></i>
+          계정 관리
+        </div>
         <div class="bento-btn">
+          <a><i class="fa-solid fa-address-card"></i><span>프로필 변경하기</span><i class="fa-solid fa-angle-right"></i></a>
           <a href="/app/settings/email"><i class="fa-solid fa-envelope"></i><span>이메일 변경하기</span><i class="fa-solid fa-angle-right"></i></a>
           <a href="/app/settings/password"><i class="fa-solid fa-lock"></i><span>비밀번호 변경하기</span><i class="fa-solid fa-angle-right"></i></a>
         </div>
       </div>
+
+      <!-- 서비스 설정 카드 -->
       <div class="setting-bento">
-        <div class="bento-title">서비스</div>
+        <div class="bento-title">
+          <i class="fa-solid fa-cog"></i>
+          서비스 설정
+        </div>
         <div class="bento-btn">
           <a href="/app/settings/ai"><i class="fa-solid fa-robot"></i><span>AI 캐릭터 변경하기</span><i class="fa-solid fa-angle-right"></i></a>
         </div>

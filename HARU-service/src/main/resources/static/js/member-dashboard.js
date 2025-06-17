@@ -43,9 +43,9 @@ function fetchKeywordRank(period, date = null) {
 
     for (let i = 0; i < cardEls.length; i++) {
       const card = cardEls[i];
-      const rankEl = card.querySelector('.rank');
-      const wordEl = card.querySelector('.word');
-      const countEl = card.querySelector('.count');
+      const rankEl = card.querySelector('.rank-badge');
+      const wordEl = card.querySelector('.keyword-word');
+      const countEl = card.querySelector('.keyword-count');
 
       if (i < ranks.length) {
         rankEl.textContent = `${i + 1}`;
@@ -218,8 +218,8 @@ async function drawEmotionChart(period = 'MONTH', date = null) {
       img.style.position = 'absolute';
       img.style.left = '0';
       img.style.top = `${yPixel}px`;
-      img.style.width = '40px';
-      img.style.height = '40px';
+      img.style.width = '55px';
+      img.style.height = '55px';
       img.style.transform = 'translateY(-50%)';
       yAxisContainer.appendChild(img);
     });
@@ -280,6 +280,8 @@ async function renderEmotionDistribution(period, value) {
       img.src = `/images/emotion/weather/${emotionImageMap[emotionKey]}`;
       img.alt = emotionKey;
       img.className = 'emotion-bar-image';
+      img.style.width = '55px';
+      img.style.height = '55px';
 
       const track = document.createElement('div');
       track.className = 'emotion-bar-track';

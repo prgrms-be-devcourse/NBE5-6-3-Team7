@@ -2,20 +2,14 @@ package com.grepp.diary.app.controller.web.diary;
 
 import com.grepp.diary.app.controller.web.diary.payload.DiaryRequest;
 import com.grepp.diary.app.model.custom.dto.CustomAiInfoDto;
-import com.grepp.diary.app.model.ai.entity.Ai;
-import com.grepp.diary.app.model.ai.entity.AiImg;
 import com.grepp.diary.app.model.custom.CustomService;
-import com.grepp.diary.app.model.custom.entity.Custom;
 import com.grepp.diary.app.model.diary.DiaryService;
 import com.grepp.diary.app.model.diary.dto.DiaryRecordDto;
 import com.grepp.diary.app.model.diary.entity.Diary;
-import com.grepp.diary.app.model.keyword.KeywordService;
-import com.grepp.diary.app.model.keyword.entity.Keyword;
 import com.grepp.diary.infra.error.exceptions.CommonException;
 import com.grepp.diary.infra.util.xss.XssProtectionUtils;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +46,7 @@ public class DiaryController {
         diaryRequest.setDate((date != null) ? date : LocalDate.now());
         model.addAttribute("diaryRequest", diaryRequest);
 
-        return "diary/write-diary";
+        return "diary/diary-write";
     }
 
     @PostMapping

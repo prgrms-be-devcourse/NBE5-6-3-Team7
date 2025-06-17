@@ -1,20 +1,56 @@
 <!-- fragments/sidebar.html -->
 <div class="sidebar" th:fragment="memberSidebar">
+  <!-- 프로필 섹션 -->
   <div class="profile">
-    <img src="/images/userImg.png" alt="프로필 이미지">
-  </div>
-  <div class="menu">
-    <a href="/app"><i class="fas fa-home"></i><span>홈</span></a>
-    <a href="/app/timeline"><i class="fa-solid fa-layer-group"></i><span>타임라인</span></a>
-    <a href="/diary/writing"><i class="fas fa-pen"></i><span>일기쓰기</span></a>
-    <a href="/app/dashboard"><i class="fas fa-chart-bar"></i><span>대시보드</span></a>
-    <a href="/app/settings"><i class="fas fa-cog"></i><span>설정</span></a>
+    <div class="avatar">
+      <img src="/images/userImg.png" alt="프로필 이미지">
+    </div>
   </div>
 
-  <!-- 하단 로그아웃 버튼 -->
+  <!-- 메뉴 섹션 -->
+  <div class="menu">
+    <div class="menu-item active">
+      <a href="/app" class="active">
+        <i class="fas fa-home"></i>
+        <span>홈</span>
+      </a>
+    </div>
+
+    <div class="menu-item">
+      <a href="/app/timeline">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>타임라인</span>
+      </a>
+    </div>
+
+    <div class="menu-item">
+      <a href="/diary/writing">
+        <i class="fas fa-pen"></i>
+        <span>일기쓰기</span>
+      </a>
+    </div>
+
+    <div class="menu-item">
+      <a href="/app/dashboard">
+        <i class="fas fa-chart-bar"></i>
+        <span>대시보드</span>
+      </a>
+    </div>
+
+    <div class="menu-item">
+      <a href="/app/settings">
+        <i class="fas fa-cog"></i>
+        <span>설정</span>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- 로그아웃 섹션 -->
   <div class="logout">
     <a href="#" onclick="logout(event)">
-      <i class="fas fa-right-from-bracket"></i><span>로그아웃</span>
+      <i class="fas fa-sign-out-alt"></i>
+      <span>로그아웃</span>
     </a>
   </div>
 </div>

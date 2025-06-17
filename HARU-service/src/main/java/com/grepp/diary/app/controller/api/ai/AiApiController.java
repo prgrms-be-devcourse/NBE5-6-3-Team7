@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -138,7 +139,7 @@ public class AiApiController {
         CompletableFuture<String> future = new CompletableFuture<>();
         aiRequestQueue.addRequest(
             new AiRequestTask(() -> {
-                return aiChatService.analyzeEmotion(stats);
+                return aiChatService.analyzeEmotion(stats, userId);
             }, future)
         );
         return future;

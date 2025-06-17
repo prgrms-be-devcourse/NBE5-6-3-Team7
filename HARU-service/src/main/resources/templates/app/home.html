@@ -5,8 +5,8 @@
   <title>홈 화면</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/sidebar.css">
-  <link rel="stylesheet" href="/css/calendar.css">
-  <link rel="stylesheet" href="/css/card-list.css">
+  <link rel="stylesheet" href="/css/home/calendar.css">
+  <link rel="stylesheet" href="/css/home/card-list.css">
   <link rel="stylesheet" href="/css/change-date.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -23,45 +23,54 @@
 
 
 <div class="main">
-  <!--캘린더 표시 구역-->
+  <!-- 환영 섹션 -->
+  <div class="welcome-section">
+    <h1 class="welcome-title">오늘은 어떤 하루였나요?</h1>
+    <p class="welcome-subtitle">당신의 소중한 이야기를 들려주세요</p>
+  </div>
+
+  <!-- 캘린더 섹션 -->
   <div class="calendar-container">
-    <div class="calendar-inner">
-      <div class="calendar-header">
-        <div class="calendar-title-wrapper">
-          <div class="calendar-title" id="calendar-title"></div>
-          <i class="fa-solid fa-caret-down calendar-caret-icon"></i>
-        </div>
-        <div class="calendar-buttons">
-          <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
-          <button id="go-today">오늘</button>
-          <button id="next-month"><i class="fas fa-chevron-right"></i></button>
-        </div>
+    <div class="calendar-header">
+      <div class="calendar-title-wrapper">
+        <div class="calendar-title" id="calendar-title"></div>
+        <i class="fa-solid fa-caret-down calendar-caret-icon"></i>
       </div>
-      <div class="calendar-grid">
-        <div class="day-label">일</div>
-        <div class="day-label">월</div>
-        <div class="day-label">화</div>
-        <div class="day-label">수</div>
-        <div class="day-label">목</div>
-        <div class="day-label">금</div>
-        <div class="day-label">토</div>
-        <!-- 날짜 셀은 JS로 렌더링 -->
+      <div class="calendar-buttons">
+        <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+        <button id="go-today">오늘</button>
+        <button id="next-month"><i class="fas fa-chevron-right"></i></button>
       </div>
     </div>
+    <div class="calendar-grid">
+      <div class="day-label">일</div>
+      <div class="day-label">월</div>
+      <div class="day-label">화</div>
+      <div class="day-label">수</div>
+      <div class="day-label">목</div>
+      <div class="day-label">금</div>
+      <div class="day-label">토</div>
+      <!-- 날짜 셀은 JS로 렌더링 -->
+    </div>
   </div>
-  <!--일기 카드 표시 구역-->
-  <div class="recent-title-box">
-    <h2 class="recent-title">최근 일기</h2>
-    <p class="recent-subtitle">최근 14개의 일기가 표시됩니다.</p>
+
+  <!-- 최근 일기 섹션 -->
+  <div class="recent-section">
+    <div class="recent-title-box">
+      <h2 class="recent-title">최근 일기</h2>
+      <p class="recent-subtitle">최근 14개의 일기가 표시됩니다.</p>
+    </div>
+    <div th:replace="fragments/diary-card-list :: diaryCardList"></div>
+
   </div>
-  <div th:replace="fragments/diary-card-list :: diaryCardList"></div>
+
 </div>
 
 
 <script src="/js/emotion-map.js"></script>
 <script src="/js/sidebar.js"></script>
-<script src="/js/calendar.js"></script>
-<script src="/js/card-list.js"></script>
+<script src="/js/home/calendar.js"></script>
+<script src="/js/home/card-list.js"></script>
 <script src="/js/change-date.js"></script>
 <script>
   // 모달 열기시 현재 캘린더 상태(year/month)를 전달
