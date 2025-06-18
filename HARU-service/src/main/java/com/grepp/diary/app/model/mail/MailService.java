@@ -1,5 +1,6 @@
 package com.grepp.diary.app.model.mail;
 
+import com.grepp.diary.app.model.custom.CustomService;
 import com.grepp.diary.app.model.mail.dto.SmtpDto;
 import com.grepp.diary.app.model.member.MemberService;
 import com.grepp.diary.infra.mail.MailApi;
@@ -21,6 +22,7 @@ public class MailService {
     private String domain;
 
     private final MemberService memberService;
+    private final CustomService customService;
 
     public void sendMailOnReply(String userId, Object diaryDate) {
         String email = memberService.getEmail(userId);
@@ -31,8 +33,8 @@ public class MailService {
         smtpDto.setSubject("답변 완료 안내");
         Map<String, String> props = new HashMap<>();
         props.put("domain", domain);
-        props.put("username", "test");
-        props.put("character", "test");
+        props.put("username", memberService.findById(userId).get().getName());
+        props.put("character", customService.findByUserId(userId).get().getAi().getName());
         props.put("date", String.valueOf(diaryDate));
         smtpDto.setProperties(props);
         smtpDto.setEventType("on_reply");

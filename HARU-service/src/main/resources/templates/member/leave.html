@@ -2,20 +2,110 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>회원 탈퇴</title>
   <link rel="stylesheet" href="/css/leave.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <script src="/js/leave.js" defer></script>
 </head>
 <body>
-<div class="container">
-  <h1>정말 떠나실건가요?</h1>
-  <p class="subtext">
-    <span class="ai-name" th:text="${aiName}">AI 캐릭터 이름</span>가 많이 그리워할 거예요
-  </p>
-  <div class="button-group">
-    <button class="stay-btn" onclick="history.back()">남기</button>
-    <button type="button" class="leave-btn" onclick="postLeave()">떠나기</button>
+<!-- 배경 장식 요소들 -->
+<div class="bg-decoration"></div>
+<div class="bg-decoration"></div>
+<div class="bg-decoration"></div>
+
+<!-- 메인 컨테이너 -->
+<div class="main-container">
+  <div class="content-wrapper">
+    <!-- 감정적 아이콘 -->
+    <div class="emotion-icon">😢</div>
+
+    <!-- 메인 메시지 -->
+    <h1 class="main-title">정말 떠나실건가요?</h1>
+
+    <!-- AI 캐릭터 메시지 -->
+    <div class="ai-message-card">
+      <div class="message-content">
+        <p class="ai-message">
+          <span class="ai-name" th:text="${aiName}">AI 친구</span>가 <br>
+          정말 많이 그리워할 거예요...
+        </p>
+        <div class="message-bubble">
+          "함께한 시간들이 너무 소중했는데, 꼭 가야만 하나요?"
+        </div>
+      </div>
+    </div>
+
+    <!-- 탈퇴 정보 안내 -->
+    <div class="warning-info">
+      <div class="warning-icon">⚠️</div>
+      <div class="warning-text">
+        <p class="warning-title">탈퇴 시 삭제되는 정보</p>
+        <ul class="warning-list">
+          <li>작성된 모든 일기</li>
+          <li>AI와의 추억들</li>
+          <li>개인 설정 정보</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 버튼 그룹 -->
+    <div class="button-group">
+      <button class="stay-btn" onclick="history.back()" type="button">
+        <span class="btn-icon">💚</span>
+        <span class="btn-text">함께 더 있을게요</span>
+      </button>
+      <button class="leave-btn" onclick="confirmLeave()" type="button">
+        <span class="btn-icon">👋</span>
+        <span class="btn-text">떠날래요</span>
+      </button>
+    </div>
+
+    <!-- 추가 도움말 -->
+    <div class="help-section">
+      <p class="help-text">
+        잠깐! 문제가 있으시다면 <a href="/support" class="help-link">고객센터</a>에 문의해보세요
+      </p>
+    </div>
   </div>
 </div>
+
+<!-- 최종 확인 모달 -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-content">
+    <div class="modal-icon">💔</div>
+    <h3>정말 마지막 확인</h3>
+    <p>이 결정은 되돌릴 수 없습니다.<br>정말로 탈퇴하시겠습니까?</p>
+    <div class="modal-buttons">
+      <button class="cancel-btn" onclick="closeModal()">취소</button>
+      <button class="confirm-btn" onclick="postLeave()">탈퇴</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function confirmLeave() {
+    document.getElementById('confirmModal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('confirmModal').classList.remove('show');
+  }
+
+  // 페이지 로드 시 애니메이션
+  document.addEventListener('DOMContentLoaded', function() {
+    const elements = document.querySelectorAll('.content-wrapper > *');
+    elements.forEach((el, index) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+
+      setTimeout(() => {
+        el.style.transition = 'all 0.6s ease';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, index * 200);
+    });
+  });
+</script>
 </body>
 </html>

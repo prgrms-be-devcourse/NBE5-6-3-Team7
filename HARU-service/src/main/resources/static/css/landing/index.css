@@ -640,3 +640,325 @@ body {
   color: #065f46;
   border: 1px solid #6ee7b7;
 }
+
+/* 회원탈퇴 완료 페이지 전용 스타일 */
+
+/* 그린 컨테이너 기본 스타일 */
+.green-container {
+  display: flex;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(74, 124, 89, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  width: 500px;
+  min-height: 400px;
+  z-index: 10;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+/* 비주얼 박스 스타일 */
+.green-visual-box {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(137, 192, 126, 0.3);
+  animation: successBounce 2s ease-in-out;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+}
+
+.green-visual-box::before {
+  content: '';
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border: 2px solid rgba(137, 192, 126, 0.3);
+  border-radius: 50%;
+  animation: ripple 2s ease-out infinite;
+}
+
+.green-visual-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.green-visual-content img {
+  width: 50px;
+  height: 50px;
+  filter: brightness(0) invert(1);
+  animation: checkPulse 1.5s ease-in-out infinite;
+}
+
+/* 폼 래퍼 스타일 */
+.form-wrapper {
+  text-align: center;
+  max-width: 400px;
+}
+
+.form-wrapper h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+.form-wrapper p {
+  font-size: 1.1rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+/* 애니메이션 키프레임 */
+@keyframes successBounce {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+@keyframes checkPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* 추가 액션 버튼들 (필요시 활용) */
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  padding: 12px 24px;
+  border: 2px solid #89c07e;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-button.primary {
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
+  color: white;
+  border-color: transparent;
+}
+
+.action-button.secondary {
+  background: transparent;
+  color: #89c07e;
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(137, 192, 126, 0.3);
+}
+
+.action-button.primary:hover {
+  box-shadow: 0 8px 24px rgba(137, 192, 126, 0.4);
+}
+
+.action-button.secondary:hover {
+  background: rgba(137, 192, 126, 0.1);
+}
+
+/* 작별 메시지 박스 (선택사항) */
+.farewell-message {
+  background: linear-gradient(135deg, rgba(137, 192, 126, 0.1) 0%, rgba(137, 192, 126, 0.05) 100%);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+  border-left: 4px solid #89c07e;
+  text-align: left;
+}
+
+.farewell-message h3 {
+  color: #4a7c59;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.farewell-message p {
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .green-container {
+    width: 90%;
+    max-width: 400px;
+    padding: 30px 25px;
+    min-height: 350px;
+  }
+
+  .green-visual-box {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 25px;
+  }
+
+  .green-visual-box::before {
+    width: 120px;
+    height: 120px;
+  }
+
+  .green-visual-content img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .form-wrapper h1 {
+    font-size: 1.5rem;
+  }
+
+  .form-wrapper p {
+    font-size: 1rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .action-button {
+    width: 100%;
+    max-width: 200px;
+    justify-content: center;
+  }
+}
+
+/* 로그인으로 돌아가기 링크 스타일 */
+.back-to-login {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.back-link {
+  color: #89c07e;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 12px 24px;
+  border: 2px solid #89c07e;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.back-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.back-link:hover {
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(137, 192, 126, 0.3);
+}
+
+.back-link:hover::before {
+  left: 0;
+}
+
+.back-link:active {
+  transform: translateY(0);
+}
+
+/* 화살표 아이콘 효과 (선택사항) */
+.back-link::after {
+  content: '←';
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.back-link:hover::after {
+  transform: translateX(-3px);
+}
+
+/* 페이드인 효과 */
+.green-container {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 반응형 디자인에서 백 링크 스타일 추가 */
+@media (max-width: 768px) {
+  .back-to-login {
+    margin-top: 25px;
+  }
+
+  .back-link {
+    font-size: 0.9rem;
+    padding: 10px 20px;
+  }
+}

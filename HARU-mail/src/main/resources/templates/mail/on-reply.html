@@ -44,21 +44,20 @@
             <!-- 배경 패턴 -->
             <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;><circle cx=&quot;50&quot; cy=&quot;50&quot; r=&quot;2&quot; fill=&quot;rgba(255,255,255,0.1)&quot;/></svg>'); opacity: 0.3;"></div>
 
-            <!-- 브랜드 로고/아이콘 -->
+            <!-- 브랜드 영역 -->
             <div style="position: relative; z-index: 2;">
-              <div style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.2); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                <span style="font-size: 40px; color: white;">✉️</span>
-              </div>
-
               <!-- 브랜드명 -->
-              <div style="margin-bottom: 15px;">
-                <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: white; letter-spacing: -0.5px;">HARU</h1>
+              <div style="margin-bottom: 20px;">
+                <h1 style="margin: 0; font-size: 48px; font-weight: 700; color: white; letter-spacing: -1px;">HARU</h1>
               </div>
 
               <!-- 메인 제목 -->
               <h2 class="header-title" th:text="${character} + '의 답장이 도착했어요!'" style="margin: 0; font-size: 28px; font-weight: 600; color: white; line-height: 1.3;">
-                캐릭터의 답장이 도착했어요!
+                AI의 답장이 도착했어요!
               </h2>
+              <p style="margin: 15px 0 0 0; font-size: 16px; color: rgba(255, 255, 255, 0.9);">
+                새로운 메시지가 기다리고 있습니다
+              </p>
             </div>
           </td>
         </tr>
@@ -68,9 +67,9 @@
           <td class="content-block" style="padding: 50px 40px; text-align: center; background: #ffffff;">
 
             <!-- 인사말 -->
-            <div style="margin-bottom: 30px;">
+            <div style="margin-bottom: 40px;">
               <h3 style="margin: 0 0 15px 0; font-size: 24px; font-weight: 600; color: #374151;">
-                안녕하세요, <span th:text="${username}" style="color: #89c07e;">사용자</span>님! 👋
+                안녕하세요, <span th:text="${username}" style="color: #89c07e;">사용자</span>님!
               </h3>
               <p style="margin: 0; font-size: 16px; color: #6b7280; line-height: 1.6;">
                 일기에 특별한 답장이 도착했습니다.
@@ -79,14 +78,9 @@
 
             <!-- 메시지 카드 -->
             <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid #bae6fd; border-radius: 12px; padding: 30px; margin: 30px 0; text-align: left;">
-              <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px;">
-                  <span style="font-size: 20px; color: white;">🤖</span>
-                </div>
-                <div>
-                  <p style="margin: 0; font-size: 14px; color: #6b7280; font-weight: 500;">AI 답장 알림</p>
-                  <p style="margin: 0; font-size: 16px; color: #374151; font-weight: 600;" th:text="${character}">캐릭터</p>
-                </div>
+              <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #bae6fd;">
+                <h4 style="margin: 0 0 5px 0; font-size: 18px; color: #374151; font-weight: 600;">AI 답장 알림</h4>
+                <p style="margin: 0; font-size: 14px; color: #6b7280;">발신자: <span th:text="${character}" style="color: #059669; font-weight: 500;">AI 캐릭터</span></p>
               </div>
               <p th:utext="${username} + ' 님의 일기에 ' + ${character} + ' 이(가) 답장을 남겼어요!<br><br>소중한 하루의 기록에 대한 따뜻한 응답을 확인해보세요.'" style="margin: 0; font-size: 16px; color: #374151; line-height: 1.6;">
                 님의 일기에 AI가 답장을 남겼어요!<br><br>소중한 하루의 기록에 대한 따뜻한 응답을 확인해보세요.
@@ -100,26 +94,34 @@
                  style="background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
                           color: #ffffff;
                           text-decoration: none;
-                          padding: 16px 32px;
+                          padding: 18px 36px;
                           border-radius: 12px;
                           font-size: 18px;
                           font-weight: 600;
                           display: inline-block;
                           box-shadow: 0 4px 16px rgba(137, 192, 126, 0.3);
                           transition: all 0.3s ease;">
-                <span style="margin-right: 8px;">📖</span>
                 답장 확인하러 가기
               </a>
             </div>
 
             <!-- 추가 정보 -->
-            <div style="background: rgba(137, 192, 126, 0.1); border-left: 4px solid #89c07e; padding: 20px; border-radius: 8px; text-align: left; margin-top: 30px;">
-              <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: 600; color: #374151;">💡 알아두세요</p>
-              <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #6b7280; line-height: 1.5;">
-                <li>답장은 일기 작성 후 자동으로 생성됩니다</li>
+            <div style="background: rgba(137, 192, 126, 0.1); border-left: 4px solid #89c07e; padding: 25px; border-radius: 8px; text-align: left; margin-top: 30px;">
+              <h5 style="margin: 0 0 15px 0; font-size: 16px; font-weight: 600; color: #374151;">TIP</h5>
+              <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #6b7280; line-height: 1.6;">
+                <li><strong>답장은 일기 작성 후 자동으로 생성됩니다</strong></li>
                 <li>언제든지 이전 답장들을 다시 확인할 수 있습니다</li>
                 <li>더 많은 기능은 HARU에서 만나보세요</li>
               </ul>
+            </div>
+
+            <!-- 서비스 안내 -->
+            <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1px solid #a7f3d0; border-radius: 12px; padding: 25px; margin: 30px 0; text-align: center;">
+              <h5 style="margin: 0 0 10px 0; font-size: 16px; font-weight: 600; color: #059669;">HARU와 함께하는 일기 여행</h5>
+              <p style="margin: 0; font-size: 14px; color: #065f46; line-height: 1.5;">
+                매일의 소중한 순간들을 기록하고, AI의 따뜻한 응답을 받아보세요.<br>
+                당신의 감정과 생각을 더 깊이 이해할 수 있도록 도와드립니다.
+              </p>
             </div>
           </td>
         </tr>
@@ -127,16 +129,18 @@
         <!-- 푸터 -->
         <tr>
           <td style="background: #f8fafc; padding: 30px 40px; text-align: center; border-top: 1px solid #e5e7eb;">
-            <p style="margin: 0 0 10px 0; font-size: 14px; color: #89c07e; font-weight: 600;">HARU - 당신의 하루를 기록하는 특별한 공간</p>
+            <h4 style="margin: 0 0 10px 0; font-size: 16px; color: #89c07e; font-weight: 600;">HARU</h4>
+            <p style="margin: 0 0 5px 0; font-size: 13px; color: #6b7280; font-weight: 500;">당신의 하루를 기록하는 특별한 공간</p>
             <p style="margin: 0; font-size: 12px; color: #9ca3af; line-height: 1.4;">
-              이 메일은 HARU 서비스의 알림 메일입니다.<br>
+              이 메일은 HARU 서비스의 AI 답장 알림 메일입니다.<br>
               궁금한 점이 있으시면 언제든지 문의해주세요.
             </p>
 
-            <!-- 소셜 링크 (선택사항) -->
-            <div style="margin-top: 20px;">
-              <a href="#" style="display: inline-block; margin: 0 8px; width: 32px; height: 32px; background: #89c07e; border-radius: 50%; text-decoration: none; line-height: 32px; color: white; font-size: 14px;">📧</a>
-              <a href="#" style="display: inline-block; margin: 0 8px; width: 32px; height: 32px; background: #89c07e; border-radius: 50%; text-decoration: none; line-height: 32px; color: white; font-size: 14px;">💬</a>
+            <!-- 연락처 정보 -->
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; font-size: 12px; color: #6b7280;">
+                <strong>고객센터:</strong> support@haru.com<br>
+              </p>
             </div>
           </td>
         </tr>

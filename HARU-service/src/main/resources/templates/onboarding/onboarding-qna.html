@@ -2,26 +2,112 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>대화 방식 선택</title>
   <link rel="stylesheet" href="/css/onboarding-qna.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <script src="/js/onboarding-qna.js" defer></script>
 </head>
 <body>
+<!-- 배경 장식 요소들 -->
+<div class="bg-decoration"></div>
+<div class="bg-decoration"></div>
+<div class="bg-decoration"></div>
+
+<!-- 진행 표시기 -->
+<div class="progress-container">
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <span class="progress-text" id="progressText">1 / 4</span>
+</div>
+
 <main class="container">
-  <h1 id="question">
-    감정이 힘들 때<br>
-    어떤 대화 방식을 원하시나요?
-  </h1>
-  <div class="button-group">
-    <button class="option-btn" onclick="handleClick(1)">위로와 공감을 해주었으면 좋겠어요.</button>
-    <button class="option-btn" onclick="handleClick(2)">상황을 헤쳐나갈 방법을 알려줬으면 좋겠어요.</button>
-    <button class="option-btn" onclick="handleClick(3)" style="display: none;">감정을 표현하고 정리해요.</button>
-    <button class="option-btn" onclick="handleClick(4)" style="display: none;">이성적으로 정리하고 계획해요.</button>
-    <button class="option-btn" onclick="handleClick(5)" style="display: none;">정중한 말투</button>
-    <button class="option-btn" onclick="handleClick(6)" style="display: none;">친근한 말투</button>
-    <button class="option-btn" onclick="handleClick(7)" style="display: none;">짧고 핵심적</button>
-    <button class="option-btn" onclick="handleClick(8)" style="display: none;">충분한 길이</button>
+  <div class="question-container">
+    <h1 id="question">
+      감정이 힘들 때<br>
+      어떤 대화 방식을 원하시나요?
+    </h1>
+
+    <!-- 질문 설명 텍스트 -->
+    <p class="question-description" id="questionDescription">
+      AI와의 대화 스타일을 맞춤 설정하기 위한 질문입니다.
+    </p>
+  </div>
+
+  <div class="button-group" id="buttonGroup">
+    <button class="option-btn" onclick="handleClick(1)" data-answer="compassionate">
+      <div class="option-content">
+        <span class="option-icon">💝</span>
+        <span class="option-text">위로와 공감을 해주었으면 좋겠어요.</span>
+      </div>
+    </button>
+
+    <button class="option-btn" onclick="handleClick(2)" data-answer="solution">
+      <div class="option-content">
+        <span class="option-icon">🎯</span>
+        <span class="option-text">상황을 헤쳐나갈 방법을 알려줬으면 좋겠어요.</span>
+      </div>
+    </button>
+
+    <button class="option-btn" onclick="handleClick(3)" style="display: none;" data-answer="emotional">
+      <div class="option-content">
+        <span class="option-icon">🎭</span>
+        <span class="option-text">감정을 표현하고 정리해요.</span>
+      </div>
+    </button>
+
+    <button class="option-btn" onclick="handleClick(4)" style="display: none;" data-answer="logical">
+      <div class="option-content">
+        <span class="option-icon">🧠</span>
+        <span class="option-text">이성적으로 정리하고 계획해요.</span>
+      </div>
+    </button>
+
+    <button class="option-btn" onclick="handleClick(5)" style="display: none;" data-answer="formal">
+      <div class="option-content">
+        <span class="option-icon">🎩</span>
+        <span class="option-text">정중한 말투</span>
+      </div>
+    </button>
+
+    <button class="option-btn" onclick="handleClick(6)" style="display: none;" data-answer="friendly">
+      <div class="option-content">
+        <span class="option-icon">😊</span>
+        <span class="option-text">친근한 말투</span>
+      </div>
+    </button>
+
+    <button class="option-btn" onclick="handleClick(7)" style="display: none;" data-answer="short">
+      <div class="option-content">
+        <span class="option-icon">⚡</span>
+        <span class="option-text">짧고 핵심적</span>
+      </div>
+    </button>
+
+    <button class="option-btn" onclick="handleClick(8)" style="display: none;" data-answer="detailed">
+      <div class="option-content">
+        <span class="option-icon">📖</span>
+        <span class="option-text">충분한 길이</span>
+      </div>
+    </button>
+  </div>
+
+  <!-- 뒤로가기 버튼 -->
+  <div class="navigation-buttons">
+    <button class="back-btn" id="backBtn" onclick="goBack()" style="display: none;">
+      <span class="back-icon">←</span> 이전
+    </button>
   </div>
 </main>
+
+<!-- 로딩 오버레이 -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <h3>AI 친구를 찾고 있어요...</h3>
+    <p>잠시만 기다려주세요</p>
+  </div>
+</div>
 </body>
 </html>
