@@ -4,14 +4,18 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.3);
+  background:
+      radial-gradient(circle at 20% 80%, rgba(120, 160, 100, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(137, 192, 126, 0.08) 0%, transparent 50%),
+      rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-overlay.show {
@@ -20,14 +24,17 @@
 }
 
 .modal-content {
-  background-color: #FEFBF6;
-  border-radius: 12px;
-  padding: 30px;
-  width: 320px;
+  background: rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 35px;
+  width: 380px;
+  max-width: 90vw;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   transform: translateY(20px) scale(0.95);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-overlay.show .modal-content {
@@ -35,37 +42,44 @@
 }
 
 .calendar-icon {
-  font-size: 30px;
-  color: #282420;
-  margin-bottom: 12px;
+  font-size: 2rem;
+  background: linear-gradient(135deg, #4a7c59 0%, #89c07e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
 }
 
 .modal-content h3 {
-  color: #282420;
-  margin-bottom: 20px;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4a7c59 0%, #89c07e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 30px;
+  letter-spacing: -0.5px;
 }
 
 .wheel-container {
   display: flex;
   justify-content: center;
   gap: 30px;
-  margin: 25px 0;
-  height: 180px;
+  margin: 35px 0;
+  height: 200px;
 }
 
 .custom-wheel-picker {
-  width: 80px;
+  width: 100px;
   position: relative;
 }
 
 .wheel-picker-container {
-  height: 180px;
+  height: 200px;
   overflow: hidden;
   position: relative;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  background: transparent;
 }
 
 .wheel-picker-list {
@@ -75,6 +89,7 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   position: relative;
+  padding: 0 8px;
 }
 
 .wheel-picker-list::-webkit-scrollbar {
@@ -82,35 +97,46 @@
 }
 
 .wheel-picker-item {
-  height: 36px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  color: #666;
+  font-size: 1rem;
+  color: #6b7280;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   user-select: none;
+  border-radius: 12px;
+  margin: 2px 0;
+  font-weight: 500;
 }
 
 .wheel-picker-item.selected {
-  color: #467750;
-  font-weight: 600;
-  font-size: 18px;
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(137, 192, 126, 0.3);
+  transform: scale(1.05);
 }
 
-.wheel-picker-item:hover:not(.padding-item) {
-  background: rgba(70, 119, 80, 0.1);
+.wheel-picker-item:hover:not(.padding-item):not(.selected) {
+  background: rgba(137, 192, 126, 0.1);
+  color: #2c3e35;
+  transform: translateY(-2px);
+  font-weight: 600;
 }
 
 /* 패딩 아이템 스타일 */
 .wheel-picker-item.padding-item {
   cursor: default;
   pointer-events: none;
+  opacity: 0;
 }
 
 .wheel-picker-item.padding-item:hover {
   background: none;
+  transform: none;
 }
 
 /* 중앙 하이라이트 영역 */
@@ -119,84 +145,180 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100%;
-  height: 36px;
-  background: rgba(70, 119, 80, 0.1);
-  border: 1px solid rgba(70, 119, 80, 0.2);
-  border-radius: 6px;
+  width: calc(100% - 16px);
+  height: 44px;
+  background: rgba(137, 192, 126, 0.08);
+  border: 1px solid rgba(137, 192, 126, 0.15);
+  border-radius: 12px;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
 }
 
 .modal-buttons {
   display: flex;
-  justify-content: space-around;
-  margin-top: 25px;
-  gap: 15px;
+  justify-content: space-between;
+  margin-top: 35px;
+  gap: 12px;
 }
 
 .modal-buttons button {
   flex: 1;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  min-height: 48px;
 }
 
 #cancel-btn {
-  background-color: #D9D8D5;
-  color: #282420;
+  background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+  color: #4a7c59;
+  border: 2px solid #89c07e;
+  box-shadow: 0 4px 12px rgba(137, 192, 126, 0.2);
 }
 
 #cancel-btn:hover {
-  background-color: #CCC;
+  background: rgba(137, 192, 126, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(137, 192, 126, 0.3);
 }
 
 #confirm-btn {
-  background-color: #467750;
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
   color: white;
+  box-shadow: 0 4px 12px rgba(137, 192, 126, 0.3);
 }
 
 #confirm-btn:hover {
-  background-color: #3A6142;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(137, 192, 126, 0.4);
+}
+
+#confirm-btn:active {
+  transform: translateY(0);
+}
+
+/* 포커스 상태 */
+.modal-buttons button:focus {
+  outline: 3px solid rgba(137, 192, 126, 0.5);
+  outline-offset: 2px;
+}
+
+.wheel-picker-item:focus {
+  outline: 2px solid rgba(137, 192, 126, 0.5);
+  outline-offset: 1px;
 }
 
 /* 데모를 위한 추가 스타일 */
 .demo-container body {
   margin: 0;
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f5f5f5;
+  font-family: 'Noto Sans KR', sans-serif;
+  background:
+      radial-gradient(circle at 20% 80%, rgba(120, 160, 100, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(137, 192, 126, 0.08) 0%, transparent 50%),
+      linear-gradient(135deg, #f6f9f7 0%, #eef4f0 100%);
+  min-height: 100vh;
 }
 
 .demo-container {
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
+  padding: 40px 20px;
 }
 
 .demo-btn {
-  background: #467750;
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
   color: white;
   border: none;
   padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
   margin: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(137, 192, 126, 0.3);
 }
 
 .demo-btn:hover {
-  background: #3A6142;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(137, 192, 126, 0.4);
 }
 
 .result {
-  margin-top: 20px;
-  padding: 15px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-top: 30px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #2c3e35;
+  font-weight: 500;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .modal-content {
+    width: 90%;
+    padding: 30px 25px;
+  }
+
+  .wheel-container {
+    gap: 20px;
+    height: 180px;
+  }
+
+  .custom-wheel-picker {
+    width: 85px;
+  }
+
+  .wheel-picker-container {
+    height: 180px;
+  }
+
+  .wheel-picker-item {
+    height: 36px;
+    font-size: 0.9rem;
+  }
+
+  .wheel-picker-item.selected {
+    font-size: 1rem;
+  }
+
+  .modal-buttons {
+    gap: 10px;
+  }
+
+  .modal-buttons button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  .modal-content h3 {
+    font-size: 1.5rem;
+  }
+
+  .calendar-icon {
+    font-size: 1.5rem;
+  }
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal-content,
+  .wheel-picker-item,
+  .modal-buttons button {
+    transition-duration: 0.1s;
+  }
+
+  .wheel-picker-list {
+    scroll-behavior: auto;
+  }
 }
