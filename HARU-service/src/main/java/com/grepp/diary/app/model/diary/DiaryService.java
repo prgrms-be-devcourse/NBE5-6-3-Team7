@@ -1,12 +1,11 @@
 package com.grepp.diary.app.model.diary;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grepp.diary.app.controller.api.diary.payload.DiaryEditRequest;
 import com.grepp.diary.app.controller.web.diary.payload.DiaryRequest;
 import com.grepp.diary.app.model.ai.entity.Ai;
-import com.grepp.diary.app.model.custom.entity.Custom;
 import com.grepp.diary.app.model.common.code.ImgType;
+import com.grepp.diary.app.model.custom.entity.Custom;
 import com.grepp.diary.app.model.diary.code.Emotion;
 import com.grepp.diary.app.model.diary.dto.DiaryDto;
 import com.grepp.diary.app.model.diary.dto.DiaryEmotionAvgDto;
@@ -200,11 +199,21 @@ public class DiaryService {
 
                 List<DiaryImg> diaryImgs = imageList.stream()
                                                     .map(fileDto -> {
-                                                        DiaryImg diaryImg = new DiaryImg(ImgType.THUMBNAIL, fileDto);
-                                                        diaryImg.setDiary(savedDiary);
+                                                        ImgType type;
+                                                        // thumbnailFileName이 null이 아니고, 현재 fileDto의 originalName과 일치하는지 확인
+                                                        if (form.getThumbnailFileName() != null && fileDto.originFileName().equals(form.getThumbnailFileName())) {
+                                                            type = ImgType.THUMBNAIL;
+                                                        } else {
+                                                            type = ImgType.MEDIUM;
+                                                        }
+
+                                                        DiaryImg diaryImg = new DiaryImg(type, fileDto);
+                                                        diaryImg.setDiary(savedDiary); // savedDiary는 해당 일기 엔티티
                                                         return diaryImg;
                                                     })
                                                     .collect(Collectors.toList());
+
+
                 diaryImgRepository.saveAll(diaryImgs);
             }
             return diary;
@@ -267,12 +276,11 @@ public class DiaryService {
         }
 
         for (Integer deletedImageId : request.getDeletedImageIds()) {
-            diaryImgRepository.deactivateDiaryImgByDiaryId(deletedImageId);
+            diaryImgRepository.deactivateDiaryImgByDiaryImgId(deletedImageId);
         }
 
         Diary updateDiary = diaryRepository.findById(request.getDiaryId())
                                      .orElseThrow(() -> new EntityNotFoundException("Diary not found"));
-
 
         if (newImages != null && !newImages.isEmpty()) {
             List<FileDto> imageList = null;
@@ -284,13 +292,25 @@ public class DiaryService {
 
             List<DiaryImg> diaryImgs = imageList.stream()
                                                 .map(fileDto -> {
-                                                    DiaryImg diaryImg = new DiaryImg(ImgType.THUMBNAIL, fileDto);
+                                                    DiaryImg diaryImg = new DiaryImg(ImgType.MEDIUM, fileDto);
                                                     diaryImg.setDiary(updateDiary);
                                                     return diaryImg;
                                                 })
                                                 .collect(Collectors.toList());
             diaryImgRepository.saveAll(diaryImgs);
         }
+
+        Optional<String> currentThumbnailNameOpt = diaryImgRepository.findThumbnailOriginalNameByDiaryId(request.getDiaryId());
+        String currentThumbnailName = currentThumbnailNameOpt.orElse(null);
+
+        if (currentThumbnailName == request.getThumbnailFileName()) return;// 변경사항 없을 경우
+
+        else if(currentThumbnailName != null) { // 썸네일로 설정한 이미지가 존재함
+            // 기존 썸네일 해제
+            diaryImgRepository.updateThumbnailToMediumByDiaryId(request.getDiaryId());
+        }
+        //썸네일 설정
+        diaryImgRepository.updateImgTypeToThumbnailByFileName(request.getDiaryId(), request.getThumbnailFileName());
     }
 
     /** 특정 년도에 작성된 일기들을 기준으로 월별 평균 기분점수를 반환합니다. */

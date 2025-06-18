@@ -133,11 +133,12 @@
             <!-- 업로드 버튼 -->
             <div class="upload-btn-wrapper">
               <!-- 반드시 form 안에 있어야 하며, name="images"로 서버 전송 가능하게 -->
-              <input type="file" th:field="*{images}" name="images" id="images" accept="image/*" style="display: none;" onchange="previewImages(event)">
+              <input type="file" multiple th:field="*{images}" name="images" id="images" accept="image/*" style="display: none;" onchange="previewImages(event)">
               <label for="images" class="upload-btn">사진 추가하기</label>
             </div>
-<!--  사진은 여러 장 추가할 수 있습니다.  나중에 멘트 바꾸기-->
-            <p class="image-guide">일기와 같이 등록하고 싶은 사진을 한장 추가해 주세요</p>
+            <input type="hidden" name="thumbnailFileName" id="thumbnailFileName" value="">
+
+            <p class="image-guide">사진은 여러장을 추가할 수 있으며 첫번째 사진이 기본 썸네일로 설정됩니다.</p>
           </div>
         </div>
         <!-- 저장 버튼 -->

@@ -77,8 +77,9 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
         // Diary와 keywords만 fetch join
         List<DiaryKeyword> keywordsList = queryFactory
             .selectFrom(diaryKeyword)
-            .leftJoin(diaryKeyword.keywordId, keyword).fetchJoin()
-            .where(diaryKeyword.diaryId.eq(diaryWithImages))
+            .leftJoin(diaryKeyword.keywordId, keyword)
+            .on(keyword.isUse.isTrue())
+            .where(diaryKeyword.diaryId.eq(diaryWithImages), keyword.isUse.isTrue())
             .fetch();
 
         // keywords만 diaryWithImages에 병합
@@ -119,7 +120,8 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
         // Diary와 keywords만 fetch join
         List<DiaryKeyword> keywordsList = queryFactory
             .selectFrom(diaryKeyword)
-            .leftJoin(diaryKeyword.keywordId, keyword).fetchJoin()
+            .leftJoin(diaryKeyword.keywordId, keyword)
+            .fetchJoin()
             .where(diaryKeyword.diaryId.eq(diaryWithImages))
             .fetch();
 

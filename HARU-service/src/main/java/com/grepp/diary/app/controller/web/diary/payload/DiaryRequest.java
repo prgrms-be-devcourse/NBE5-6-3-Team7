@@ -19,7 +19,6 @@ public class DiaryRequest {
     private Emotion emotion;
     private List<String> keywords = new ArrayList<>();
     private LocalDate date;
-    // Multipart 파일 업로드용
-    @Size(max = 1)
     private List<MultipartFile> images;
+    private String thumbnailFileName;
 }
