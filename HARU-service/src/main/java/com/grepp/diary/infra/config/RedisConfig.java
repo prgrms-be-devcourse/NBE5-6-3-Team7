@@ -2,6 +2,8 @@ package com.grepp.diary.infra.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,13 +58,19 @@ public class RedisConfig {
 
     @Bean
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
+        // 기본 TTL 설정 (30분)
         RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
             .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper)))
             .entryTtl(Duration.ofMinutes(30)); // 캐시 유효기간 (선택)
 
+        // 개별 캐시 설정 (감정 분석 결과는 24시간)
+        Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
+        cacheConfigs.put("emotionStatsCache", cacheConfiguration.entryTtl(Duration.ofHours(24)));
+
         return RedisCacheManager.builder(redisConnectionFactory)
             .cacheDefaults(cacheConfiguration)
+            .withInitialCacheConfigurations(cacheConfigs) // 이름별 설정 추가
             .build();
     }
 }
