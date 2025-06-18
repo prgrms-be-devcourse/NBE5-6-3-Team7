@@ -31,11 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // 필터 타입 설정
       const filterText = this.textContent.trim();
-      if (filterText === '전체') {
+      if (filterText === '전체 일기') {
         currentFilter = 'all';
       } else if (filterText === '이동') {
         currentFilter = 'travel';
-      } else if (filterText === '사진 있는 일기') {
+      } else if (filterText === '사진 일기') {
         currentFilter = 'with_image';
       }
 

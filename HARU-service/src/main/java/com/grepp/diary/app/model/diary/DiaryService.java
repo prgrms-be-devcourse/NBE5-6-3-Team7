@@ -431,6 +431,5 @@ public class DiaryService {
         }
         return 1;
     }
-
 }
 
