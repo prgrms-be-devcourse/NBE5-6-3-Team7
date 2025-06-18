@@ -138,4 +138,29 @@ public class AuthService implements UserDetailsService {
             .build();
     }
 
+
+    public TokenDto generateTokenAfterSignup(java.security.Principal principal) {
+        String username = principal.getName(); // userId
+
+        // 1. 블랙리스트 삭제
+        userBlackListRepository.deleteById(username);
+
+        // 2. AccessToken 생성
+        AccessTokenDto accessTokenDto = jwtProvider.generateAccessToken(username);
+
+        // 3. RefreshToken 생성 및 저장 (기본 30일)
+        long rtExpiration = 60L * 60 * 24 * 30;
+        RefreshToken refreshToken = new RefreshToken(username, accessTokenDto.getId());
+        refreshTokenService.saveWithExpiration(refreshToken, rtExpiration);
+
+        // 4. TokenDto 생성 및 반환
+        return TokenDto.builder()
+            .accessToken(accessTokenDto.getToken())
+            .refreshToken(refreshToken.getToken())
+            .atExpiresIn(jwtProvider.getAtExpiration())
+            .rtExpiresIn(rtExpiration)
+            .grantType(GrantType.BEARER)
+            .build();
+    }
+
 }

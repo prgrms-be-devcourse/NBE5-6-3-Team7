@@ -5,6 +5,7 @@ import com.grepp.diary.app.model.ai.AiService;
 import com.grepp.diary.app.model.ai.entity.Ai;
 import com.grepp.diary.app.model.auth.AuthService;
 import com.grepp.diary.app.model.auth.code.Role;
+import com.grepp.diary.app.model.auth.domain.CustomPrincipal;
 import com.grepp.diary.app.model.custom.entity.Custom;
 import com.grepp.diary.app.model.custom.repository.CustomRepository;
 import com.grepp.diary.app.model.member.dto.MemberDto;
@@ -16,6 +17,7 @@ import com.grepp.diary.infra.mail.MailApi;
 import com.grepp.diary.infra.response.ResponseCode;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +53,7 @@ public class MemberService {
         return memberRepository.countByEnabledTrue();
     }
 
-    public void signup(HttpSession session, String token, Role role) {
+    public Principal signup(HttpSession session, String token, Role role) {
 
         // 1. 세션에서 dto 추출 및 토큰 검증
         MemberDto dto = (MemberDto) session.getAttribute(token);
@@ -86,6 +88,8 @@ public class MemberService {
 
         // SPRING_SECURITY_CONTEXT 세션에 설정
         session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
+        return new CustomPrincipal(dto.getUserId(), dto.getEmail(), dto.getRole().name());
     }
 
     public void sendVerificationMail(SignupForm signupForm, HttpSession session) {
