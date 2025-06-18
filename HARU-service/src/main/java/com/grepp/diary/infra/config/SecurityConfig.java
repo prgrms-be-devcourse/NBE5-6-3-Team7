@@ -48,9 +48,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
         http
-//            .csrf(csrf -> csrf
-//                .ignoringRequestMatchers("/api/**", "/admin/**", "/member/**", "/diary/**", "/app/**", "/ai/**", "/auth/**")
-//            )
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**", "/admin/**", "/member/**", "/diary/**", "/app/**", "/ai/**", "/auth/**")
+            )
             .formLogin(login -> login
                 .loginPage("/")
                 .loginProcessingUrl("/none")
@@ -72,7 +72,15 @@ public class SecurityConfig {
                     .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
                     .requestMatchers(GET, "/", "/css/**", "/js/**", "/images/**", "/assets/**", "/uploads/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers("/auth/login", "/auth/logout", "/auth-idpw","/auth-idpw-verification", "/auth/regist/**", "/auth/regist-mail","/auth/auth-id","/auth/auth-pw").permitAll()
+                    .requestMatchers(
+                        "/auth/login",
+                        "/auth/logout",
+                        "/auth/auth-idpw",
+                        "/auth/auth-idpw-verification",
+                        "/auth/regist/**",
+                        "/auth/regist-mail",
+                        "/auth/auth-id",
+                        "/auth/auth-pw").permitAll()
                     .requestMatchers("/auth/change-pw", "/auth/find-idpw","/member/leave", "/member/leave-success").permitAll()
                     .requestMatchers("/custom/**").permitAll()
                     .requestMatchers("/api/ai/list/img").permitAll()

@@ -143,25 +143,18 @@ public class AuthController {
     public String sendAuthCodeForId(@RequestParam String email, Model model,
         @RequestParam(required = false) String userId,
         HttpSession session) {
-
-        // code 존재 x = 인증번호 요청 전 단계
-        // 이메일만 입력 들어오면 아이디 검사(아이디 존재x)
-
-        // 아이디+비번 검사 1단계 : 이메일 유효성 검사
-        if (!memberService.isValidEmail(email)) {
-            if (userId != null) {
-                // 비번 검사 1.1 단계
+        if(userId != null) {
+            if (!memberService.existsByUserIdAndEmail(userId, email)) {
+                model.addAttribute("error", "일치하는 계정이 없습니다.");
                 model.addAttribute("type", "pw");
+                return "member/find-idpw";
             }
-            model.addAttribute("error", "유효한 이메일 형식이 아닙니다.");
-            return "member/find-idpw";
-        }
-
-        // 비번 검사 1.2단계 : 이메일 + 아이디로 사용자 존재 확인
-        if (!memberService.existsByUserIdAndEmail(userId, email)) {
-            model.addAttribute("error", "일치하는 계정이 없습니다.");
-            model.addAttribute("type", "pw");
-            return "member/find-idpw";
+        } else {
+            if (!memberService.isValidEmail(email)) {
+                model.addAttribute("type", "pw");
+                model.addAttribute("error", "유효한 이메일 형식이 아닙니다.");
+                return "member/find-idpw";
+            }
         }
 
         try {
@@ -193,9 +186,18 @@ public class AuthController {
         @RequestParam String code, HttpSession session) {
 
         // 인증번호가 입력된 상태 → 인증번호 검증 단계
-        String sessionCode = (String) session.getAttribute("authCode");
-        String sessionEmail = (String) session.getAttribute("authEmail");
-        String sessionUserId = (String) session.getAttribute("authUserId");
+        String sessionCode, sessionEmail, sessionUserId;
+        if (userId != null) {
+            // 비밀번호 찾기
+            sessionCode = (String) session.getAttribute("pwAuthCode");
+            sessionEmail = (String) session.getAttribute("pwAuthEmail");
+            sessionUserId = (String) session.getAttribute("pwAuthUserId");
+        } else {
+            // 아이디 찾기
+            sessionCode = (String) session.getAttribute("idAuthCode");
+            sessionEmail = (String) session.getAttribute("idAuthEmail");
+            sessionUserId = null;
+        }
 
         // 인증 성공!!
         if (sessionCode != null && sessionCode.equals(code)) {
@@ -206,6 +208,7 @@ public class AuthController {
                 try {
                     // 아이디 찾기
                     userId = memberService.findUserIdByEmailFromSession(session);
+                    log.info("userId : " + userId);
                     model.addAttribute("message", userId);
                     return "member/find-idpw-verification";
                 } catch (CommonException e) {
@@ -218,7 +221,7 @@ public class AuthController {
                 model.addAttribute("email", sessionEmail);
                 model.addAttribute("userId", sessionUserId);
                 model.addAttribute("step", "verify");
-                return "member/find-idpw-verification";
+                return "member/reset-password";
             }
         }else {
             // 인증 실패!!

@@ -5,20 +5,19 @@ document.addEventListener("DOMContentLoaded", function () {
   const formFindPw = document.getElementById("form-find-pw");
 
   // 아이디 찾기 상태 관리
-  let findIdStep = 'email'; // 'email' 또는 'verify'
+  let findIdStep = window.findIdStep || 'email';
   const findIdSubmitBtn = document.getElementById("find-id-submit-btn");
   const verificationGroupId = document.getElementById("verification-group-id");
-  const stepInputId = document.getElementById("step-input-id");
 
   // 비밀번호 찾기 상태 관리
-  let findPwStep = 'email'; // 'email' 또는 'verify'
+  let findPwStep = window.findPwStep || 'email';
   const findPwSubmitBtn = document.getElementById("find-pw-submit-btn");
   const verificationGroupPw = document.getElementById("verification-group-pw");
-  const useridGroupPw = document.getElementById("userid-group-pw");
-  const stepInputPw = document.getElementById("step-input-pw");
 
   // 탭 전환 이벤트
   btnFindId.addEventListener("click", () => {
+    if (btnFindId.disabled) return;
+
     formFindId.style.display = "flex";
     formFindPw.style.display = "none";
 
@@ -32,6 +31,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   btnFindPw.addEventListener("click", () => {
+    if (btnFindPw.disabled) return;
+
     formFindPw.style.display = "flex";
     formFindId.style.display = "none";
 
@@ -49,27 +50,30 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
 
     if (findIdStep === 'email') {
-      // 이메일 단계: 인증번호 받기
-      const email = document.querySelector("#form-find-id input[name='email']").value;
+      const email = document.querySelector("#form-find-id input[name='email']").value.trim();
       if (!email) {
         showMessage("이메일을 입력해주세요.", true);
         return;
       }
 
-      // 서버에 인증번호 요청
-      requestVerificationCode('id', email);
+      if (!isValidEmail(email)) {
+        showMessage("유효한 이메일 형식이 아닙니다.", true);
+        return;
+      }
+
+      // 일반 폼 제출로 인증번호 요청
+      submitFormWithLoading(formFindId, findIdSubmitBtn, '/auth/auth-idpw');
 
     } else if (findIdStep === 'verify') {
-      // 인증 단계: 아이디 찾기
-      const code = document.getElementById("code-input-id").value;
+      const code = document.getElementById("code-input-id").value.trim();
+
       if (!code) {
         showMessage("인증번호를 입력해주세요.", true);
         return;
       }
 
-      // 실제 폼 제출
-      stepInputId.value = 'verify';
-      formFindId.submit();
+      // 일반 폼 제출로 인증번호 검증
+      submitFormWithLoading(formFindId, findIdSubmitBtn, '/auth/auth-idpw-verification');
     }
   });
 
@@ -78,9 +82,8 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
 
     if (findPwStep === 'email') {
-      // 이메일 단계: 인증번호 받기
-      const email = document.querySelector("#form-find-pw input[name='email']").value;
-      const userId = document.querySelector("#form-find-pw input[name='userId']").value;
+      const email = document.querySelector("#form-find-pw input[name='email']").value.trim();
+      const userId = document.querySelector("#form-find-pw input[name='userId']").value.trim();
 
       if (!email) {
         showMessage("이메일을 입력해주세요.", true);
@@ -91,79 +94,56 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // 서버에 인증번호 요청
-      requestVerificationCode('pw', email, userId);
+      if (!isValidEmail(email)) {
+        showMessage("유효한 이메일 형식이 아닙니다.", true);
+        return;
+      }
+
+      // 일반 폼 제출로 인증번호 요청
+      submitFormWithLoading(formFindPw, findPwSubmitBtn, '/auth/auth-idpw');
 
     } else if (findPwStep === 'verify') {
-      // 인증 단계: 비밀번호 재설정
-      const code = document.getElementById("code-input-pw").value;
+      const code = document.getElementById("code-input-pw").value.trim();
+
       if (!code) {
         showMessage("인증번호를 입력해주세요.", true);
         return;
       }
 
-      // 실제 폼 제출
-      stepInputPw.value = 'verify';
-      formFindPw.submit();
+      // 일반 폼 제출로 인증번호 검증
+      submitFormWithLoading(formFindPw, findPwSubmitBtn, '/auth/auth-idpw-verification');
     }
   });
 
-  // 인증번호 요청 함수
-  function requestVerificationCode(type, email, userId = null) {
-    const submitBtn = type === 'id' ? findIdSubmitBtn : findPwSubmitBtn;
-    const originalText = submitBtn.innerHTML;
+  // 폼 제출 함수 (로딩 상태 포함)
+  function submitFormWithLoading(form, button, action) {
+    const originalText = button.innerHTML;
+    const originalAction = form.action;
 
-    // 로딩 상태
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 전송 중...';
-    submitBtn.disabled = true;
+    // 로딩 상태로 변경
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...';
+    button.disabled = true;
 
-    // 실제 환경에서는 AJAX로 서버에 요청
-    // 여기서는 데모를 위해 setTimeout 사용
+    // 폼 액션 변경
+    form.action = action;
+
+    // 잠시 후 폼 제출 (사용자가 로딩 상태를 볼 수 있도록)
     setTimeout(() => {
-      submitBtn.disabled = false;
+      form.submit();
+    }, 300);
+  }
 
-      if (type === 'id') {
-        // 아이디 찾기: 인증번호 입력 단계로 전환
-        findIdStep = 'verify';
-        verificationGroupId.style.display = 'block';
-        submitBtn.innerHTML = '<span>아이디 찾기</span>';
-
-        const emailInput = document.querySelector("#form-find-id input[name='email']");
-        emailInput.readOnly = true;
-        emailInput.style.backgroundColor = '#f9fafb';
-        showMessage(`${email}로 인증번호가 전송되었습니다.`, false);
-
-        // 인증번호 입력 필드에 포커스
-        setTimeout(() => {
-          document.getElementById("code-input-id").focus();
-        }, 100);
-
-      } else {
-        // 비밀번호 찾기: 인증번호 입력 단계로 전환
-        findPwStep = 'verify';
-        verificationGroupPw.style.display = 'block';
-        submitBtn.innerHTML = '<span>비밀번호 재설정</span>';
-
-        const emailInput = document.querySelector("#form-find-pw input[name='email']");
-        const userIdInput = document.querySelector("#form-find-pw input[name='userId']");
-        emailInput.readOnly = true;
-        userIdInput.readOnly = true;
-        emailInput.style.backgroundColor = '#f9fafb';
-        userIdInput.style.backgroundColor = '#f9fafb';
-        showMessage(`${email}로 인증번호가 전송되었습니다.`, false);
-
-        // 인증번호 입력 필드에 포커스
-        setTimeout(() => {
-          document.getElementById("code-input-pw").focus();
-        }, 100);
-      }
-    }, 2000);
+  // 이메일 유효성 검사 함수
+  function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
   // 폼 리셋 함수들
   function resetFindIdForm() {
+    if (findIdStep === 'verify') return;
+
     findIdStep = 'email';
-    stepInputId.value = 'email';
     verificationGroupId.style.display = 'none';
     findIdSubmitBtn.innerHTML = '<span>인증번호 받기</span>';
     findIdSubmitBtn.disabled = false;
@@ -174,12 +154,13 @@ document.addEventListener("DOMContentLoaded", function () {
     emailInput.readOnly = false;
     emailInput.style.backgroundColor = '';
     emailInput.value = '';
-    codeInput.value = '';
+    if (codeInput) codeInput.value = '';
   }
 
   function resetFindPwForm() {
+    if (findPwStep === 'verify') return;
+
     findPwStep = 'email';
-    stepInputPw.value = 'email';
     verificationGroupPw.style.display = 'none';
     findPwSubmitBtn.innerHTML = '<span>인증번호 받기</span>';
     findPwSubmitBtn.disabled = false;
@@ -194,54 +175,35 @@ document.addEventListener("DOMContentLoaded", function () {
     userIdInput.style.backgroundColor = '';
     emailInput.value = '';
     userIdInput.value = '';
-    codeInput.value = '';
+    if (codeInput) codeInput.value = '';
   }
 
   function clearMessages() {
-    // 메시지 컨테이너가 있다면 클리어
     const errorMsg = document.getElementById("error-msg");
     if (errorMsg) {
       errorMsg.style.display = "none";
     }
 
-    // Thymeleaf 메시지도 숨김
+    const existingMsg = document.querySelector(".dynamic-message");
+    if (existingMsg) {
+      existingMsg.remove();
+    }
+
     const thymeleafMessages = document.querySelectorAll("p[th\\:if]");
     thymeleafMessages.forEach(msg => {
       msg.style.display = "none";
     });
   }
-
-  // 폼 제출 시 로딩 상태 표시
-  const forms = document.querySelectorAll('.regist_form');
-  forms.forEach(form => {
-    form.addEventListener('submit', function(e) {
-      const submitBtn = form.querySelector('.green-btn');
-      const originalText = submitBtn.innerHTML;
-
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...';
-      submitBtn.disabled = true;
-
-      // 실제 환경에서는 제거하세요 - 데모용 복원
-      setTimeout(() => {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-      }, 3000);
-    });
-  });
 });
 
 // 메시지 표시 함수
 function showMessage(message, isError = false) {
-  // 기존 메시지들 숨김
   const errorMsg = document.getElementById("error-msg");
   if (errorMsg) {
     errorMsg.style.display = "none";
   }
 
-  // 새 메시지 생성
   const linksSection = document.querySelector(".links-section");
-
-  // 기존 동적 메시지 제거
   const existingMsg = document.querySelector(".dynamic-message");
   if (existingMsg) {
     existingMsg.remove();

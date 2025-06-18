@@ -494,3 +494,149 @@ body {
     transform: rotate(360deg);
   }
 }
+
+/* find-idpw-verification.html을 위한 추가 스타일 */
+
+/* 성공 아이콘 애니메이션 */
+@keyframes successPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.success-icon {
+  animation: successPulse 2s ease-in-out infinite;
+}
+
+/* 사용자 아이디 표시 스타일 */
+.user-id-display {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin: 20px 0;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* 결과 박스 스타일 */
+.result-box {
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
+  padding: 30px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  color: white;
+  text-align: center;
+}
+
+.result-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+/* 안내 박스 스타일 */
+.info-box {
+  background: rgba(137, 192, 126, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  border-left: 4px solid #89c07e;
+}
+
+.info-box-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.info-box-icon {
+  color: #89c07e;
+  margin-top: 2px;
+}
+
+.info-box-text {
+  color: #374151;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.info-box-title {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.info-box ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+/* 단일 링크 중앙 정렬 */
+.auth-links.single-link {
+  justify-content: center;
+}
+
+/* reset-password.html을 위한 추가 스타일 */
+
+/* 보안 가이드 박스 */
+.security-guide {
+  background: rgba(137, 192, 126, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  border-left: 4px solid #89c07e;
+}
+
+.security-guide-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.security-guide-icon {
+  color: #89c07e;
+  margin-top: 2px;
+}
+
+.security-guide-text {
+  color: #374151;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.security-guide-title {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.security-guide ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+/* 메시지 스타일 (에러/성공) */
+.message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin: 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.message.error {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+.message.success {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
