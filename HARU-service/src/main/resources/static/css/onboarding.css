@@ -1,88 +1,389 @@
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: 'Noto Sans KR', sans-serif;
-  background-color: #dde7df;
-  color: #222;
+  background:
+      radial-gradient(circle at 20% 80%, rgba(120, 160, 100, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(137, 192, 126, 0.08) 0%, transparent 50%),
+      linear-gradient(135deg, #f6f9f7 0%, #eef4f0 100%);
+  min-height: 100vh;
+  color: #333;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* 배경 애니메이션 요소들 */
+.bg-decoration {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(137, 192, 126, 0.1);
+  backdrop-filter: blur(10px);
+  animation: float 6s ease-in-out infinite;
+  z-index: 1;
+}
+
+.bg-decoration:nth-child(1) {
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+  background: rgba(137, 192, 126, 0.08);
+}
+
+.bg-decoration:nth-child(2) {
+  top: 60%;
+  right: 10%;
+  animation-delay: 2s;
+  width: 150px;
+  height: 150px;
+  background: rgba(74, 124, 89, 0.1);
+}
+
+.bg-decoration:nth-child(3) {
+  bottom: 20%;
+  left: 20%;
+  animation-delay: 4s;
+  width: 100px;
+  height: 100px;
+  background: rgba(120, 160, 100, 0.12);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
 }
 
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  /*padding: 60px;*/
+  min-height: 100vh;
+  padding: 40px 20px;
+  position: relative;
 }
 
 .content {
   text-align: center;
   width: 100%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 60px 40px;
+  box-shadow:
+      0 20px 60px rgba(74, 124, 89, 0.15),
+      0 0 0 1px rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: slideIn 0.8s ease-out;
+  z-index: 10;
+  position: relative;
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 h1 {
-  font-size: 56px;
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+  background: linear-gradient(135deg, #89c07e, #4a7c59);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+h1 strong {
   font-weight: 900;
-  margin-bottom: 0.6em;
-  line-height: 1.4;
+  display: block;
+  margin-top: 8px;
 }
 
 .subtitle {
   font-size: 18px;
-  margin-bottom: 60px;
-  color: #444;
+  margin-bottom: 40px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.subtitle span {
+  font-weight: 600;
+  color: #89c07e;
 }
 
 .start-btn {
-  background-color: #417b56;
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
   color: white;
-  font-size: 26px;
-  padding: 20px 50px;
-  width: 416px;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 18px 40px;
   border: none;
-  border-radius: 10px;
+  border-radius: 50px;
   cursor: pointer;
   margin-bottom: 50px;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 25px rgba(137, 192, 126, 0.4);
+  position: relative;
+  overflow: hidden;
+  min-width: 200px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.start-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s;
+}
+
+.start-btn:hover::before {
+  left: 100%;
 }
 
 .start-btn:hover {
-  background-color: #2f5e3d;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(137, 192, 126, 0.6);
 }
 
+.start-btn:active {
+  transform: translateY(0);
+}
+
+/* AI 원들을 4열 그리드로 배치 */
 .circle-container {
-  display: flex;
-  justify-content: center;
-  gap: 80px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  justify-items: center;
 }
 
 .circle {
-  width: 250px;
-  height: 250px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  line-height: 1.5;
   overflow: hidden;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  box-shadow:
+      0 15px 35px rgba(74, 124, 89, 0.1),
+      0 5px 15px rgba(74, 124, 89, 0.08);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
+  animation: floatCircle 6s ease-in-out infinite;
+  /* 클릭 효과 제거 */
+}
+
+.circle:nth-child(1) {
+  background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%);
+  animation-delay: 0s;
+}
+
+.circle:nth-child(2) {
+  background: linear-gradient(135deg, #89c07e 20%, #6ba46f 100%);
+  animation-delay: -2s;
+}
+
+.circle:nth-child(3) {
+  background: linear-gradient(135deg, #a8d49a 0%, #89c07e 100%);
+  animation-delay: -4s;
+}
+
+.circle:nth-child(4) {
+  background: linear-gradient(135deg, #4a7c59 0%, #89c07e 100%);
+  animation-delay: -1s;
+}
+
+.circle:nth-child(5) {
+  background: linear-gradient(135deg, #c7e6c0 0%, #89c07e 100%);
+  animation-delay: -3s;
+}
+
+.circle:nth-child(6) {
+  background: linear-gradient(135deg, #89c07e 40%, #6ba46f 100%);
+  animation-delay: -5s;
+}
+
+.circle:nth-child(7) {
+  background: linear-gradient(135deg, #a8d49a 20%, #89c07e 90%);
+  animation-delay: -1.5s;
+}
+
+.circle:nth-child(8) {
+  background: linear-gradient(135deg, #4a7c59 20%, #89c07e 80%);
+  animation-delay: -3.5s;
+}
+
+@keyframes floatCircle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* 호버 효과는 유지하되 클릭 효과는 제거 */
+.circle:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow:
+      0 20px 40px rgba(74, 124, 89, 0.12),
+      0 8px 20px rgba(74, 124, 89, 0.1);
 }
 
 .circle img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease;
 }
 
-h1 {
-  font-size: 56px;
-  font-weight: 700;
-  line-height: 1.6;
-  margin-bottom: 60px;
-  color: #222;
+.circle:hover img {
+  transform: scale(1.05);
 }
 
+/* AI 캐릭터가 없을 경우를 위한 플레이스홀더 */
+.circle-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+  text-align: center;
+  padding: 15px;
+}
+
+.circle-placeholder::before {
+  content: '🤖';
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .content {
+    margin: 20px;
+    padding: 40px 30px;
+  }
+
+  .circle-container {
+    gap: 15px;
+    max-width: 400px;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .circle {
+    width: 80px;
+    height: 80px;
+  }
+
+  .start-btn {
+    font-size: 18px;
+    padding: 16px 32px;
+    min-width: 180px;
+  }
+
+  .bg-decoration {
+    display: none;
+  }
+
+  .circle-placeholder::before {
+    font-size: 20px;
+    margin-bottom: 2px;
+  }
+
+  .circle-placeholder {
+    font-size: 10px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 30px 20px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .circle-container {
+    gap: 10px;
+    max-width: 280px;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .circle {
+    width: 60px;
+    height: 60px;
+  }
+
+  .circle-placeholder::before {
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  .circle-placeholder {
+    font-size: 8px;
+    padding: 8px;
+  }
+}
+
+/* 접근성 개선 - 포커스는 유지하되 클릭 기능은 제거 */
+.start-btn:focus {
+  outline: 3px solid rgba(137, 192, 126, 0.5);
+  outline-offset: 2px;
+}
+
+/* 로딩 상태 표시 */
+.loading {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 기존 스타일과의 호환성 유지 */
 .button-group {
   display: flex;
   flex-direction: column;
@@ -91,8 +392,8 @@ h1 {
 
 .option-btn {
   background-color: #f6fef8;
-  border: 1px solid #417b56;
-  color: #417b56;
+  border: 1px solid #89c07e;
+  color: #89c07e;
   font-size: 18px;
   padding: 18px 32px;
   border-radius: 8px;
@@ -103,4 +404,6 @@ h1 {
 
 .option-btn:hover {
   background-color: #e4f5ec;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(137, 192, 126, 0.2);
 }

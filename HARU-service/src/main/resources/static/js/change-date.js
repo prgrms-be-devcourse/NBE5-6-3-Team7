@@ -29,7 +29,7 @@ function setupMonthPicker() {
   // 상단 패딩
   for (let i = 0; i < 5; i++) {
     const item = document.createElement('div');
-    item.className = 'wheel-picker-item';
+    item.className = 'wheel-picker-item padding-item';
     monthPicker.appendChild(item);
   }
 
@@ -56,7 +56,7 @@ function setupMonthPicker() {
   // 하단 패딩
   for (let i = 0; i < 5; i++) {
     const item = document.createElement('div');
-    item.className = 'wheel-picker-item';
+    item.className = 'wheel-picker-item padding-item';
     monthPicker.appendChild(item);
   }
 
@@ -68,6 +68,10 @@ function setupMonthPicker() {
     }
   }, 100);
 
+  // 스크롤 범위 제한 추가
+  addScrollLimiter(monthPicker);
+
+  // 스크롤 자동 변경 기능 추가
   setupScrollListener(monthPicker, (value) => {
     selectedMonth = parseInt(value);
   });
@@ -84,7 +88,7 @@ function setupYearPicker() {
   // 상단 패딩
   for (let i = 0; i < 5; i++) {
     const item = document.createElement('div');
-    item.className = 'wheel-picker-item';
+    item.className = 'wheel-picker-item padding-item';
     yearPicker.appendChild(item);
   }
 
@@ -111,7 +115,7 @@ function setupYearPicker() {
   // 하단 패딩
   for (let i = 0; i < 5; i++) {
     const item = document.createElement('div');
-    item.className = 'wheel-picker-item';
+    item.className = 'wheel-picker-item padding-item';
     yearPicker.appendChild(item);
   }
 
@@ -123,6 +127,10 @@ function setupYearPicker() {
     }
   }, 100);
 
+  // 스크롤 범위 제한 추가
+  addScrollLimiter(yearPicker);
+
+  // 스크롤 자동 변경 기능 추가
   setupScrollListener(yearPicker, (value) => {
     selectedYear = parseInt(value);
   });
@@ -136,50 +144,116 @@ function updateSelection(container, selectedItem) {
 }
 
 function scrollToItem(container, item) {
+  if (!container || !item) return;
+
   const containerHeight = container.offsetHeight;
   const itemTop = item.offsetTop;
-  const itemHeight = 36;
+  const itemHeight = 40; // wheel-picker-item height
   const scrollTop = itemTop - (containerHeight / 2) + (itemHeight / 2);
 
+  // 스크롤 범위 안전장치
+  const maxScroll = container.scrollHeight - containerHeight;
+  const safeScrollTop = Math.max(0, Math.min(scrollTop, maxScroll));
+
   container.scrollTo({
-    top: scrollTop,
+    top: safeScrollTop,
     behavior: 'smooth'
   });
 }
 
-function setupScrollListener(container, onValueChange) {
-  let scrollTimeout;
+// 스크롤 범위 제한 함수
+function addScrollLimiter(container) {
+  if (!container) return;
+
+  let isScrolling = false;
 
   container.addEventListener('scroll', () => {
+    if (isScrolling) return;
+
+    const maxScroll = container.scrollHeight - container.offsetHeight;
+    const currentScroll = container.scrollTop;
+
+    // 스크롤이 범위를 벗어났을 때 보정
+    if (currentScroll < 0) {
+      isScrolling = true;
+      container.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => { isScrolling = false; }, 100);
+    } else if (currentScroll > maxScroll) {
+      isScrolling = true;
+      container.scrollTo({ top: maxScroll, behavior: 'smooth' });
+      setTimeout(() => { isScrolling = false; }, 100);
+    }
+  });
+
+  // 터치/휠 이벤트 제한
+  container.addEventListener('wheel', (e) => {
+    const maxScroll = container.scrollHeight - container.offsetHeight;
+    const currentScroll = container.scrollTop;
+
+    // 위로 스크롤할 때 상단 경계 확인
+    if (e.deltaY < 0 && currentScroll <= 0) {
+      e.preventDefault();
+    }
+    // 아래로 스크롤할 때 하단 경계 확인
+    else if (e.deltaY > 0 && currentScroll >= maxScroll) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+}
+
+// 스크롤 자동 변경 기능 (안전장치 포함)
+function setupScrollListener(container, onValueChange) {
+  if (!container || !onValueChange) return;
+
+  let scrollTimeout;
+  let isManualScroll = false;
+
+  container.addEventListener('scroll', () => {
+    // 안전장치 작동 중이면 무시
+    if (isManualScroll) return;
+
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
-      const containerHeight = container.offsetHeight;
-      const scrollTop = container.scrollTop;
-      const centerY = scrollTop + containerHeight / 2;
+      try {
+        const containerHeight = container.offsetHeight;
+        const scrollTop = container.scrollTop;
+        const centerY = scrollTop + containerHeight / 2;
 
-      const items = container.querySelectorAll('.wheel-picker-item[data-value]');
-      let closestItem = null;
-      let closestDistance = Infinity;
+        const items = container.querySelectorAll('.wheel-picker-item[data-value]');
+        if (items.length === 0) return;
 
-      items.forEach(item => {
-        const itemTop = item.offsetTop;
-        const itemCenter = itemTop + 18; // item height / 2
-        const distance = Math.abs(centerY - itemCenter);
+        let closestItem = null;
+        let closestDistance = Infinity;
 
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestItem = item;
+        items.forEach(item => {
+          const itemTop = item.offsetTop;
+          const itemCenter = itemTop + 20; // item height / 2 (40px / 2)
+          const distance = Math.abs(centerY - itemCenter);
+
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestItem = item;
+          }
+        });
+
+        if (closestItem && closestItem.dataset.value) {
+          updateSelection(container, closestItem);
+          onValueChange(closestItem.dataset.value);
+
+          // 자동 중앙 정렬 (부드럽게)
+          isManualScroll = true;
+          scrollToItem(container, closestItem);
+          setTimeout(() => { isManualScroll = false; }, 300);
         }
-      });
-
-      if (closestItem) {
-        updateSelection(container, closestItem);
-        onValueChange(closestItem.dataset.value);
-        scrollToItem(container, closestItem);
+      } catch (error) {
+        console.warn('스크롤 리스너 오류:', error);
+        // 오류 발생 시 안전하게 무시
       }
     }, 150);
   });
 }
+
+// setupScrollListener 함수 제거 - 더 이상 사용하지 않음
 
 // 이벤트 리스너
 document.getElementById("cancel-btn").addEventListener("click", closeModal);
@@ -196,6 +270,13 @@ document.getElementById("confirm-btn").addEventListener("click", () => {
 // 모달 외부 클릭시 닫기
 dateModal.addEventListener('click', (e) => {
   if (e.target === dateModal) {
+    closeModal();
+  }
+});
+
+// 키보드 지원 추가
+dateModal.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
     closeModal();
   }
 });
