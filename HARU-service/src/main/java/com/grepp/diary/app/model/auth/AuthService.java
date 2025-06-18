@@ -106,10 +106,15 @@ public class AuthService implements UserDetailsService {
             mailDto
         );
 
-        session.setAttribute("authCode", code);
-        session.setAttribute("authEmail", email);
         if (userId != null) {
-            session.setAttribute("authUserId", userId);
+            // 비밀번호 찾기일 때
+            session.setAttribute("pwAuthCode", code);
+            session.setAttribute("pwAuthEmail", email);
+            session.setAttribute("pwAuthUserId", userId);
+        } else {
+            // 아이디 찾기일 때
+            session.setAttribute("idAuthCode", code);
+            session.setAttribute("idAuthEmail", email);
         }
     }
 }
