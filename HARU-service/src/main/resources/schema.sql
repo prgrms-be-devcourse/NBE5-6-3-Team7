@@ -73,7 +73,7 @@ CREATE TABLE `DIARY` (
 );
 
 -- 일기 사진 테이블
-CREATE TABLE `IMAGE` (
+CREATE TABLE `DIARY_IMAGE` (
   `IMG_ID`        INT            NOT NULL AUTO_INCREMENT,
   `DIARY_ID`      INT            NOT NULL,
   `SAVE_PATH`     VARCHAR(500)   NOT NULL,
