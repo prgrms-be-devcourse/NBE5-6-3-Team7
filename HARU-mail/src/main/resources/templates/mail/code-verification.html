@@ -1,28 +1,163 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>diary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HARU - 인증코드</title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+  <style type="text/css">
+    /* 이메일 클라이언트 호환성을 위한 기본 스타일 */
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+
+    /* 반응형 */
+    @media only screen and (max-width: 600px) {
+      .container { width: 100% !important; }
+      .content-block { padding: 20px !important; }
+      .header-title { font-size: 24px !important; }
+      .code-display { padding: 20px !important; font-size: 32px !important; }
+    }
+  </style>
 </head>
-<body style="margin: 0; font-family: Arial, sans-serif; background-color: #DDE6E0;">
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f6f9f7 0%, #eef4f0 100%); line-height: 1.6;">
 
-<div style="background-color: #467750; padding: 60px 0; text-align: center;">
-  <img src="cid:mail-image" alt="메일 이미지" style="width: 120px; height: auto;">
-  <h1 style="font-size: 28px; color: white">
-    ID/PW 찾기 인증코드
-  </h1>
-</div>
+<!-- 전체 컨테이너 -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: linear-gradient(135deg, #f6f9f7 0%, #eef4f0 100%); min-height: 100vh;">
+  <tr>
+    <td style="padding: 40px 20px;">
 
-<div style="text-align: center; padding: 60px 20px; background-color: #E0E8E2">
-  <p style="font-size: 14px; color: #333333; margin-bottom: 40px;">
-    아래의 인증코드를 입력해주세요
-  </p>
+      <!-- 메인 이메일 컨테이너 -->
+      <table class="container" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 20px 60px rgba(74, 124, 89, 0.15); overflow: hidden;">
 
-  <div th:text="${code}"
-      style="background-color: #467750; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 18px; font-weight: bold; display: inline-block;">
-  </div>
+        <!-- 헤더 섹션 -->
+        <tr>
+          <td style="background: linear-gradient(135deg, #89c07e 0%, #4a7c59 100%); padding: 50px 40px; text-align: center; position: relative;">
+            <!-- 배경 패턴 -->
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;><circle cx=&quot;50&quot; cy=&quot;50&quot; r=&quot;2&quot; fill=&quot;rgba(255,255,255,0.1)&quot;/></svg>'); opacity: 0.3;"></div>
 
-</div>
+            <!-- 브랜드 로고/아이콘 -->
+            <div style="position: relative; z-index: 2;">
+              <div style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.2); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; backdrop-filter: blur(10px);">
+                <span style="font-size: 40px; color: white;">🔐</span>
+              </div>
+
+              <!-- 브랜드명 -->
+              <div style="margin-bottom: 15px;">
+                <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: white; letter-spacing: -0.5px;">HARU</h1>
+              </div>
+
+              <!-- 메인 제목 -->
+              <h2 class="header-title" style="margin: 0; font-size: 28px; font-weight: 600; color: white; line-height: 1.3;">
+                인증코드가 발송되었습니다
+              </h2>
+            </div>
+          </td>
+        </tr>
+
+        <!-- 메인 콘텐츠 -->
+        <tr>
+          <td class="content-block" style="padding: 50px 40px; text-align: center; background: #ffffff;">
+
+            <!-- 인사말 -->
+            <div style="margin-bottom: 30px;">
+              <h3 style="margin: 0 0 15px 0; font-size: 24px; font-weight: 600; color: #374151;">
+                계정 찾기 인증코드 🔑
+              </h3>
+              <p style="margin: 0; font-size: 16px; color: #6b7280; line-height: 1.6;">
+                아래의 인증코드를 입력하여 본인 확인을 완료해주세요.
+              </p>
+            </div>
+
+            <!-- 인증코드 표시 영역 -->
+            <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 3px dashed #89c07e; border-radius: 16px; padding: 40px 30px; margin: 40px 0;">
+              <p style="margin: 0 0 20px 0; font-size: 14px; color: #6b7280; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">인증코드</p>
+
+              <!-- 인증코드 -->
+              <div class="code-display" th:text="${code}" style="
+                  font-family: 'Courier New', monospace;
+                  font-size: 42px;
+                  font-weight: 700;
+                  color: #059669;
+                  letter-spacing: 8px;
+                  margin: 20px 0;
+                  text-shadow: 0 2px 4px rgba(5, 150, 105, 0.1);
+                  user-select: all;
+                  -webkit-user-select: all;
+                  -moz-user-select: all;
+                ">
+                123456
+              </div>
+
+              <p style="margin: 20px 0 0 0; font-size: 12px; color: #9ca3af;">
+                위 숫자를 복사하여 인증 화면에 입력해주세요
+              </p>
+            </div>
+
+            <!-- 중요 안내사항 -->
+            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #fca5a5; border-radius: 12px; padding: 25px; margin: 30px 0; text-align: left;">
+              <div style="display: flex; align-items: flex-start;">
+                <div style="margin-right: 12px; margin-top: 2px;">
+                  <span style="font-size: 20px;">⚠️</span>
+                </div>
+                <div>
+                  <p style="margin: 0 0 10px 0; font-size: 16px; font-weight: 600; color: #dc2626;">중요 안내사항</p>
+                  <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #7f1d1d; line-height: 1.6;">
+                    <li>본인이 요청하지 않은 인증코드라면 즉시 무시해주세요</li>
+                    <li>인증코드를 타인과 공유하지 마세요</li>
+                    <li>문제가 지속되면 고객센터로 문의해주세요</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- 도움말 박스 -->
+            <div style="background: rgba(137, 192, 126, 0.1); border-left: 4px solid #89c07e; padding: 20px; border-radius: 8px; text-align: left; margin-top: 30px;">
+              <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: 600; color: #374151;">💡 도움이 필요하신가요?</p>
+              <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #6b7280; line-height: 1.5;">
+                <li>인증코드가 오지 않았다면 스팸 폴더를 확인해주세요</li>
+                <li>코드 입력 시 공백 없이 숫자만 입력하세요</li>
+                <li>유효시간이 지났다면 새로운 인증코드를 요청하세요</li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+
+        <!-- 푸터 -->
+        <tr>
+          <td style="background: #f8fafc; padding: 30px 40px; text-align: center; border-top: 1px solid #e5e7eb;">
+            <p style="margin: 0 0 10px 0; font-size: 14px; color: #89c07e; font-weight: 600;">HARU - 당신의 하루를 기록하는 특별한 공간</p>
+            <p style="margin: 0; font-size: 12px; color: #9ca3af; line-height: 1.4;">
+              이 메일은 계정 보안을 위한 인증 메일입니다.<br>
+              본인이 요청하지 않은 인증이라면 즉시 비밀번호를 변경해주세요.
+            </p>
+
+            <!-- 연락처 정보 -->
+            <div style="margin-top: 20px;">
+              <p style="margin: 0; font-size: 12px; color: #6b7280;">
+                문의사항이 있으시면 언제든지 연락해주세요
+              </p>
+              <div style="margin-top: 10px;">
+                <a href="#" style="display: inline-block; margin: 0 8px; width: 32px; height: 32px; background: #89c07e; border-radius: 50%; text-decoration: none; line-height: 32px; color: white; font-size: 14px;">📧</a>
+                <a href="#" style="display: inline-block; margin: 0 8px; width: 32px; height: 32px; background: #89c07e; border-radius: 50%; text-decoration: none; line-height: 32px; color: white; font-size: 14px;">💬</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+
+      </table>
+
+    </td>
+  </tr>
+</table>
 
 </body>
 </html>
