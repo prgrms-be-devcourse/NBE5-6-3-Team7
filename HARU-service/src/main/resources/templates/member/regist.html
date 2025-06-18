@@ -4,63 +4,142 @@
   <meta charset="UTF-8">
   <title>diary</title>
 </head>
-<link rel="stylesheet" href="/css/index.css">
+<link rel="stylesheet" href="/css/landing/regist.css">
 <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <body>
-<main class="green-container">
-  <div class="green-visual-box" style="position: absolute">
-    <div class="green-visual-content">
-      <div class="box box-1">
-        <div class="eclipse">
-          <img src="/images/ai/1.png" alt="AI 이미지1" />
-        </div>
+<!-- 배경 장식 요소들 -->
+<div class="bg-decoration"></div>
+<div class="bg-decoration"></div>
+<div class="bg-decoration"></div>
+
+<div class="main-container">
+  <!-- 왼쪽 비주얼 섹션 -->
+  <div class="visual-section">
+    <div class="brand-section">
+      <div class="logo-icon">
+        <i class="fas fa-heart"></i>
       </div>
-      <div class="box box-2">
-        <div class="eclipse">
-          <img src="/images/ai/2.png" alt="AI 이미지2" />
-        </div>
+      <h1 class="brand-title">HARU</h1>
+      <p class="brand-subtitle">감정을 기록하고 성장하는<br>특별한 여정을 시작하세요</p>
+    </div>
+
+    <div class="ai-preview">
+      <div class="ai-character">
+        <i class="fas fa-user-circle" style="font-size: 2rem; color: #89c07e;"></i>
       </div>
-      <div class="box box-3">
-        <div class="eclipse">
-          <img src="/images/ai/3.png" alt="AI 이미지3" />
-        </div>
+      <div class="ai-character">
+        <i class="fas fa-smile" style="font-size: 2rem; color: #89c07e;"></i>
       </div>
-      <div class="box box-4">
-        <div class="eclipse">
-          <img src="/images/ai/4.png" alt="AI 이미지4" />
-        </div>
+      <div class="ai-character">
+        <i class="fas fa-heart" style="font-size: 2rem; color: #89c07e;"></i>
+      </div>
+      <div class="ai-character">
+        <i class="fas fa-star" style="font-size: 2rem; color: #89c07e;"></i>
       </div>
     </div>
   </div>
-  <div class="form-wrapper">
-    <h1>회원가입</h1>
-    <form class="regist_form" method="post" th:action="@{/auth/regist}" th:object="${signupForm}">
-      <div class="input-group">
-        <input class="inputBox" th:field="*{userId}" placeholder="아이디"/>
+
+  <!-- 오른쪽 폼 섹션 -->
+  <div class="form-section">
+    <div class="welcome-text">
+      <h2 class="welcome-title">환영합니다!</h2>
+      <p class="welcome-subtitle">새로운 감정 여행을 시작해보세요</p>
+    </div>
+
+    <form class="register_form" method="post" th:action="@{/auth/regist}" th:object="${signupForm}">
+
+      <div class="form-group">
+        <div class="input-group user">
+          <i class="fas fa-user"></i>
+          <input class="inputBox" th:field="*{userId}" placeholder="아이디"/>
+        </div>
+        <div class="error-message" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></div>
       </div>
-      <div class="notice" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></div>
-      <div class="input-group">
-        <input class="inputBox" th:field="*{email}" placeholder="이메일"/>
+
+      <div class="form-group">
+        <div class="input-group email">
+          <i class="fas fa-envelope"></i>
+          <input class="inputBox" th:field="*{email}" placeholder="이메일"/>
+        </div>
+        <div class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
       </div>
-      <div class="notice" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-      <div class="input-group">
-        <input class="inputBox" th:field="*{name}" placeholder="이름"/>
+
+      <div class="form-group">
+        <div class="input-group name">
+          <i class="fas fa-id-card"></i>
+          <input class="inputBox" th:field="*{name}" placeholder="이름"/>
+        </div>
+        <div class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
       </div>
-      <div class="notice" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
-      <div class="input-group">
-        <input type="password" class="inputBox" th:field="*{password}" placeholder="비밀번호"/>
+
+      <div class="form-group">
+        <div class="input-group password">
+          <i class="fas fa-lock"></i>
+          <input type="password" class="inputBox" th:field="*{password}" placeholder="비밀번호"/>
+        </div>
+        <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
       </div>
-      <div class="notice" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
-      <div class="input-group">
-        <input type="password" class="inputBox" th:field="*{repassword}" placeholder="비밀번호 확인"/>
+
+      <div class="form-group">
+        <div class="input-group password">
+          <i class="fas fa-lock"></i>
+          <input type="password" class="inputBox" th:field="*{repassword}" placeholder="비밀번호 확인"/>
+        </div>
+        <div class="error-message" th:if="${#fields.hasErrors('repassword')}"
+             th:errors="*{repassword}"></div>
       </div>
-      <div class="notice" th:if="${#fields.hasErrors('repassword')}"
-           th:errors="*{repassword}"></div>
-      <button class="green-btn" type="submit">회원가입</button>
+
+        <button type="submit" class="register-button" id="registerBtn">
+          <span class="button-text">회원가입</span>
+          <div class="loading">
+            <div class="spinner"></div>
+            <span>가입 처리 중...</span>
+          </div>
+        </button>
     </form>
+
+    <div class="links-section">
+      <div class="auth-links">
+        <a href="/login">이미 계정이 있으신가요? 로그인</a>
+      </div>
+    </div>
+
   </div>
-  </div>
-</main>
+</div>
+
+<script>
+  fetch("/api/ai/list/img")
+  .then(response => response.json())
+  .then(data => {
+    const imgPaths = data.map(dto => {
+      return '/uploads/' + dto.savePath + dto.renamedName;
+    });
+    const aiCharacters = document.querySelectorAll(".ai-character");
+
+    aiCharacters.forEach((character, index) => {
+      if (imgPaths[index]) {
+        character.innerHTML = `<img src="${imgPaths[index]}" alt="AI 캐릭터 ${index + 1}">`;
+      }
+    });
+  })
+  .catch(error => {
+    console.error("AI 이미지 목록 불러오기 실패:", error);
+  });fetch("/api/ai/list/img")
+  .then(response => response.json())
+  .then(data => {
+    const imgPaths = data.map(dto => {
+      return '/uploads/' + dto.savePath + dto.renamedName
+    });
+    const imgElements = document.querySelectorAll(".ai-character");
+    imgElements.forEach((img, index) => {
+      img.src = imgPaths[index];
+    })
+  })
+  .catch(error => {
+    console.error("AI 이미지 목록 불러오기 실패:", error)
+  })
+</script>
 </body>
+
 </html>

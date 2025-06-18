@@ -5,20 +5,30 @@
   <title>일기 작성</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/sidebar.css">
-  <link rel="stylesheet" th:href="@{/css/diary.css}">
+  <link rel="stylesheet" href="/css/diary.css">
+  <link rel="stylesheet" href="/css/change-date.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <div th:replace="fragments/member-sidebar :: memberSidebar"></div>
+  <div th:replace="fragments/change-full-date-modal :: fragment"></div>
+  <!-- 프로그레스 바 -->
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
 
   <div class="main">
+    <!-- 헤더 섹션 -->
+    <div class="diary-header">
+      <h1 class="diary-title">오늘의 일기</h1>
+      <p class="diary-subtitle">당신의 소중한 하루를 기록해보세요</p>
+    </div>
 
     <div class="container">
-      <h2>오늘의 일기를 작성해 볼까요?</h2>
-
       <form th:action="@{/diary}" method="post" enctype="multipart/form-data" th:object="${diaryRequest}">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <!-- 날짜 선택 -->
         <div class="form-box">
           <div class="date-display">
             <input
@@ -27,8 +37,8 @@
                 name="date"
                 class="date-input"
                 style="display: none;"
-                th:value="${diaryDate}"> <!-- 서버에서 LocalDate를 yyyy-MM-dd로 변환해서 전달해야 함 -->
-            <div class="date-text" id="date-text" th:text="${#temporals.format(diaryDate, 'Y년 M월 d일 E요일')}"></div>
+                th:value="${diaryRequest.date}"> <!-- 서버에서 LocalDate를 yyyy-MM-dd로 변환해서 전달해야 함 -->
+            <div class="date-text" id="date-text" th:text="${#temporals.format(diaryRequest.date, 'Y년 M월 d일 E요일')}"></div>
             <button type="button" class="date-change" id="date-change-btn">날짜 변경</button>
           </div>
         </div>
@@ -73,25 +83,13 @@
               <!-- 토글 버튼 -->
               <button type="button" class="toggle-btn" onclick="toggleKeywordExpand(this)">+ 더보기</button>
 
-              <!-- 템플릿 영역 (보이지 않게 숨겨둠) -->
-              <div id="keyword-good" style="display: none;">
-                <div th:each="keyword : ${keywordGroups.EMOTION_GOOD}" class="keyword-chip">
-                  <input type="checkbox" th:id="'kw-' + ${keyword.keywordId}" th:name="keywords" th:value="${keyword.name}">
-                  <label th:for="'kw-' + ${keyword.keywordId}" th:text="${keyword.name}"></label>
-                </div>
-              </div>
-
-              <div id="keyword-bad" style="display: none;">
-                <div th:each="keyword : ${keywordGroups.EMOTION_BAD}" class="keyword-chip">
-                  <input type="checkbox" th:id="'kw-' + ${keyword.keywordId}" th:name="keywords" th:value="${keyword.name}">
-                  <label th:for="'kw-' + ${keyword.keywordId}" th:text="${keyword.name}"></label>
-                </div>
-              </div>
+              <!-- 숨김 영역 -->
+              <div id="keyword-good" style="display: none;"></div>
+              <div id="keyword-bad" style="display: none;"></div>
 
             </div>
           </div>
         </div>
-
 
         <!-- 누구와 함께 -->
         <div class="form-box">
@@ -99,14 +97,8 @@
             <label>누구와 함께였나요? (선택)</label>
             <div class="keyword-section">
               <!-- 동행 키워드들 -->
-              <div class="keyword-group">
-                <div th:each="keyword : ${keywordGroups.PERSON}" class="keyword-chip">
-                  <input type="checkbox"
-                         th:id="'kw-person-' + ${keyword.keywordId}"
-                         th:name="keywords"
-                         th:value="${keyword.name}">
-                  <label th:for="'kw-person-' + ${keyword.keywordId}" th:text="${keyword.name}"></label>
-                </div>
+              <div id="kw-person-wrapper" class="keyword-group">
+
               </div>
             </div>
           </div>
@@ -118,14 +110,8 @@
             <label>어떤 상황이었나요? (선택)</label>
             <div class="keyword-section">
               <!-- 상황 키워드들 -->
-              <div class="keyword-group">
-                <div th:each="keyword : ${keywordGroups.SITUATION}" class="keyword-chip">
-                  <input type="checkbox"
-                         th:id="'kw-situation-' + ${keyword.keywordId}"
-                         th:name="keywords"
-                         th:value="${keyword.name}">
-                  <label th:for="'kw-situation-' + ${keyword.keywordId}" th:text="${keyword.name}"></label>
-                </div>
+              <div id="kw-situation-wrapper" class="keyword-group">
+
               </div>
             </div>
           </div>
@@ -142,7 +128,6 @@
           </div>
         </div>
 
-
         <!-- 이미지 업로드 - Form 안에서 images 리스트 전송 -->
         <div class="form-box">
           <div class="form-group image-upload-wrapper">
@@ -156,11 +141,12 @@
             <!-- 업로드 버튼 -->
             <div class="upload-btn-wrapper">
               <!-- 반드시 form 안에 있어야 하며, name="images"로 서버 전송 가능하게 -->
-              <input type="file" th:field="*{images}" name="images" id="images" accept="image/*" style="display: none;" onchange="previewImages(event)">
+              <input type="file" multiple th:field="*{images}" name="images" id="images" accept="image/*" style="display: none;" onchange="previewImages(event)">
               <label for="images" class="upload-btn">사진 추가하기</label>
             </div>
-<!--  사진은 여러 장 추가할 수 있습니다.  나중에 멘트 바꾸기-->
-            <p class="image-guide">일기와 같이 등록하고 싶은 사진을 한장 추가해 주세요</p>
+            <input type="hidden" name="thumbnailFileName" id="thumbnailFileName" value="">
+
+            <p class="image-guide">사진은 여러장을 추가할 수 있으며 첫번째 사진이 기본 썸네일로 설정됩니다.</p>
           </div>
         </div>
         <!-- 저장 버튼 -->
@@ -173,7 +159,14 @@
   <script src="/js/logout.js"></script>
   <script src="/js/diary.js"></script>
   <script src="/js/sidebar.js"></script>
-
+  <script src="/js/change-full-date.js"></script>
+  <script>
+    document.querySelector('.date-change').addEventListener('click', () => {
+      const input = document.getElementById('diary-date');
+      const baseDate = input.value ? new Date(input.value) : new Date();
+      openDateModal(baseDate);
+    });
+  </script>
 
 </body>
 </html>

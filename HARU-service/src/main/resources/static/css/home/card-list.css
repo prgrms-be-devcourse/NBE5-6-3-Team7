@@ -1,0 +1,230 @@
+.recent-section {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.recent-title-box {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 0 20px;
+}
+
+.recent-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4a7c59 0%, #89c07e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.recent-subtitle {
+  font-size: 1.1rem;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.diary-list-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+  padding: 0 20px;
+}
+
+/* 카드 공통 스타일 */
+.diary-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.diary-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+
+.diary-content {
+  display: flex;
+  position: relative;
+  z-index: 1;
+  min-height: 140px;
+}
+
+/* 왼쪽 이모지 + 날짜 */
+.diary-left {
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  gap: 12px;
+  border-right: 2px solid rgba(137, 192, 126, 0.2);
+}
+
+.emotion-icon {
+  width: 90px;
+  height: 90px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.diary-card:hover .emotion-icon {
+  transform: scale(1.1);
+}
+
+.diary-date {
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  background: rgba(137, 192, 126, 0.2);
+  border-radius: 8px;
+  backdrop-filter: blur(5px);
+}
+
+/* 오른쪽 일기 내용 */
+.diary-right {
+  flex: 1;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+/* 사진 있는 카드 */
+.diary-card.with-image {
+  background: linear-gradient(135deg, rgba(44, 62, 53, 0.9) 0%, rgba(44, 62, 53, 0.8) 100%);
+  color: #ffffff;
+}
+
+.diary-card .image-overlay {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3;
+  z-index: 0;
+  transition: opacity 0.3s ease;
+}
+
+.diary-card:hover .image-overlay {
+  opacity: 0.4;
+}
+
+.diary-card.with-image .diary-left {
+  border-right-color: rgba(255, 255, 255, 0.2);
+}
+
+.diary-card.with-image .diary-date {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.diary-card.with-image .diary-right {
+  position: relative;
+  z-index: 1;
+}
+
+/* 사진 없는 카드 */
+.diary-card.no-image {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+  color: #374151;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .main {
+    margin-left: 60px;
+    padding: 20px 15px;
+  }
+
+  .welcome-title {
+    font-size: 2.2rem;
+  }
+
+  .calendar-container {
+    padding: 20px;
+    margin-bottom: 40px;
+  }
+
+  .calendar-title {
+    font-size: 2rem;
+  }
+
+  .diary-list-section {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0 15px;
+  }
+
+  .recent-title {
+    font-size: 2rem;
+  }
+
+  .diary-card {
+    min-height: 120px;
+  }
+
+  .diary-left {
+    width: 100px;
+    padding: 16px;
+  }
+
+  .emotion-icon {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+/* 로딩 애니메이션 */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(137, 192, 126, 0.3);
+  border-top: 4px solid #89c07e;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 빈 상태 표시 */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+.empty-state i {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  color: #d1d5db;
+}
+
+.empty-state p {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.empty-state small {
+  font-size: 1rem;
+}

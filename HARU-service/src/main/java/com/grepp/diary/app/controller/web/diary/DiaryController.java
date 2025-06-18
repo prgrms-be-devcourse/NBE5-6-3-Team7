@@ -1,21 +1,19 @@
 package com.grepp.diary.app.controller.web.diary;
 
 import com.grepp.diary.app.controller.web.diary.payload.DiaryRequest;
+import com.grepp.diary.app.model.common.code.ImgType;
 import com.grepp.diary.app.model.custom.dto.CustomAiInfoDto;
-import com.grepp.diary.app.model.ai.entity.Ai;
-import com.grepp.diary.app.model.ai.entity.AiImg;
 import com.grepp.diary.app.model.custom.CustomService;
-import com.grepp.diary.app.model.custom.entity.Custom;
 import com.grepp.diary.app.model.diary.DiaryService;
 import com.grepp.diary.app.model.diary.dto.DiaryRecordDto;
 import com.grepp.diary.app.model.diary.entity.Diary;
+import com.grepp.diary.app.model.diary.entity.DiaryImg;
 import com.grepp.diary.app.model.keyword.KeywordService;
 import com.grepp.diary.app.model.keyword.entity.Keyword;
 import com.grepp.diary.infra.error.exceptions.CommonException;
 import com.grepp.diary.infra.util.xss.XssProtectionUtils;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +30,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.grepp.diary.app.model.diary.entity.QDiary.diary;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class DiaryController {
 
     private final DiaryService diaryService;
-    private final KeywordService keywordService;
     private final CustomService customService;
     private final XssProtectionUtils xssUtils;
 
@@ -49,15 +48,11 @@ public class DiaryController {
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
         Model model
     ) {
-        LocalDate targetDate = (date != null) ? date : LocalDate.now();
-        model.addAttribute("diaryDate", targetDate);
-        model.addAttribute("diaryRequest", new DiaryRequest());
-        List<Keyword> allKeywords = keywordService.findAllKeywordEntities();
-        Map<String, List<Keyword>> grouped = allKeywords.stream()
-                                                        .collect(Collectors.groupingBy(k -> k.getType().name()));
-        model.addAttribute("keywordGroups", grouped);
+        DiaryRequest diaryRequest = new DiaryRequest();
+        diaryRequest.setDate((date != null) ? date : LocalDate.now());
+        model.addAttribute("diaryRequest", diaryRequest);
 
-        return "diary/write-diary";
+        return "diary/diary-write";
     }
 
     @PostMapping
@@ -76,7 +71,7 @@ public class DiaryController {
         }
     }
 
-    @GetMapping("/record")
+    @GetMapping("/details")
     public String showDiaryRecordPage(
         Model model,
         @RequestParam("date")
@@ -110,12 +105,15 @@ public class DiaryController {
     @GetMapping("/edit/{id}")
     public String showDiaryEditPage(@PathVariable Integer id, Model model,
         @AuthenticationPrincipal UserDetails user
-
     ) {
         String userId = user.getUsername();
         Optional<Diary> diaryExist = diaryService.findDiaryByUserIdAndDiaryId(userId, id);
-
         model.addAttribute("diary", DiaryRecordDto.fromEntity(diaryExist.get()));
+
+        Optional<DiaryImg> thumbnailImg = diaryExist.get().getImages().stream()
+                                               .filter(img -> ImgType.THUMBNAIL.equals(img.getType()))
+                                               .findFirst();
+        model.addAttribute("thumbnailName", thumbnailImg.map(DiaryImg::getOriginName).orElse(null));
 
         // 선택했던 키워드들
         List<String> keywordNames = diaryExist.get().getKeywords().stream()
@@ -124,10 +122,6 @@ public class DiaryController {
                                          .collect(Collectors.toList());
         model.addAttribute("keywordNames", keywordNames);
 
-        List<Keyword> allKeywords = keywordService.findAllKeywordEntities();
-        Map<String, List<Keyword>> grouped = allKeywords.stream()
-                                                        .collect(Collectors.groupingBy(k -> k.getType().name()));
-        model.addAttribute("keywordGroups", grouped);
         return "diary/edit";
     }
 }

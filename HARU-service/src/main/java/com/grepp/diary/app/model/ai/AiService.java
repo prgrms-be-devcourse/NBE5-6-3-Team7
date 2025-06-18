@@ -1,8 +1,10 @@
 package com.grepp.diary.app.model.ai;
 
 import com.grepp.diary.app.controller.api.admin.payload.AdminAiWriteRequest;
+import com.grepp.diary.app.model.ai.dto.AiImgDto;
 import com.grepp.diary.app.model.ai.dto.AiInfoDto;
 import com.grepp.diary.app.model.ai.dto.AiDto;
+import com.grepp.diary.app.model.ai.dto.AiWithPathDto;
 import com.grepp.diary.app.model.ai.entity.Ai;
 import com.grepp.diary.app.model.ai.entity.AiImg;
 import com.grepp.diary.app.model.ai.repository.AiImgRepository;
@@ -13,6 +15,8 @@ import com.grepp.diary.infra.response.ResponseCode;
 import com.grepp.diary.infra.util.file.FileDto;
 import com.grepp.diary.infra.util.file.FileUtil;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,23 +52,35 @@ public class AiService {
     }
 
     @Transactional
-    public List<Integer> modifyAiActivate(List<Integer> aiIds) {
+    public List<Ai> modifyAiActivate(List<Integer> aiIds) {
+        List<Ai> aiList = new ArrayList<>();
+
         for (Integer id : aiIds) {
-            aiRepository.findById(id).ifPresent(ai -> ai.setIsUse(true));
+            Ai ai = aiRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("AI not found with id: " + id));
+            ai.setIsUse(true);
+            aiList.add(ai);
         }
-        return aiIds;
+
+        return aiRepository.saveAll(aiList);
     }
 
     @Transactional
-    public List<Integer> modifyAiNonActivate(List<Integer> aiIds) {
+    public List<Ai> modifyAiNonActivate(List<Integer> aiIds) {
+        List<Ai> aiList = new ArrayList<>();
+
         for (Integer id : aiIds) {
-            aiRepository.findById(id).ifPresent(ai -> ai.setIsUse(false));
+            Ai ai = aiRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("AI not found with id: " + id));
+            ai.setIsUse(false);
+            aiList.add(ai);
         }
-        return aiIds;
+
+        return aiRepository.saveAll(aiList);
     }
 
     @Transactional
-    public Boolean modifyAi(List<MultipartFile> images, AdminAiWriteRequest request) {
+    public Ai modifyAi(List<MultipartFile> images, AdminAiWriteRequest request) {
         try {
 
             Optional<Ai> optionalAi = aiRepository.findById(request.getId());
@@ -94,14 +110,14 @@ public class AiService {
                 aiImgRepository.save(aiImg);
             }
 
-            return true;
+            return ai;
         } catch (IOException e) {
             throw new CommonException(ResponseCode.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Transactional
-    public Boolean createAi(List<MultipartFile> images, AdminAiWriteRequest request) {
+    public Ai createAi(List<MultipartFile> images, AdminAiWriteRequest request) {
         try {
             Ai ai = new Ai();
 
@@ -123,18 +139,45 @@ public class AiService {
                 aiImgRepository.save(aiImg);
             }
 
-            return true;
+            return ai;
         } catch (IOException e) {
             throw new CommonException(ResponseCode.INTERNAL_SERVER_ERROR);
         }
     }
 
-    /** 모든 AI에 대한 정보를 반환합니다.(프롬프트 제외) */
     public List<AiInfoDto> getAIList() {
         return aiRepository.getAIListDto();
     }
 
     public Optional<Ai> findById(Integer id) {
         return aiRepository.findById(id);
+    }
+
+    @Transactional
+    public List<Ai> deleteAi(List<Integer> requests) {
+        List<Ai> results = new ArrayList<>();
+
+        for (Integer request : requests) {
+
+            Optional<Ai> optionalAi = aiRepository.findById(request);
+
+            if (optionalAi.isEmpty()) {
+                throw new RuntimeException("Ai not found");
+            }
+
+            Ai ai = optionalAi.get();
+            ai.setDeletedAt(LocalDateTime.now());
+            ai.setIsUse(false);
+
+            results.add(ai);
+        }
+
+        aiRepository.saveAllAndFlush(results);
+
+        return results;
+    }
+
+    public List<AiWithPathDto> getImgPathList() {
+        return aiImgRepository.getAiImgInfoActivated();
     }
 }

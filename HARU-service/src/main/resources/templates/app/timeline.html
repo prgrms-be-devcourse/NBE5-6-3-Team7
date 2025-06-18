@@ -15,11 +15,30 @@
   <script src="/js/logout.js"></script>
 
   <div class="main">
-    <div class="timeline-wrapper">
-      <h2 class="timeline-title">타임라인</h2>
+    <!-- 타임라인 헤더 -->
+    <div class="timeline-header">
+      <h1 class="timeline-title">타임라인</h1>
+      <p class="timeline-subtitle">당신의 추억을 되돌아보세요</p>
     </div>
+
+    <!-- 필터 컨트롤 -->
+    <div class="filter-controls">
+      <button class="filter-btn active">전체 일기</button>
+      <button class="filter-btn">사진 일기</button>
+<!--      <button class="filter-btn">🔍 검색</button>-->
+<!--      <button class="filter-btn">지난 달</button>-->
+    </div>
+
+    <!-- 템플릿 정의 -->
     <div th:insert="fragments/diary-card-timeline :: diaryCardTemplate"></div>
-    <div id="diary-card-container" class="card-list"></div>
+
+    <!-- 타임라인 컨테이너 -->
+    <div id="timeline-container" class="timeline-container"></div>
+
+    <!-- 로딩 스피너 -->
+    <div class="loading-spinner" style="display: none;">
+      <div class="spinner"></div>
+    </div>
   </div>
 
   <script src="/js/emotion-map.js"></script>

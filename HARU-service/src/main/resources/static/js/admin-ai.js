@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderAis(ais) {
     aiContent.innerHTML = '';
     if (!ais || ais.length === 0) {
-      aiContent.innerHTML = '<p>AI 캐릭터가 없습니다.</p>';
       return;
     }
 
@@ -66,46 +65,59 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.getElementById('active-ai')?.addEventListener('click', () => {
-    const aiIds = getCheckedAiIds();
-    if (aiIds.length === 0) return alert('선택된 캐릭터가 없습니다.');
-
-    fetch('/api/admin/ai/active', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
-      },
-      body: JSON.stringify({ aiIds })
-    })
-    .then(res => {
-      if (!res.ok) throw new Error('활성화 실패');
-      return res.json();
-    })
-    .then(() => {
-      alert('활성화 완료');
-      fetchAis();
-    })
-    .catch(err => alert(err.message));
+    toggleAiActivation(true);
   });
 
   document.getElementById('non-active-ai')?.addEventListener('click', () => {
+    toggleAiActivation(false);
+  });
+
+  function toggleAiActivation(isUse) {
     const aiIds = getCheckedAiIds();
     if (aiIds.length === 0) return alert('선택된 캐릭터가 없습니다.');
 
-    fetch('/api/admin/ai/nonactive', {
+    const requestBody = {
+      aiIds: aiIds,
+      isUse: isUse
+    };
+
+    fetch('/api/admin/ai/status', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         [csrfHeader]: csrfToken
       },
-      body: JSON.stringify({ aiIds })
+      body: JSON.stringify(requestBody)
     })
     .then(res => {
-      if (!res.ok) throw new Error('비활성화 실패');
+      if (!res.ok) throw new Error(isUse ? '활성화 실패' : '비활성화 실패');
       return res.json();
     })
     .then(() => {
-      alert('비활성화 완료');
+      alert(isUse ? '활성화 완료' : '비활성화 완료');
+      fetchAis();
+    })
+    .catch(err => alert(err.message));
+  }
+
+  document.getElementById('delete-ai')?.addEventListener('click', () => {
+    const aiIds = getCheckedAiIds();
+    if (aiIds.length === 0) return alert('선택된 캐릭터가 없습니다.');
+
+    fetch('/api/admin/ai/delete', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken
+      },
+      body: JSON.stringify(aiIds)
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('삭제 실패');
+      return res.json();
+    })
+    .then(() => {
+      alert('삭제 완료');
       fetchAis();
     })
     .catch(err => alert(err.message));

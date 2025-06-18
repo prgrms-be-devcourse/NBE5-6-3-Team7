@@ -20,7 +20,7 @@ import lombok.ToString;
 @Entity
 @Getter @Setter @ToString
 @NoArgsConstructor
-@Table(name="IMAGE")
+@Table(name="DIARY_IMAGE")
 public class DiaryImg {
 
     @Id

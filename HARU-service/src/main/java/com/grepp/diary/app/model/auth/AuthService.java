@@ -2,7 +2,7 @@ package com.grepp.diary.app.model.auth;
 
 import com.grepp.diary.app.controller.web.auth.form.SigninForm;
 import com.grepp.diary.app.model.auth.domain.Principal;
-import com.grepp.diary.app.model.member.dto.SmtpDto;
+import com.grepp.diary.app.model.mail.dto.SmtpDto;
 import com.grepp.diary.app.model.member.entity.Member;
 import com.grepp.diary.app.model.member.repository.MemberRepository;
 import com.grepp.diary.infra.mail.MailApi;
@@ -39,6 +39,9 @@ public class AuthService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final @Lazy RememberMeServices rememberMeServices;
     private final MailApi mailApi;
+
+    @Value("${app.domain}")
+    private String domain;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -89,13 +92,10 @@ public class AuthService implements UserDetailsService {
         SmtpDto mailDto = new SmtpDto();
         mailDto.setFrom("haru");
         mailDto.setTo(List.of(email));
-        String subject = "Diary 인증번호 안내";
+        mailDto.setSubject("Diary 인증번호 안내");
         Map<String, String> props = new HashMap<>();
+        props.put("domain", domain);
         props.put("code", code);
-        String text = "안녕하세요.\n\n" +
-            "요청하신 인증번호는 아래와 같습니다.\n\n" +
-            "인증번호는 [" + code + "] 입니다.\n\n" +
-            "감사합니다.";
 
         mailDto.setProperties(props);
         mailDto.setEventType("send_code");
@@ -106,12 +106,15 @@ public class AuthService implements UserDetailsService {
             mailDto
         );
 
-        session.setAttribute("authCode", code);
-        session.setAttribute("authEmail", email);
         if (userId != null) {
-            session.setAttribute("authUserId", userId);
+            // 비밀번호 찾기일 때
+            session.setAttribute("pwAuthCode", code);
+            session.setAttribute("pwAuthEmail", email);
+            session.setAttribute("pwAuthUserId", userId);
+        } else {
+            // 아이디 찾기일 때
+            session.setAttribute("idAuthCode", code);
+            session.setAttribute("idAuthEmail", email);
         }
     }
-
-
 }

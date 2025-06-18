@@ -48,9 +48,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
         http
-//            .csrf(csrf -> csrf
-//                .ignoringRequestMatchers("/api/**", "/admin/**", "/member/**", "/diary/**", "/app/**", "/ai/**", "/auth/**")
-//            )
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**", "/admin/**", "/member/**", "/diary/**", "/app/**", "/ai/**", "/auth/**")
+            )
             .formLogin(login -> login
                 .loginPage("/")
                 .loginProcessingUrl("/none")
@@ -70,13 +70,22 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
-                    .requestMatchers(GET, "/", "/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/auth/login", "/auth/logout", "/auth/find_id", "/auth/find_pw", "/auth/regist/**", "/auth/regist-mail","/auth/auth-id","/auth/auth-pw").permitAll()
-                .requestMatchers("/auth/change-pw", "/auth/find-idpw","/member/leave", "/member/leave-success").permitAll()
-                .requestMatchers("/custom/**").permitAll()
+                    .requestMatchers(GET, "/", "/css/**", "/js/**", "/images/**", "/assets/**", "/uploads/**").permitAll()
+                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers(
+                        "/auth/login",
+                        "/auth/logout",
+                        "/auth/auth-idpw",
+                        "/auth/auth-idpw-verification",
+                        "/auth/regist/**",
+                        "/auth/regist-mail",
+                        "/auth/auth-id",
+                        "/auth/auth-pw").permitAll()
+                    .requestMatchers("/auth/change-pw", "/auth/find-idpw","/member/leave", "/member/leave-success").permitAll()
+                    .requestMatchers("/custom/**").permitAll()
+                    .requestMatchers("/api/ai/list/img").permitAll()
 //                .anyRequest().permitAll() // 개발 중 전체 열기
-                .anyRequest().authenticated()
+                    .anyRequest().authenticated()
             );
 
         return http.build();

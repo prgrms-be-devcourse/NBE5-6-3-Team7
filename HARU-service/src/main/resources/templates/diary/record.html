@@ -17,100 +17,128 @@
 <!--  class = main으로 바꿔서 여기에 다 있음 -->
 <main class="main">
   <div class="container">
-    <div class="diary-container">
+    <!-- 페이지 헤더 -->
+    <div class="page-header">
+      <h1 class="page-title">나의 하루</h1>
+      <p class="page-subtitle">당신의 소중한 하루를 되돌아봐요</p>
+    </div>
+
+    <!-- 일기 카드 -->
+    <div class="diary-card">
       <div class="diary-header">
-        <div class="diary-date">
-          <div id="diary-emotion">
+        <div class="diary-date-section">
+          <div class="emotion-icon" id="diary-emotion">
+            <!-- 감정 아이콘이 JavaScript로 추가됩니다 -->
           </div>
           <input type="hidden" id="emotion-text" th:value="${diary.emotion}"/>
-          <h1 th:text="${#temporals.format(diary.date, 'yy.MM.dd')}">날짜</h1>
+          <div class="date-info">
+            <h1 th:text="${#temporals.format(diary.date, 'yy.MM.dd')}">날짜</h1>
+            <div class="weekday">요일</div>
+          </div>
         </div>
 
-        <div class="button-group">
-          <div class="button" onclick="editDiary()"><i class="fa-solid fa-pen"></i></div>
-          <input type="hidden" id="reply-content" th:value="${diary.reply?.content}">
-          <div class="button" onclick="deleteDiary()"><i class="fa-solid fa-trash-can"></i></div>
-          <div class="button" onclick="goBack()"><i class="fa-solid fa-arrow-left-long"></i></div>
+        <div class="action-buttons">
+          <button class="action-btn" onclick="goBack()" title="돌아가기">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <button class="action-btn" onclick="editDiary()" title="편집">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="action-btn delete" onclick="deleteDiary()" title="삭제">
+            <i class="fas fa-trash-can"></i>
+          </button>
         </div>
+        <!--        <div class="button-group">-->
+        <!--          <input type="hidden" id="reply-content" th:value="${diary.reply?.content}">-->
+        <!--        </div>-->
       </div>
-      <div class="diary-main">
-        <div th:if="${diary.images != null && !diary.images.isEmpty()}">
-          <div class="diary-image">
-            <div class="diary-image-wrapper">
-              <div th:each="image : ${diary.images}">
-                <img th:src="@{${image.path}}" th:alt="${image.originName}" class="diary-image-img">
-              </div>
+
+      <div class="diary-content">
+        <!-- 이미지 섹션 -->
+        <div th:if="${diary.images != null && !diary.images.isEmpty()}" class="diary-image-section">
+          <div class="diary-image-wrapper">
+            <div th:each="image : ${diary.images}">
+              <img th:src="@{${image.path}}" th:alt="${image.originName}">
             </div>
           </div>
         </div>
-        <div class="diary-text">
-          <div class="diary-text-wrapper">
+
+        <!-- 텍스트 섹션 -->
+        <div class="diary-text-section">
+          <div class="diary-text-content">
             <p th:text="${diary.content}">일기 내용</p>
           </div>
         </div>
+
+        <!-- 키워드 섹션 -->
         <div th:if="${diary.keywordNames != null && !diary.keywordNames.isEmpty()}">
-          <div class="diary-keyword" th:if="${diary.keywordNames}">
-            <div class="keyword" th:each="kw : ${diary.keywordNames}"
+          <div class="diary-keywords" th:if="${diary.keywordNames}">
+            <div class="keyword-tag" th:each="kw : ${diary.keywordNames}"
                  th:text="|#${kw} |"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="reply-container">
+    <!-- AI 답장 카드 -->
+    <div class="reply-card">
       <div class="reply-header">
-        <i class="fa-regular fa-envelope" style="font-size: 2rem; padding-right: 7px"></i>
-        <div th:if="${diary.reply != null}">
-          <div th:text="|${customAiInfo.name}의 답장이 도착했어요|" style="font-size: 1.3rem; font-weight: bold">
-            [ai 캐릭터]의 답장이 도착했어요
-          </div>
+        <div class="reply-icon">
+          <i class="fa-regular fa-envelope"></i>
         </div>
-        <div th:if="${diary.reply == null}">
-          <div th:text="|${customAiInfo.name}가 답장을 작성중이에요|" style="font-size: 1.3rem; font-weight: bold">
-            [ai 캐릭터]가 답장을 작성중이에요
+        <div class="reply-title">
+          <div th:if="${diary.reply != null}">
+            <div th:text="|${customAiInfo.name}의 답장이 도착했어요|" class="reply-title">
+              [ai 캐릭터]의 답장이 도착했어요
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="reply-main">
-        <div class="reply-text">
-          <div class="ai-avatar">
-            <img alt="ai avatar" th:src="@{${customAiInfo.renamedPath}}">
-          </div>
-          <div class="ai-reply">
-            <div class="ai-reply-wrapper">
-              <div th:if="${diary.reply != null}">
-                <div th:utext="${replyContent}"></div>
-              </div>
-              <div th:if="${diary.reply == null}">
-                <p>소중하게 읽고 답장을 작성해드릴게요 ✏️</p>
-              </div>
+          <div th:if="${diary.reply == null}">
+            <div th:text="|${customAiInfo.name}가 답장을 작성중이에요|"
+                 style="font-size: 1.3rem; font-weight: bold">
+              [ai 캐릭터]가 답장을 작성중이에요
             </div>
           </div>
         </div>
-        <!-- diary 생성일자가 7일 이내일 경우에만 채팅버튼 생성 -->
-        <div class="chat-btn-wrapper"
-             th:if="${diary.reply != null} and ${T(java.time.LocalDate).now().minusDays(7).isBefore(diary.getCreatedAt().toLocalDate())} and ${diary.reply.getCreatedAt() == diary.reply.getModifiedAt()}">
-          <!--        <div class="chat-btn-wrapper" th:if="${diary.reply != null}">-->
-          <div class="chat-btn" onclick="chat()">
-            <i class="fa-regular fa-message" style="margin-right: 7px"></i>
-            <div th:text="|${customAiInfo.name}와 더 많은 대화하러 가기|">[ai 캐릭터]와 더 많은 대화하러 가기</div>
+      </div>
+
+      <div class="reply-content">
+        <div class="ai-message">
+          <div class="ai-avatar">
+            <img alt="ai avatar" th:src="@{${customAiInfo.renamedPath}}">
+          </div>
+          <div class="ai-message-content">
+            <div th:if="${diary.reply != null}">
+              <div th:utext="${replyContent}"></div>
+            </div>
+            <div th:if="${diary.reply == null}">
+              <p>소중하게 읽고 답장을 작성해드릴게요 ✏️</p>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- diary 생성일자가 7일 이내일 경우에만 채팅버튼 생성 -->
+      <div class="chat-button-wrapper"
+           th:if="${diary.reply != null} and ${T(java.time.LocalDate).now().minusDays(7).isBefore(diary.getCreatedAt().toLocalDate())} and ${diary.reply.getCreatedAt() == diary.reply.getModifiedAt()}">
+        <!--        <div class="chat-btn-wrapper" th:if="${diary.reply != null}">-->
+        <div class="chat-button" onclick="chat()">
+          <i class="fas fa-comments" style="margin-right: 7px"></i>
+          <div th:text="|${customAiInfo.name}와 더 많은 대화하러 가기|">[ai 캐릭터]와 더 많은 대화하러 가기</div>
+        </div>
+      </div>
     </div>
-
   </div>
-
 </main>
+
 <script src="/js/emotion-map.js"></script>
 <script th:inline="javascript">
   const diaryId = '[[${diary.diaryId}]]'
-  const diaryDate = [[${diary.date}]]
   const emotionText = document.getElementById('emotion-text').value.toUpperCase();
   const emotionDiv = document.getElementById('diary-emotion');
   const emotionIcon = document.createElement('img');
   emotionIcon.src = `/images/emotion/weather/${emotionImageMap[emotionText]}`
   emotionIcon.alt = 'emotion';
+  emotionIcon.style.transform = 'scale(2)';
   emotionDiv.appendChild(emotionIcon);
 
   function goBack() {
@@ -118,13 +146,9 @@
   }
 
   function editDiary() {
-    const replyContent = document.getElementById('reply-content').value;
-    if (replyContent && replyContent.trim().length > 0) {
-      alert("이미 답장이 달린 일기는 수정할 수 없습니다.");
-      return;
-    }
     window.location.href = `/diary/edit/${diaryId}`;
   }
+
   const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
   const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 

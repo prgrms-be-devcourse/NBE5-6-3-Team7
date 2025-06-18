@@ -1,16 +1,32 @@
 package com.grepp.diary.app.model.diary.repository;
 
+import com.grepp.diary.app.model.diary.dto.DiaryEmotionStatsDto;
 import com.grepp.diary.app.model.diary.entity.Diary;
 import com.grepp.diary.app.model.diary.entity.DiaryImg;
 import com.grepp.diary.app.model.diary.entity.QDiary;
 import com.grepp.diary.app.model.diary.entity.QDiaryImg;
+import com.grepp.diary.app.model.keyword.code.KeywordType;
+import com.grepp.diary.app.model.keyword.dto.KeywordInfoDto;
 import com.grepp.diary.app.model.keyword.entity.DiaryKeyword;
 import com.grepp.diary.app.model.keyword.entity.QDiaryKeyword;
 import com.grepp.diary.app.model.keyword.entity.QKeyword;
+import com.grepp.diary.app.model.reply.dto.ReplyAdminDto;
 import com.grepp.diary.app.model.reply.entity.QReply;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.group.Group;
+import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +54,23 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
                 diary.member.userId.eq(userId),
                 diary.isUse.isTrue(),
                 diaryImg.isUse.isTrue().or(diaryImg.isUse.isNull()) // 이미지 사용 중이거나 없는 경우 허용
+            )
+            .orderBy(diary.date.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .distinct() // 중복 Diary 제거 (fetchJoin 시 유용)
+            .fetch();
+    }
+
+    @Override
+    public List<Diary> findRecentDiariesHavingImages(String userId, Pageable pageable) {
+        return queryFactory
+            .selectFrom(diary)
+            .leftJoin(diary.images, diaryImg).fetchJoin() // Diary.images → DiaryImg에서 mappedBy되어야 함
+            .where(
+                diary.member.userId.eq(userId),
+                diary.isUse.isTrue(),
+                diaryImg.isUse.isTrue() // 이미지 사용 중인 일기만
             )
             .orderBy(diary.date.desc())
             .offset(pageable.getOffset())
@@ -76,8 +109,9 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
         // Diary와 keywords만 fetch join
         List<DiaryKeyword> keywordsList = queryFactory
             .selectFrom(diaryKeyword)
-            .leftJoin(diaryKeyword.keywordId, keyword).fetchJoin()
-            .where(diaryKeyword.diaryId.eq(diaryWithImages))
+            .leftJoin(diaryKeyword.keywordId, keyword)
+            .on(keyword.isUse.isTrue())
+            .where(diaryKeyword.diaryId.eq(diaryWithImages), keyword.isUse.isTrue())
             .fetch();
 
         // keywords만 diaryWithImages에 병합
@@ -118,7 +152,8 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
         // Diary와 keywords만 fetch join
         List<DiaryKeyword> keywordsList = queryFactory
             .selectFrom(diaryKeyword)
-            .leftJoin(diaryKeyword.keywordId, keyword).fetchJoin()
+            .leftJoin(diaryKeyword.keywordId, keyword)
+            .fetchJoin()
             .where(diaryKeyword.diaryId.eq(diaryWithImages))
             .fetch();
 
@@ -197,4 +232,89 @@ public class DiaryRepositoryCustomImpl implements DiaryRepositoryCustom {
             })
             .toList();
     }
+
+    @Override
+    public List<DiaryEmotionStatsDto> findEmotionStatsByUserIdAndDate(String userId,
+        LocalDate start, LocalDate end) {
+
+        // 조회 데이터를 튜플로 먼저 저장
+        List<Tuple> result = queryFactory
+            .select(
+                diary.diaryId,
+                diary.emotion,
+                diary.date,
+                keyword.name,
+                keyword.type
+            )
+            .from(diary)
+            .leftJoin(diary.keywords, diaryKeyword)
+            .leftJoin(diaryKeyword.keywordId, keyword)
+            .where(
+                diary.member.userId.eq(userId), diary.date.between(start, end)
+            )
+            .orderBy(diary.date.asc())
+            .fetch();
+
+        Map<Integer, DiaryEmotionStatsDto> diaryMap = new LinkedHashMap<>();
+
+        // 튜플 리스트를 순회하며 dto 생성
+        for (Tuple tuple : result) {
+            Integer diaryId = tuple.get(diary.diaryId);
+            DiaryEmotionStatsDto dto = diaryMap.get(diaryId);
+
+            // 키워드는 여러 개이므로 먼저 해당하는 일기가 있는지 확인
+            if (dto == null) {
+                dto = new DiaryEmotionStatsDto();
+                dto.setDiaryId(diaryId);
+                dto.setEmotion(tuple.get(diary.emotion));
+                dto.setDate(tuple.get(diary.date));
+                dto.setKeywordInfoDtos(new ArrayList<>());
+                diaryMap.put(diaryId, dto);
+            }
+
+            // 키워드 주입
+            String keywordName = tuple.get(keyword.name);
+            KeywordType keywordType = tuple.get(keyword.type);
+            if (keywordName != null && keywordType != null) {
+                dto.getKeywordInfoDtos().add(new KeywordInfoDto(keywordName, keywordType));
+            }
+        }
+
+        return new ArrayList<>(diaryMap.values());
+    }
+
+    @Override
+    public List<ReplyAdminDto> findByDateRangeAndStatus(LocalDateTime startDate, LocalDateTime endDate, String status) {
+
+        BooleanExpression dateCondition = diary.createdAt.between(startDate, endDate);
+        BooleanExpression statusCondition = null;
+
+        if (status.equals("replied")) {
+            statusCondition = reply.createdAt.isNotNull();
+        } else if (status.equals("unreplied")) {
+            statusCondition = reply.createdAt.isNull();
+        }
+
+        return queryFactory
+            .select(Projections.constructor(
+                ReplyAdminDto.class,
+                diary.member.userId,
+                diary.diaryId,
+                diary.date,
+                diary.createdAt,
+                reply.createdAt,
+                reply.createdAt.isNotNull()
+            ))
+            .from(diary)
+            .leftJoin(reply).on(reply.diary.eq(diary))
+            .where(dateCondition, statusCondition)
+            .orderBy(
+                new CaseBuilder()
+                    .when(reply.createdAt.isNull()).then(0)
+                    .otherwise(1).asc(),
+                reply.createdAt.desc().nullsLast()
+            )
+            .fetch();
+    }
+
 }

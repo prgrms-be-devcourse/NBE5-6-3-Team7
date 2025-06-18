@@ -34,6 +34,7 @@ public class CustomRepositoryImpl implements CustomRepositoryCustom {
             .select(ai, custom.count().as(usageCount))
             .from(ai)
             .leftJoin(custom).on(custom.ai.eq(ai))
+            .where(ai.deletedAt.isNull())
             .groupBy(ai)
             .orderBy(usageCount.desc());
 

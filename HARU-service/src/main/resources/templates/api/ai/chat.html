@@ -3,63 +3,461 @@
 <head>
   <meta charset="UTF-8">
   <title>My Day</title>
-  <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/sidebar.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.1/dist/full.css" rel="stylesheet"
-        type="text/css"/>
-
   <style>
-    .main {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      align-items: center;
+    * {
+      margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
 
-    #nav-container{
-      width: 100%;
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f8fffe 0%, #f0f9f0 100%);
+      min-height: 100vh;
+      color: #2d3436;
     }
 
-    #chat-container {
-      /*flex: 1;*/
-      width: 100%;
-      /*max-width: 768px;*/
-      height: 100%;
+    /* 메인 컨텐츠 */
+    .main {
+      margin-left: 70px;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
-      gap: 1rem;
-      padding: 1rem;
     }
 
-    #input-container {
-      width: 100%;
+    /* 얇은 헤더 */
+    .chat-header {
+      background: #f8fffe;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 12px 30px;
       display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      z-index: 100;
+      position: relative;
+    }
+
+    .chat-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: linear-gradient(to bottom, rgba(248, 255, 254, 0.9), rgba(248, 255, 254, 0));
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .close-chat-button {
+      background: rgba(255, 107, 107, 0.1);
+      color: #ff6b6b;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255, 107, 107, 0.2);
+      position: relative;
+      z-index: 10;
+    }
+
+    .close-chat-button:hover {
+      background: #ff6b6b;
+      color: white;
+      border-color: #ff6b6b;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    }
+
+    /* 채팅 컨테이너 */
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+    }
+
+    /* 채팅 메시지 */
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 70%;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message.ai {
+      align-self: flex-start;
+    }
+
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .message-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .message-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .message-time {
+      font-size: 0.75rem;
+      color: #6b8e6e;
+      opacity: 0.7;
+    }
+
+    .message.user .message-time {
+      text-align: right;
+    }
+
+    .message-bubble {
+      padding: 16px 20px;
+      border-radius: 20px;
+      font-size: 1rem;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    .message.user .message-bubble {
+      background: linear-gradient(135deg, #89C07E, #6b8e6e);
+      color: white;
+      border-bottom-right-radius: 6px;
+    }
+
+    .message.ai .message-bubble {
+      background: white;
+      color: #2d3436;
+      border: 2px solid rgba(137, 192, 126, 0.15);
+      border-bottom-left-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 로딩 메시지 */
+    .loading-message {
+      display: flex;
+      gap: 12px;
+      max-width: 70%;
+      align-self: flex-start;
+    }
+
+    .loading-bubble {
+      background: #f8fffe;
+      border: 2px solid rgba(137, 192, 126, 0.15);
+      padding: 16px 20px;
+      border-radius: 20px 20px 20px 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #6b8e6e;
+    }
+
+    .loading-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .loading-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #89C07E;
+      animation: loading 1.4s infinite ease-in-out;
+    }
+
+    .loading-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loading-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes loading {
+      0%, 80%, 100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+      }
+      40% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* 입력 영역 */
+    .input-container {
+      padding: 20px 30px;
+      background: linear-gradient(135deg, #f8fffe 0%, #f0f9f0 100%);
+      border-top: 1px solid rgba(137, 192, 126, 0.2);
+    }
+
+    .input-form {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      background: white;
+      border: 2px solid rgba(137, 192, 126, 0.2);
+      border-radius: 25px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: #89C07E;
+      box-shadow: 0 0 0 3px rgba(137, 192, 126, 0.1);
+    }
+
+    .message-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      resize: none;
+      max-height: 120px;
+      min-height: 24px;
+      background: transparent;
+      color: #2d3436;
+    }
+
+    .message-input::placeholder {
+      color: #6b8e6e;
+      opacity: 0.7;
+    }
+
+    .send-button {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #89C07E, #467750);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(137, 192, 126, 0.3);
+    }
+
+    .send-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(137, 192, 126, 0.4);
+    }
+
+    .send-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* 로딩 오버레이 */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 모달 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      transform: translateY(-20px);
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #2d3436;
+    }
+
+    .modal p {
+      color: #6b8e6e;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
       justify-content: center;
     }
 
-    #chat-form {
-      width: 100%;
-      max-width: 768px;
-      padding: 1rem;
-      gap: 1rem;
-      background-color: #E0E8E2;
-      margin-bottom: 0;
+    .modal-button {
+      padding: 12px 24px;
+      border-radius: 25px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
-    .sidebar .profile {
+    .modal-button.primary {
+      background: linear-gradient(135deg, #89C07E, #467750);
+      color: white;
+    }
+
+    .modal-button.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(137, 192, 126, 0.3);
+    }
+
+    .modal-button.secondary {
+      background: #f8f9fa;
+      color: #6b8e6e;
+      border: 2px solid rgba(137, 192, 126, 0.2);
+    }
+
+    .modal-button.secondary:hover {
+      background: #e9ecef;
+    }
+
+    /* 채팅 종료 버튼들 */
+    .chat-end-buttons {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
     }
 
-    .skeleton-bubble {
-      background-color: #f3f3f3;
-      color: #999;
+    .chat-end-button {
+      padding: 12px 20px;
+      border-radius: 20px;
+      border: 2px solid #89C07E;
+      background: transparent;
+      color: #89C07E;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .chat-end-button:hover {
+      background: #89C07E;
+      color: white;
+    }
+
+    .chat-end-button.secondary {
+      border-color: #ccc;
+      color: #6b8e6e;
+    }
+
+    .chat-end-button.secondary:hover {
+      background: #6b8e6e;
+      color: white;
+    }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
+      .main {
+        margin-left: 60px;
+      }
+
+      .chat-header {
+        padding: 10px 20px;
+      }
+
+      .message {
+        max-width: 85%;
+      }
+
+      .input-container {
+        padding: 16px 20px;
+      }
     }
   </style>
 </head>
@@ -67,89 +465,69 @@
 <div th:replace="~{fragments/member-sidebar :: memberSidebar}"></div>
 <script src="/js/logout.js"></script>
 
-<div class="main">
+<!-- 메인 컨텐츠 -->
+<main class="main">
   <input type="hidden" id="csrf-token" th:value="${_csrf.token}"/>
   <input type="hidden" id="csrf-header" th:value="${_csrf.headerName}"/>
+  <!-- 이 줄이 누락되어 있었습니다 -->
   <input type="hidden" id="ai-img-url" th:value="@{'/uploads/' + ${imgSavePath} + ${imgRenamedName}}"/>
 
-
-  <div id="nav-container">
-    <div class="navbar bg-green-800 shadow-sm justify-center">
-      <div class="w-[80vw] max-w-[768px] flex justify-between items-center px-2">
-        <div class="flex items-center gap-2">
-          <div class="avatar">
-            <div class="w-10 rounded-full">
-              <img alt="ai avatar" th:src="@{'/uploads/'+ ${imgSavePath} + ${imgRenamedName}}"/>
-            </div>
-          </div>
-          <a id="ai-button" class="btn btn-ghost text-xl text-white" th:text="|${aiName}|">daisyUI</a>
-        </div>
-        <a class="btn btn-sm bg-transparent text-white hover:bg-white hover:text-green-800 transition-colors duration-200"
-           onclick="closeChat()">대화 종료하기</a>
-      </div>
-    </div>
+  <!-- 얇은 헤더 -->
+  <div class="chat-header">
+    <button class="close-chat-button" onclick="closeChat()">
+      대화 종료하기
+    </button>
   </div>
 
-  <div id="chat-container" class="overflow-x-auto">
+  <div id="chat-container" class="chat-container">
     <!-- 채팅 표시 영역 -->
     <!-- AI 메시지 -->
-    <div class="chat chat-start md:ml-[calc(50%-384px)]">
-      <div class="chat-image avatar">
-        <div class="w-10 rounded-full">
-<!--          <img alt="ai avatar" th:src="@{/images/ai/{aiId}.png(aiId=${aiId})}"/>-->
-          <img alt="ai avatar" th:src="@{'/uploads/'+ ${imgSavePath} + ${imgRenamedName}}"/>
-        </div>
+    <div class="message ai">
+      <div class="message-avatar">
+        <img alt="ai avatar" th:src="@{'/uploads/'+ ${imgSavePath} + ${imgRenamedName}}"/>
       </div>
-      <div class="chat-header">
-        <time id="start-time" class="text-xs opacity-50">12:45</time>
+      <div class="message-content">
+        <div class="message-time" id="start-time">00:00</div>
+        <div class="message-bubble" th:utext="${diaryReply}">reply</div>
       </div>
-      <div class="chat-bubble max-w-lg bg-white text-black" th:utext="${diaryReply}">기존 일기 답변</div>
     </div>
-
   </div>
 
-  <div id="input-container">
-    <form id="chat-form" class="flex justify-between items-center w-[80vw] max-w-[768px] px-2">
-      <div
-          class="flex flex-grow items-center bg-white border border-gray-300 rounded px-4 py-2 shadow-sm">
-                <textarea
-                    id="user-input"
-                    class="flex-grow resize-none outline-none text-base place-holder-gray-400 bg-transparent max-h-32 overflow-y-auto"
-                    placeholder="메시지를 입력하세요"
-                    rows="2"
-                    oninput="autoResize(this)"
-                ></textarea>
-
-        <button type="submit" id="send-button"
-                class="ml-2 w-8 h-8 rounded-full bg-green-800 flex items-center justify-center hover:bg-green-700 transition-colors duration-200">
-          <i class="fas fa-arrow-up text-white"></i>
-        </button>
+  <!-- 입력 영역 -->
+  <div class="input-container">
+    <form class="input-form" id="chat-form">
+      <div class="input-wrapper">
+          <textarea
+              class="message-input"
+              id="user-input"
+              placeholder="메시지를 입력하세요"
+              rows="1"
+          ></textarea>
       </div>
+      <button type="submit" class="send-button" id="send-button">
+        <i class="fas fa-arrow-up"></i>
+      </button>
     </form>
   </div>
+</main>
 
-  <!-- 로딩 인디케이터 -->
-  <div id="loading-overlay"
-       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="flex flex-col items-center gap-4">
-      <span class="loading loading-spinner loading-lg text-white"></span>
-      <p class="text-white">처리 중입니다...</p>
+<!-- 로딩 오버레이 (주석 해제) -->
+<div id="loading-overlay" class="loading-overlay">
+  <div class="flex flex-col items-center gap-4">
+    <div class="loading-spinner"></div>
+    <p style="color: white;">처리 중입니다...</p>
+  </div>
+</div>
+
+<!-- 모달 -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">알림</h3>
+    <p id="modal-message">메시지</p>
+    <div class="modal-buttons">
+      <button class="modal-button primary" onclick="closeModal()">확인</button>
     </div>
   </div>
-
-  <!-- 알림 모달 -->
-  <dialog id="alert-modal" class="modal">
-    <div class="modal-box">
-      <h3 class="font-bold text-lg" id="alert-modal-title">알림</h3>
-      <p class="py-4" id="alert-modal-message">메시지</p>
-      <div class="modal-action">
-        <form method="dialog">
-          <button class="btn">확인</button>
-        </form>
-      </div>
-    </div>
-  </dialog>
-
 </div>
 
 <script th:inline="javascript">
@@ -157,16 +535,15 @@
   const diaryId = [[${diaryId}]]
   const diaryDate = [[${diaryDate}]]
   const aiId = [[${aiId}]]
-  const aiImgUrl = document.getElementById('ai-img-url').value;
-  const mainDiv = document.querySelector('.main');
+
   const userInput = document.getElementById('user-input');
   const chatForm = document.getElementById('chat-form');
   const chatContainer = document.getElementById('chat-container');
   const sendButton = document.getElementById('send-button');
+
+  const aiImgUrl = document.getElementById('ai-img-url').value;
   const csrfToken = document.getElementById('csrf-token').value;
   const csrfHeader = document.getElementById('csrf-header').value;
-  console.log(aiImgUrl);
-  console.log(diaryDate);
 
   function getCurrentTime() {
     const now = new Date();
@@ -175,83 +552,82 @@
     return `${hours}:${minutes}`;
   }
 
+  function showModal(title, message) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-message').innerText = message;
+    document.getElementById('modal-overlay').classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('active');
+  }
+
+  function autoResize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+  }
+
+  userInput.addEventListener('input', function() {
+    autoResize(this);
+  });
+
+  userInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      setTimeout(() => {
+        chatForm.dispatchEvent(new Event('submit'));
+      }, 0);
+    }
+  });
+
   function showLoading() {
-    document.getElementById('loading-overlay').classList.remove('hidden');
+    document.getElementById('loading-overlay').classList.add('active');
   }
 
   function hideLoading() {
-    document.getElementById('loading-overlay').classList.add('hidden');
+    document.getElementById('loading-overlay').classList.remove('active');
   }
-
-  function showModal(title, message) {
-    const modal = document.getElementById('alert-modal');
-    document.getElementById('alert-modal-title').innerText = title;
-    document.getElementById('alert-modal-message').innerText = message;
-    modal.showModal();
-  }
-
-  userInput.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') {
-      if (!e.shiftKey) {
-        e.preventDefault();
-
-        setTimeout(() => {
-          chatForm.dispatchEvent(new Event('submit'));
-        }, 0);
-      }
-    }
-  })
 
   // 채팅 전송
   chatForm.addEventListener('submit', function (e) {
     e.preventDefault();
     const userMessage = userInput.value.trim();
-    if (!userMessage) {
-      return;
-    }
-
-    userInput.value = '';
-    userInput.style.height = 'auto';
+    if (!userMessage) return;
 
     const currentTime = getCurrentTime();
 
-    // 사용자 말풍선 추가
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'chat chat-end md:mr-[calc(50%-384px)]';
-    messageDiv.innerHTML = `
-      <div class="chat-image avatar">
-        <div class="w-10 rounded-full">
-          <img src="/images/userImg.png" alt="user avatar"/>
-        </div>
+    // 사용자 메시지 추가
+    const userMessageDiv = document.createElement('div');
+    userMessageDiv.className = 'message user';
+    userMessageDiv.innerHTML = `
+      <div class="message-avatar">
+        <img src="/images/userImg.png" alt="user avatar"/>
       </div>
-      <div class="chat-header">
-          <time class="text-xs opacity-50">${currentTime}</time>
+      <div class="message-content">
+          <div class="message-time">${currentTime}</div>
+          <div class="message-bubble">${userMessage}</div>
       </div>
     `;
 
-    // 사용자 메시지 생성
-    const bubbleDiv = document.createElement('div');
-    bubbleDiv.className = "chat-bubble max-w-lg bg-green-700 text-white";
-    bubbleDiv.textContent = userMessage; // 자동 이스케이프 처리
+    chatContainer.appendChild(userMessageDiv);
+    userInput.value = '';
+    userInput.style.height = 'auto';
 
-    messageDiv.appendChild(bubbleDiv);
-    chatContainer.appendChild(messageDiv);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-
-    // 스켈레톤 말풍선 추가
+    // 로딩 메시지 추가
     const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'chat chat-start loading-skeleton md:ml-[calc(50%-384px)]';
-    loadingDiv.id = 'loading-bubble';
+    loadingDiv.className = 'loading-message';
+    loadingDiv.id = 'loading-message';
     loadingDiv.innerHTML = `
-    <div class="chat-image avatar">
-      <div class="w-10 rounded-full">
-        <img alt="ai avatar" src=${aiImgUrl}/>
+    <div class="message-avatar">
+      <img alt="ai avatar" src="${aiImgUrl}"/>
+    </div>
+    <div class="loading-bubble">
+      <span>응답을 생성하고 있어요</span>
+      <div class="loading-dots">
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
       </div>
-    </div>
-    <div class="chat-header">
-    </div>
-    <div class="chat-bubble max-w-lg skeleton-bubble">
-      <span class="loading loading-dots loading-sm"></span>
     </div>
   `;
 
@@ -276,102 +652,88 @@
     .then((response) => response.text())
     .then((data) => {
       // 스켈레톤 제거
-      const loadingEl = document.getElementById('loading-bubble');
-      if (loadingEl) {
-        loadingEl.remove();
-      }
+      document.getElementById('loading-message')?.remove();
 
       // ai 말풍선 추가
-      const responseTime = getCurrentTime();
-      const responseDiv = document.createElement('div');
-      responseDiv.className = 'chat chat-start md:ml-[calc(50%-384px)]';
-      responseDiv.innerHTML = `
-        <div class="chat-image avatar">
-          <div class="w-10 rounded-full">
-            <img alt="ai avatar" src=${aiImgUrl}/>
+      const aiMessageDiv = document.createElement('div');
+      aiMessageDiv.className = 'message ai';
+      aiMessageDiv.innerHTML = `
+        <div class="message-avatar">
+          <img alt="ai avatar" src="${aiImgUrl}"/>
+        </div>
+        <div class="message-content">
+          <div class="message-time">${getCurrentTime()}</div>
+          <div class="message-bubble">
+            ${data}
           </div>
         </div>
-        <div class="chat-header">
-          <time class="text-xs opacity-50">${responseTime}</time>
-        </div>
-        <div class="chat-bubble max-w-lg bg-white text-black">${data}</div>
       `;
       // 대화 내역 추가
       chatHistory.push({user: userMessage, ai: data})
 
       // 스크롤 조정
-      chatContainer.appendChild(responseDiv);
+      chatContainer.appendChild(aiMessageDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     })
     .catch((error) => {
-      const loadingEl = document.getElementById('loading-bubble');
-      if (loadingEl) {
-        loadingEl.remove();
-      }
+      document.getElementById('loading-message')?.remove();
       console.error(error);
       alert("현재 대화가 어렵습니다. 다시 시도해 주세요.")
     })
   })
 
-  function autoResize(textarea) {
-    textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 128) + 'px'; // 최대 5줄(32px * 5 = 160)
-
-  }
-
   function closeChat() {
-
+    // 헤더 버튼도 비활성화
+    document.querySelector('.close-chat-button').disabled = true;
     userInput.disabled = true;
     sendButton.disabled = true;
+
     const currentTime = getCurrentTime();
 
-    // 사용자 -> 대화 종료하기
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'chat chat-end md:mr-[calc(50%-384px)]';
-    messageDiv.innerHTML = `
-      <div class="chat-image avatar">
-        <div class="w-10 rounded-full">
-          <img src="/images/userImg.png" alt="user avatar">
-        </div>
+    // 사용자 -> 대화 종료하기 (수정된 클래스명)
+    const userMessageDiv = document.createElement('div');
+    userMessageDiv.className = 'message user';
+    userMessageDiv.innerHTML = `
+      <div class="message-avatar">
+        <img src="/images/userImg.png" alt="user avatar">
       </div>
-      <div class="chat-header">
-          <time class="text-xs opacity-50">${currentTime}</time>
+      <div class="message-content">
+        <div class="message-time">${currentTime}</div>
+        <div class="message-bubble">대화 종료하기</div>
       </div>
-      <div class="chat-bubble max-w-lg bg-green-700 text-white">대화 종료하기</div>
     `;
 
     // 스크롤 조정
-    chatContainer.appendChild(messageDiv);
+    chatContainer.appendChild(userMessageDiv);
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
     // ai -> 대화내용 요약 여부 질문
-    const responseTime = getCurrentTime();
-    const responseDiv = document.createElement('div');
-    responseDiv.className = 'chat chat-start md:ml-[calc(50%-384px)]';
-    responseDiv.innerHTML = `
-        <div class="chat-image avatar">
-          <div class="w-10 rounded-full">
-            <img alt="ai avatar" src=${aiImgUrl}/>
-          </div>
+    const aiMessageDiv = document.createElement('div');
+    aiMessageDiv.className = 'message ai';
+    aiMessageDiv.innerHTML = `
+        <div class="message-avatar">
+          <img alt="ai avatar" src="${aiImgUrl}"/>
         </div>
-        <div class="chat-header">
-          <time class="text-xs opacity-50">${responseTime}</time>
-        </div>
-        <div class="chat-bubble max-w-lg bg-white text-black flex flex-col items-start gap-2">
-          <div>지금까지의 대화 내용을 요약하여 기록할까요?</div>
-          <button class="btn btn-xl bg-transparent outline--green-700 text-green-700 hover:bg-green-600 hover:text-white w-[100%]" onclick="memo()">Yes</button>
-          <button class="btn btn-xl bg-transparent text-grey-400 hover:bg-gray-500 hover:text-white w-[100%]" onclick="noMemo()">No</button>
+        <div class="message-content">
+          <div class="message-time">${getCurrentTime()}</div>
+          <div class="message-bubble">
+              지금까지의 대화 내용을 요약하여 기록할까요?
+              <div class="chat-end-buttons">
+                <button class="chat-end-button" onclick="saveMemo()">Yes</button>
+                <button class="chat-end-button secondary" onclick="noMemo()">No</button>
+              </div>
+            </div>
         </div>
       `;
 
     setTimeout(() => {
-      chatContainer.appendChild(responseDiv);
+      chatContainer.appendChild(aiMessageDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }, 700);
-
   }
 
-  function memo() {
+  // 함수명 수정: memo() -> saveMemo()
+  function saveMemo() {
     showLoading();
 
     fetch('/api/ai/chat/memo', {
@@ -390,9 +752,11 @@
       hideLoading();
       if (response.ok) {
         showModal('저장 완료', '대화 내용을 답장과 함께 저장했어요!');
-        document.getElementById('alert-modal').addEventListener('close', () => {
-          window.location.href = `/diary/record?date=${diaryDate}`;
-        }, {once: true});
+        // 모달 닫기 이벤트 수정
+        setTimeout(() => {
+          closeModal();
+          window.location.href = `/diary/details?date=${diaryDate}`;
+        }, 2000);
       } else {
         showModal('저장 실패', '대화 내용을 저장하지 못했어요. 다시 시도해주세요.');
       }
@@ -422,7 +786,7 @@
     .then(response => {
       hideLoading();
       if (response.ok) {
-        window.location.href = `/diary/record?date=${diaryDate}`; // 처리 성공 후 리다이렉트
+        window.location.href = `/diary/details?date=${diaryDate}`;
       } else {
         showModal('에러', '대화 종료 처리에 실패했습니다. 다시 시도해주세요.');
       }
@@ -434,12 +798,11 @@
     })
   }
 
+  // 초기 시간 설정
   document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('start-time').innerText = getCurrentTime();
     chatContainer.scrollTop = chatContainer.scrollHeight;
   })
-
 </script>
-
 </body>
 </html>

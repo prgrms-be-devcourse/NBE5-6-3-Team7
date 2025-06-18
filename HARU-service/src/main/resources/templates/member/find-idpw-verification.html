@@ -1,31 +1,100 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>diary</title>
+  <title>diary - 계정 찾기 완료</title>
+  <link rel="stylesheet" href="/css/landing/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<link rel="stylesheet" href="/css/index.css">
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <body>
-<main class="green-container">
-  <div class="green-visual-box" style="position: absolute">
-    <div class="green-visual-content">
-      <img src="/images/login/img_checked.png" alt="체크 이미지">
-    </div>
-  </div>
-  <div class="form-wrapper">
-    <div th:if="${message != null}" style="text-align: center;">
-      <h1 style="margin-bottom: 0.3em;">회원님의 아이디는</h1>
-      <h1 style="margin-top: 0; color: #467750; margin-bottom: 0.3em;" th:text="${message}"></h1>
-      <h1 style="margin-top: 0;">입니다.</h1>
-    </div>
-    <h1 th:if="${message == null}">비밀번호가 변경되었습니다</h1>
+<!-- 배경 장식 요소들 -->
+<div class="bg-decoration"></div>
+<div class="bg-decoration"></div>
+<div class="bg-decoration"></div>
 
-    <button class="green-btn" type="button" style="width: 416px;" onclick="location.href='/'">로그인으로
-      돌아가기
-    </button>
+<div class="main-container">
+  <!-- 왼쪽 비주얼 섹션 -->
+  <div class="visual-section">
+    <div class="logo-section">
+      <div class="logo-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h1 class="brand-title">HARU</h1>
+      <p class="brand-subtitle">계정 정보를 찾았습니다!</p>
+    </div>
   </div>
-</main>
+
+  <!-- 오른쪽 결과 섹션 -->
+  <div class="form-section">
+    <!-- 성공 아이콘 -->
+    <div style="text-align: center; margin-bottom: 40px;">
+      <i class="fas fa-check success-icon" style="font-size: 4rem; color: #059669;"></i>
+    </div>
+
+    <!-- 결과 메시지 -->
+    <div class="welcome-text">
+      <!-- 아이디 찾기 성공 시 -->
+      <div th:if="${message != null}">
+        <div class="result-box">
+          <p class="result-text" style="margin-bottom: 10px;">
+            회원님의 아이디는
+          </p>
+          <p class="user-id-display" th:text="${message}">
+            사용자아이디
+          </p>
+          <p class="result-text">
+            입니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- 비밀번호 변경 성공 시 -->
+      <div th:if="${message == null}">
+        <div class="result-box">
+          <p class="result-text">
+            비밀번호가 성공적으로 변경되었습니다.<br>
+            새로운 비밀번호로 로그인해주세요.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 추가 안내 메시지 -->
+    <div class="info-box">
+      <div class="info-box-content">
+        <i class="fas fa-info-circle info-box-icon"></i>
+        <div class="info-box-text">
+          <p class="info-box-title">안전한 계정 관리를 위해:</p>
+          <ul>
+            <li>정기적으로 비밀번호를 변경해주세요</li>
+            <li>다른 사이트와 다른 비밀번호를 사용해주세요</li>
+            <li>개인정보 보호에 항상 주의해주세요</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 로그인 버튼 -->
+    <button class="green-btn" type="button" onclick="location.href='/'">
+      <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
+      로그인으로 돌아가기
+    </button>
+
+    <!-- 추가 링크들 -->
+    <div class="links-section">
+      <div class="auth-links single-link">
+        <a href="/auth/find-idpw" th:if="${message != null}">
+          <i class="fas fa-key"></i>
+          비밀번호 찾기
+        </a>
+        <a href="/auth/find-idpw" th:if="${message == null}">
+          <i class="fas fa-search"></i>
+          아이디 찾기
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

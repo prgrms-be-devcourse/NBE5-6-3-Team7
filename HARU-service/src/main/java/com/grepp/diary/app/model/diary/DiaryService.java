@@ -1,14 +1,16 @@
 package com.grepp.diary.app.model.diary;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grepp.diary.app.controller.api.diary.payload.DiaryEditRequest;
 import com.grepp.diary.app.controller.web.diary.payload.DiaryRequest;
 import com.grepp.diary.app.model.ai.entity.Ai;
-import com.grepp.diary.app.model.custom.entity.Custom;
 import com.grepp.diary.app.model.common.code.ImgType;
+import com.grepp.diary.app.model.custom.entity.Custom;
 import com.grepp.diary.app.model.diary.code.Emotion;
 import com.grepp.diary.app.model.diary.dto.DiaryDto;
 import com.grepp.diary.app.model.diary.dto.DiaryEmotionAvgDto;
 import com.grepp.diary.app.model.diary.dto.DiaryEmotionCountDto;
+import com.grepp.diary.app.model.diary.dto.DiaryEmotionStatsDto;
 import com.grepp.diary.app.model.diary.entity.Diary;
 import com.grepp.diary.app.model.diary.entity.DiaryImg;
 import com.grepp.diary.app.model.diary.repository.DiaryImgRepository;
@@ -20,9 +22,11 @@ import com.grepp.diary.app.model.keyword.repository.KeywordRepository;
 import com.grepp.diary.app.model.member.entity.Member;
 import com.grepp.diary.app.model.member.repository.MemberRepository;
 import com.grepp.diary.app.model.reply.ReplyRepository;
+import com.grepp.diary.app.model.reply.dto.ReplyAdminDto;
 import com.grepp.diary.app.model.reply.entity.Reply;
 import com.grepp.diary.infra.error.exceptions.CommonException;
 import com.grepp.diary.infra.response.ResponseCode;
+import com.grepp.diary.infra.util.date.code.DatePeriod;
 import com.grepp.diary.infra.util.file.FileDto;
 import com.grepp.diary.infra.util.file.FileUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,6 +34,9 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -59,6 +66,7 @@ public class DiaryService {
     private final DiaryKeywordRepository diaryKeywordRepository;
 
     private final FileUtil fileUtil;
+    private final ObjectMapper objectMapper;
     private final ReplyRepository replyRepository;
 
     /** 시작일과 끝을 기준으로 해당 날짜 사이에 존재하는 일기들을 반환합니다. */
@@ -90,8 +98,11 @@ public class DiaryService {
      * 일기들은 포함된 이미지와 함께 반환됩니다.
      * 일기들을 하나의 페이지에 표시하기 위해 사용됩니다.
      * */
-    public List<Diary> getDiariesWithImages(String userId, int page, int size) {
+    public List<Diary> getDiariesWithImages(String userId, int page, int size, String filter) {
         Pageable limit = PageRequest.of(page, size);
+        if (filter.equals("with_image")) {
+            return diaryRepository.findRecentDiariesHavingImages(userId, limit);
+        }
         return diaryRepository.findRecentDiariesWithImages(userId, limit);
     }
 
@@ -195,11 +206,21 @@ public class DiaryService {
 
                 List<DiaryImg> diaryImgs = imageList.stream()
                                                     .map(fileDto -> {
-                                                        DiaryImg diaryImg = new DiaryImg(ImgType.THUMBNAIL, fileDto);
-                                                        diaryImg.setDiary(savedDiary);
+                                                        ImgType type;
+                                                        // thumbnailFileName이 null이 아니고, 현재 fileDto의 originalName과 일치하는지 확인
+                                                        if (form.getThumbnailFileName() != null && fileDto.originFileName().equals(form.getThumbnailFileName())) {
+                                                            type = ImgType.THUMBNAIL;
+                                                        } else {
+                                                            type = ImgType.MEDIUM;
+                                                        }
+
+                                                        DiaryImg diaryImg = new DiaryImg(type, fileDto);
+                                                        diaryImg.setDiary(savedDiary); // savedDiary는 해당 일기 엔티티
                                                         return diaryImg;
                                                     })
                                                     .collect(Collectors.toList());
+
+
                 diaryImgRepository.saveAll(diaryImgs);
             }
             return diary;
@@ -262,12 +283,11 @@ public class DiaryService {
         }
 
         for (Integer deletedImageId : request.getDeletedImageIds()) {
-            diaryImgRepository.deactivateDiaryImgByDiaryId(deletedImageId);
+            diaryImgRepository.deactivateDiaryImgByDiaryImgId(deletedImageId);
         }
 
         Diary updateDiary = diaryRepository.findById(request.getDiaryId())
                                      .orElseThrow(() -> new EntityNotFoundException("Diary not found"));
-
 
         if (newImages != null && !newImages.isEmpty()) {
             List<FileDto> imageList = null;
@@ -279,13 +299,25 @@ public class DiaryService {
 
             List<DiaryImg> diaryImgs = imageList.stream()
                                                 .map(fileDto -> {
-                                                    DiaryImg diaryImg = new DiaryImg(ImgType.THUMBNAIL, fileDto);
+                                                    DiaryImg diaryImg = new DiaryImg(ImgType.MEDIUM, fileDto);
                                                     diaryImg.setDiary(updateDiary);
                                                     return diaryImg;
                                                 })
                                                 .collect(Collectors.toList());
             diaryImgRepository.saveAll(diaryImgs);
         }
+
+        Optional<String> currentThumbnailNameOpt = diaryImgRepository.findThumbnailOriginalNameByDiaryId(request.getDiaryId());
+        String currentThumbnailName = currentThumbnailNameOpt.orElse(null);
+
+        if (currentThumbnailName == request.getThumbnailFileName()) return;// 변경사항 없을 경우
+
+        else if(currentThumbnailName != null) { // 썸네일로 설정한 이미지가 존재함
+            // 기존 썸네일 해제
+            diaryImgRepository.updateThumbnailToMediumByDiaryId(request.getDiaryId());
+        }
+        //썸네일 설정
+        diaryImgRepository.updateImgTypeToThumbnailByFileName(request.getDiaryId(), request.getThumbnailFileName());
     }
 
     /** 특정 년도에 작성된 일기들을 기준으로 월별 평균 기분점수를 반환합니다. */
@@ -330,17 +362,17 @@ public class DiaryService {
      * 기준 달 또는 연도에 작성된 일기들의 감정별 갯수를 반환합니다.
      * 사용되지 않은 감정의 경우 0으로 처리됩니다.
      * */
-    public List<DiaryEmotionCountDto> getEmotionsCount(String userId, String period, int value){
+    public List<DiaryEmotionCountDto> getEmotionsCount(String userId, DatePeriod period, int value){
         Map<Emotion, Integer> countMap = Arrays.stream(Emotion.values())
             .collect(Collectors.toMap(e -> e, e -> 0, (a, b) -> a, () -> new EnumMap<>(Emotion.class)));
 
-        if("monthly".equals(period)){
+        if(period == DatePeriod.MONTH){
             return diaryRepository.findEmotionCountByUserIdAndMonth(userId, value)
                 .stream()
                 .map(row -> new DiaryEmotionCountDto((Emotion) row[0],
                     Math.toIntExact((Long) row[1])))
                 .toList();
-        } else if("yearly".equals(period)){
+        } else if(period == DatePeriod.YEAR){
             return diaryRepository.findEmotionCountByUserIdAndYear(userId, value)
                 .stream()
                 .map(row -> new DiaryEmotionCountDto((Emotion) row[0],
@@ -353,6 +385,72 @@ public class DiaryService {
 
     public Optional<Diary> findDiaryByUserIdAndDiaryId(String userId, Integer diaryId) {
         return diaryRepository.findActiveDiaryByDiaryIdWithAllRelations(userId, diaryId);
+    }
+
+    public String getEmotionStats(String userId, LocalDate date) {
+        LocalDate startDate = date.minusDays(14);
+        List<DiaryEmotionStatsDto> dtos = diaryRepository.findEmotionStatsByUserIdAndDate(userId, startDate, date);
+
+        if (dtos == null || dtos.isEmpty()) {
+            return "NO_RECENT_DIARY";
+        }
+
+        try {
+            return objectMapper.writeValueAsString(dtos);
+        } catch (Exception e) {
+            throw new CommonException(ResponseCode.INTERNAL_SERVER_ERROR,
+                "감정 데이터 분석에 실패했습니다. 나중에 다시 시도해주세요.");
+        }
+    }
+
+    public Object getDiaryDate(Integer diaryId) {
+        Diary diary = diaryRepository.findById(diaryId).orElse(null);
+        assert diary != null;
+        return diary.getDate();
+    }
+
+    public List<ReplyAdminDto> getDiaryAndReplyStatus(String period, String customDate, String status) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate;
+        LocalDateTime endDate = now;
+
+        switch (period) {
+            case "1year" -> startDate = now.minusYears(1);
+            case "custom" -> {
+                if (customDate == null || !customDate.contains("~")) {
+                    throw new IllegalArgumentException("올바르지 않은 기간을 선택했습니다" + customDate);
+                }
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                String[] dates = customDate.split("~");
+
+                try {
+                    LocalDate start = LocalDate.parse(dates[0].trim(), formatter);
+                    LocalDate end = LocalDate.parse(dates[1].trim(), formatter);
+                    startDate = start.atStartOfDay();
+                    endDate = end.atTime(LocalTime.MAX);
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("날짜 형식이 잘못되었습니다.", e);
+                }
+            }
+            default -> {
+                int months = extractMonths(period);
+                startDate = now.minusMonths(months);
+            }
+        }
+
+        return diaryRepository.findByDateRangeAndStatus(startDate, endDate, status);
+    }
+
+    public int extractMonths(String period) {
+        if (period != null && period.contains("month")) {
+            try {
+                return Integer.parseInt(period.replace("month", ""));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("기간 파싱 오류 : " + period);
+            }
+        }
+        return 1;
     }
 }
 

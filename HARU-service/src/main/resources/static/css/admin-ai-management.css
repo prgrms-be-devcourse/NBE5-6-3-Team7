@@ -1,7 +1,7 @@
 .ai-container {
   width: 100%;
   padding: 20px;
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   margin-top: 2%;
 }
@@ -57,7 +57,7 @@
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden;
-  max-width: 900px;
+  max-width: 1000px;
   width: 100%;
   height: 500px;
   margin: 0 auto;
@@ -83,10 +83,24 @@
 
 .ai-content {
   max-height: 455px;
+  min-height: 400px;
   overflow-y: auto;
   padding: 0;
   box-sizing: border-box;
 }
+
+.ai-content:empty::before {
+  content: "데이터가 없습니다.";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: 65%;
+  width: 100%;
+  color: #666;
+  font-size: 16px;
+}
+
 
 .ai-wirte-container {
   width: 500px;
