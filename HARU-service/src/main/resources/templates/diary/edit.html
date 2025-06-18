@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>일기 수정</title>
-  <link rel="stylesheet" th:href="@{/css/diary.css}">
-  <link rel="stylesheet" href="/css/sidebar.css">
   <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/diary.css">
   <link rel="stylesheet" href="/css/change-date.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -17,7 +17,11 @@
   <script src="/js/logout.js"></script>
 
   <main class="main">
-    <div class="main-container">
+    <div class="diary-header">
+      <h1 class="diary-title">일기 수정</h1>
+    </div>
+
+    <div class="container">
       <input type="hidden" id="diaryId" th:value="${diary.diaryId}">
 
       <div class="form-box">
@@ -29,8 +33,7 @@
               class="date-input"
               style="display: none;"
               th:value="${diary.date}">
-          <div class="date-text" id="date-text"
-               th:text="${#temporals.format(diary.date, 'Y년 M월 d일 E요일')}"></div>
+          <div class="date-text" id="date-text" th:text="${#temporals.format(diary.date, 'Y년 M월 d일 E요일')}"></div>
           <button type="button" class="date-change" id="date-change-btn">날짜 변경</button>
         </div>
       </div>
@@ -79,12 +82,10 @@
             <div id="keyword-primary" class="keyword-group"></div>
 
             <!-- 하단 그룹 (secondary, 기본 숨김) -->
-            <div id="keyword-secondary" class="keyword-group secondary-group"
-                 style="display: none;"></div>
+            <div id="keyword-secondary" class="keyword-group secondary-group" style="display: none;"></div>
 
             <!-- 토글 버튼 -->
-            <button type="button" class="toggle-btn" onclick="toggleKeywordExpand(this)">+ 더보기
-            </button>
+            <button type="button" class="toggle-btn" onclick="toggleKeywordExpand(this)">+ 더보기</button>
 
             <!-- 템플릿 영역 (보이지 않게 숨겨둠) -->
             <div id="keyword-good" style="display: none;"></div>

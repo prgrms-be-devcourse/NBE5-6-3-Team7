@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,15 +45,19 @@ public class AiApiController {
     private final ChatService chatService;
     private final XssProtectionUtils xssUtils;
 
-    @GetMapping("reply")
-    public String singleReply(@RequestParam int diaryId){
-        String prompt = aiReplyScheduler.buildReplyPrompt(diaryId);
-        String replyContent = aiChatService.reply(prompt);
+    @PostMapping("reply")
+    public List<Integer> adminReply(
+        @RequestBody List<Integer> ids
+    ){
+        for(Integer diaryId : ids) {
+            String prompt = aiReplyScheduler.buildReplyPrompt(diaryId);
+            String replyContent = aiChatService.reply(prompt);
 
-        log.info("prompt : {}", prompt);
-        log.info("reply: {}", replyContent);
-        diaryService.registReply(diaryId, replyContent);
-        return replyContent;
+            log.info("prompt : {}", prompt);
+            log.info("reply: {}", replyContent);
+            diaryService.registReply(diaryId, replyContent);
+        }
+        return ids;
     }
 
     @GetMapping("retry-batch")
@@ -125,15 +130,19 @@ public class AiApiController {
 
     @GetMapping("stats/emotion")
     public CompletableFuture<String> getEmotionStats(
+//        @RequestParam String userId,
         @RequestParam LocalDate date,
+        @RequestParam String username,
         Authentication authentication
     ) {
         String userId = authentication.getName();
         String stats = diaryService.getEmotionStats(userId, date);
+
         CompletableFuture<String> future = new CompletableFuture<>();
         aiRequestQueue.addRequest(
             new AiRequestTask(() -> {
-                return aiChatService.analyzeEmotion(stats);
+                if (stats.equals("NO_RECENT_DIARY")) return "감정 분석 기능을 사용하려면 먼저 일기를 작성해주세요!";
+                return aiChatService.analyzeEmotion(stats, userId, username);
             }, future)
         );
         return future;

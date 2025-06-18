@@ -15,88 +15,95 @@
   <script src="/js/logout.js"></script>
 
   <div class="main">
-    <div class="dashboard-container">
-      <div class="dashboard-header">
-        <h1 class="dashboard-title">대시보드</h1>
-        <!-- 월간/연간 선택 -->
-        <div class="toggle-container">
-          <button class="toggle-btn selected" id="MONTH">월간</button>
-          <button class="toggle-btn" id="YEAR">연간</button>
-        </div>
-        <!-- AI 한마디 -->
+    <!-- 대시보드 헤더 -->
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">대시보드</h1>
+      <!-- 월간/연간 선택 -->
+      <div class="toggle-container">
+        <button class="toggle-btn selected" id="MONTH">월간</button>
+        <button class="toggle-btn" id="YEAR">연간</button>
       </div>
+      <!-- AI 한마디 -->
+    </div>
+    <div class="dashboard-container">
       <div class="dashboard-content">
-        <!-- 1행: 감정 흐름 -->
-        <div class="row-1">
-          <div class="box flow-chart">
-            <div class="flow-chart-title">
-              <div class="section-title">감정 흐름</div>
-            </div>
-            <!-- 차트 삽입 -->
-            <div class="flow-chart-inner">
-              <div id="yAxisLabels" class="y-axis-labels"></div>
-              <canvas id="emotionChart" width="400" height="150"></canvas>
-            </div>
+        <!-- 감정 흐름 차트 -->
+        <div class="dashboard-card emotion-flow-card">
+          <h3 class="section-title">
+            <i class="fas fa-chart-line"></i>
+            감정 흐름
+          </h3>
+          <!-- 차트 삽입 -->
+          <div class="chart-container">
+            <div id="yAxisLabels" class="y-axis-labels"></div>
+            <canvas id="emotionChart" width="400" height="150"></canvas>
           </div>
         </div>
-        <!-- 2행: 일기 수 + 감정 분포 -->
-        <div class="row-2">
-          <div class="box diary-count">
-            <div class="section-title">작성한 일기 수</div>
-            <div class="diary-count-wrapper">
-              <div class="diary-count-icon">
-                <img src="/images/icon/diary.svg" alt="Diary Icon" class="icon" />
-              </div>
-              <div class="diary-count-number">0</div>
-            </div>
 
+        <!-- 통계 카드들 -->
+        <div class="stats-grid">
+          <div class="dashboard-card">
+            <h3 class="section-title">
+              <i class="fas fa-book"></i>
+              작성한 일기 수
+            </h3>
+            <div class="diary-count-content">
+              <div class="diary-count-icon">
+                <i class="fas fa-pen-alt"></i>
+              </div>
+              <div class="diary-count-number" id="diaryCount">12</div>
+            </div>
           </div>
-          <div class="box emotion-distribution">
-            <div class="section-title">감정 분포</div>
+
+          <div class="dashboard-card">
+            <h3 class="section-title">
+              <i class="fas fa-chart-pie"></i>
+              감정 분포
+            </h3>
             <!-- 분포 막대 그래프 -->
-            <div class="emotion-bars-wrapper">
+            <div class="emotion-distribution-content">
               <div class="emotion-bars" id="emotionBars">
                 <!-- JS에서 여기에 그래프를 동적으로 채움 -->
               </div>
             </div>
           </div>
         </div>
-        <!-- 3행: 키워드 랭킹 -->
-        <div class="row-3">
-          <div class="box keyword-ranking-container">
-            <h3 class="section-title">키워드 랭킹</h3>
-            <div class="keyword-ranking">
-              <div class="keyword-card">
-                <div class="rank">1</div>
-                <div class="word">-</div>
-                <div class="count">-회</div>
-              </div>
-              <div class="keyword-card">
-                <div class="rank">2</div>
-                <div class="word">-</div>
-                <div class="count">-회</div>
-              </div>
-              <div class="keyword-card">
-                <div class="rank">3</div>
-                <div class="word">-</div>
-                <div class="count">-회</div>
-              </div>
-              <div class="keyword-card">
-                <div class="rank">4</div>
-                <div class="word">-</div>
-                <div class="count">-회</div>
-              </div>
-              <div class="keyword-card">
-                <div class="rank">5</div>
-                <div class="word">-</div>
-                <div class="count">-회</div>
-              </div>
+
+        <!-- 키워드 랭킹 -->
+        <div class="dashboard-card keyword-ranking-card">
+          <h3 class="section-title">
+            <i class="fas fa-trophy"></i>
+            키워드 랭킹
+          </h3>
+          <div class="keyword-ranking">
+            <div class="keyword-card">
+              <div class="rank-badge">1</div>
+              <div class="keyword-word">-</div>
+              <div class="keyword-count">-</div>
+            </div>
+            <div class="keyword-card">
+              <div class="rank-badge">2</div>
+              <div class="keyword-word">-</div>
+              <div class="keyword-count">-</div>
+            </div>
+            <div class="keyword-card">
+              <div class="rank-badge">3</div>
+              <div class="keyword-word">-</div>
+              <div class="keyword-count">-</div>
+            </div>
+            <div class="keyword-card">
+              <div class="rank-badge">4</div>
+              <div class="keyword-word">-</div>
+              <div class="keyword-count">-</div>
+            </div>
+            <div class="keyword-card">
+              <div class="rank-badge">5</div>
+              <div class="keyword-word">-</div>
+              <div class="keyword-count">-</div>
             </div>
           </div>
-        </div>
       </div>
     </div>
-
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

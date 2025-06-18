@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderAis(ais) {
     aiContent.innerHTML = '';
     if (!ais || ais.length === 0) {
-      aiContent.innerHTML = '<p>AI 캐릭터가 없습니다.</p>';
       return;
     }
 

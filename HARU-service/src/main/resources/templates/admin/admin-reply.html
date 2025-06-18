@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 화면</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/admin-reply-management.css">
+  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_green.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+
+<div class="main">
+  <div class="reply-container">
+    <div class="reply-title">일기 답변 관리</div>
+    <div class="reply-buttons">
+      <div class="reply-action">
+        <div class="dropdown-wrapper">
+          <button class="dropdown-button" id="status-button">
+            <span id="status-selected">전체</span>
+            <i class="fa fa-angle-down" aria-hidden="true"></i>
+          </button>
+          <div class="dropdown" id="status-dropdown">
+            <button data-value="all">전체</button>
+            <button data-value="replied">답변 완료</button>
+            <button data-value="unreplied">답변 대기</button>
+          </div>
+        </div>
+        <div class="dropdown-wrapper">
+          <button class="dropdown-button" id="period-button">
+            <span id="period-selected">1개월</span>
+            <i class="fa fa-angle-down" aria-hidden="true"></i>
+          </button>
+          <div class="dropdown" id="period-dropdown">
+            <button data-value="1month">1개월</button>
+            <button data-value="3month">3개월</button>
+            <button data-value="6month">6개월</button>
+            <button data-value="1year">1년</button>
+            <button data-value="custom">직접 설정</button>
+          </div>
+        </div>
+        <input type="text" id="dateRangeInput" name="daterangepicker" style="display:none;"/>
+      </div>
+      <div class="reply-action">
+        <button class="action-button" style="background-color: #467750; border-color: #467750; color: white" id="send-reply">재전송</button>
+      </div>
+    </div>
+    <div class="reply-box">
+      <div class="reply-header">
+        <div class="content-label"><span><input type="checkbox" id="selectAll"></span></div>
+        <div class="content-label">사용자ID</div>
+        <div class="content-label">일기ID</div>
+        <div class="content-label">작성 날짜</div>
+        <div class="content-label">생성 날짜</div>
+        <div class="content-label">답변 날짜</div>
+        <div class="content-label">답변 상태</div>
+      </div>
+
+      <div class="reply-content" id="replyContent"></div>
+    </div>
+
+    <div id="loadingModal" class="modal-overlay" style="display:none;">
+      <div class="modal-content">
+        <p>답변 생성중입니다..</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+<script>
+  flatpickr.localize(flatpickr.l10ns.ko);
+</script>
+<script src="/js/logout.js"></script>
+<script src="/js/sidebar.js"></script>
+<script src="/js/admin-reply.js"></script>
+</body>
+</html>

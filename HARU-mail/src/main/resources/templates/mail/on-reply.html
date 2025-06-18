@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>diary</title>
+</head>
+<body style="margin: 0; font-family: Arial, sans-serif; background-color: #DDE6E0;">
+
+<div style="background-color: #467750; padding: 60px 0; text-align: center;">
+  <img src="cid:mail-image" alt="메일 이미지" style="width: 120px; height: auto;">
+  <h1 th:text = "${character} + '의 답장이 도착했어요!'" style="font-size: 28px; color: white">
+  </h1>
+</div>
+
+<div style="text-align: center; padding: 60px 20px; background-color: #E0E8E2">
+  <div th:utext = "${username} + ' 님의 일기에' + ${character} + ' 이(가) 답장을 남겼어요<br>아래의 버튼을 클릭해 확인해보세요'" style="color: #282420; padding-bottom: 20px;">
+  </div>
+  <a th:href="|${domain}/diary/details?date=${date}|"
+       style="background-color: #467750; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 18px; font-weight: bold; display: inline-block;">
+    확인하러 가기
+  </a>
+</div>
+
+</body>
+</html>

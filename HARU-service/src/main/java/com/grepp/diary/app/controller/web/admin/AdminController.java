@@ -61,4 +61,10 @@ public class AdminController {
 
         return "admin/admin-ai-write";
     }
+
+    @GetMapping("reply")
+    public String reply() {
+
+        return "admin/admin-reply";
+    }
 }
