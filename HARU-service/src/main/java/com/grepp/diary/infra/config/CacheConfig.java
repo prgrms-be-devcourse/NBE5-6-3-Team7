@@ -41,7 +41,6 @@ public class CacheConfig {
      */
     @Bean
     public RedisCacheConfiguration cacheConfiguration() {
-        ObjectMapper mapper = redisObjectMapper(); // ⚠ 전역 빈 아님
 
         return RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(Duration.ofHours(24))
@@ -49,6 +48,6 @@ public class CacheConfig {
             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(
                 new StringRedisSerializer()))
             .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
-                new GenericJackson2JsonRedisSerializer(mapper)));
+                new StringRedisSerializer()));
     }
 }
