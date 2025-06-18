@@ -1,6 +1,7 @@
 package com.grepp.diary.app.model.keyword.repository;
 
 import com.grepp.diary.app.model.keyword.entity.Keyword;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -9,4 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface KeywordRepository extends JpaRepository<Keyword, Integer>, KeywordRepositoryCustom {
 
     Optional<Keyword> findByName(String name);
+
+    List<Keyword> findByIsUseTrue();
+
 }
