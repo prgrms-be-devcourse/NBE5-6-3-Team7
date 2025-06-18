@@ -27,6 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Member member = memberRepository.findById(username)
             .orElseThrow(() -> new UsernameNotFoundException(username));
 
+        // 저장은 정상이지만, 가져올 때 Map으로 역직렬화되므로 방어 로직 추가
         return List.of(new SimpleGrantedAuthority(member.getRole().name()));
     }
 
@@ -39,6 +40,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<SimpleGrantedAuthority> authorities = findAuthorities(username);
         return Principal.createPrincipal(member, authorities);
     }
+
 
 
 

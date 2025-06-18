@@ -132,14 +132,17 @@ public class AiApiController {
     public CompletableFuture<String> getEmotionStats(
 //        @RequestParam String userId,
         @RequestParam LocalDate date,
+        @RequestParam String username,
         Authentication authentication
     ) {
         String userId = authentication.getName();
         String stats = diaryService.getEmotionStats(userId, date);
+
         CompletableFuture<String> future = new CompletableFuture<>();
         aiRequestQueue.addRequest(
             new AiRequestTask(() -> {
-                return aiChatService.analyzeEmotion(stats, userId);
+                if (stats.equals("NO_RECENT_DIARY")) return "감정 분석 기능을 사용하려면 먼저 일기를 작성해주세요!";
+                return aiChatService.analyzeEmotion(stats, userId, username);
             }, future)
         );
         return future;

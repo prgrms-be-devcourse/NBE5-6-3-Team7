@@ -16,8 +16,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
@@ -84,18 +87,23 @@ public class JwtProvider {
     public Authentication genreateAuthentication(String accessToken) {
         Claims claims = parseClaim(accessToken);
 
-        // 캐시에 저장된 값이 SimpleGrantedAuthority가 아니라면 역직렬화 에러 발생
-        // 따라서 캐시나 직접 DB에서 권한을 조회해서 SimpleGrantedAuthority 리스트를 구성해야 함
-        List<SimpleGrantedAuthority> authorities = userDetailsService.findAuthorities(claims.getSubject());
+        List<?> rawAuthorities = userDetailsService.findAuthorities(claims.getSubject());
+
+        List<GrantedAuthority> authorities = rawAuthorities.stream()
+            .map(auth -> {
+                if (auth instanceof SimpleGrantedAuthority) {
+                    return (SimpleGrantedAuthority) auth;
+                } else if (auth instanceof LinkedHashMap<?, ?> map && map.get("authority") != null) {
+                    return new SimpleGrantedAuthority(map.get("authority").toString());
+                } else {
+                    throw new IllegalArgumentException("권한 역직렬화 실패: " + auth);
+                }
+            })
+            .collect(Collectors.toList());
 
         Principal principal = new Principal(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
-
-
-
-
-
 
     public Claims parseClaim(String accessToken) {
         try{
@@ -105,8 +113,7 @@ public class JwtProvider {
             return ex.getClaims();
         }
     }
-    
-    
+
     public boolean validateToken(String requestAccessToken) {
         try{
             Jwts.parser().verifyWith(getSecretKey()).build().parse(requestAccessToken);

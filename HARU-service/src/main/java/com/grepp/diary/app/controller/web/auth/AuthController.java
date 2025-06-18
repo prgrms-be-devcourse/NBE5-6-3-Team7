@@ -152,113 +152,104 @@ public class AuthController {
         return "/member/find-idpw";
     }
 
-
-    @PostMapping("/auth-id")
-    public String sendAuthCodeForId(@RequestParam String email, Model model,RedirectAttributes redirectAttributes,
-        @RequestParam(required = false) String code, HttpSession session) {
-
-        if (code == null || code.isBlank()) {
-            // 1. 이메일 유효성 검사
-            if (!memberService.isValidEmail(email)) {
-                model.addAttribute("error", "유효한 이메일 형식이 아닙니다.");
-                return "member/find-idpw";
-            }
-
-            try {
-                // 2.인증 코드 전송 (세션 처리 포함)
-                authService.generateAndSendCode(email, session, null);
-                model.addAttribute("email", email);
-                model.addAttribute("step", "verify");
-                model.addAttribute("message", "인증번호가 전송되었습니다.");
-                return "member/find-idpw";
-            } catch (CommonException e) {
-                model.addAttribute("error", e.getMessage()); // 사용자에게 오류 메시지 전달
-                return "member/find-idpw";
-            }
-        }
-
-        // 인증번호가 입력된 상태 → 인증번호 검증 단계
-        String sessionCode = (String) session.getAttribute("authCode");
-
-        if (sessionCode != null && sessionCode.equals(code)) {
-            try {
-                String userId = memberService.findUserIdByEmailFromSession(session);
-                model.addAttribute("message", userId);
-                return "member/find-idpw-verification";
-            } catch (CommonException e) {
-                model.addAttribute("error", e.getMessage());
-                model.addAttribute("step", null);
-                return "member/find-idpw";
-            }
-        } else {
-            model.addAttribute("error", "인증번호가 일치하지 않습니다.");
-            model.addAttribute("email", email);
-            model.addAttribute("step", "verify");
-
-            return "member/find-idpw";
-
-        }
-
-    }
-
-
-    @PostMapping("/auth-pw")
-    public String sendAuthCodeForPw(@RequestParam String email,
-        @RequestParam String userId,
-        @RequestParam(required = false) String code,
-        Model model,
+    // 아이디 + 비번 합쳐서 (이메일 유효성)검사 + 인증코드 전송
+    @PostMapping("/auth-idpw")
+    public String sendAuthCodeForId(@RequestParam String email, Model model,
+        @RequestParam(required = false) String userId,
         HttpSession session) {
-
-        if (code == null || code.isBlank()) {
-            // 1. 이메일 형식 확인
-            if (!memberService.isValidEmail(email)) {
-                model.addAttribute("error", "유효한 이메일 형식이 아닙니다.");
-                model.addAttribute("type", "pw");
-                return "member/find-idpw";
-            }
-
-            // 2. 이메일 + 아이디로 사용자 존재 확인
+        if(userId != null) {
             if (!memberService.existsByUserIdAndEmail(userId, email)) {
                 model.addAttribute("error", "일치하는 계정이 없습니다.");
                 model.addAttribute("type", "pw");
                 return "member/find-idpw";
             }
+        } else {
+            if (!memberService.isValidEmail(email)) {
+                model.addAttribute("type", "pw");
+                model.addAttribute("error", "유효한 이메일 형식이 아닙니다.");
+                return "member/find-idpw";
+            }
+        }
 
-            // 3. 인증 코드 생성 및 저장
-            authService.generateAndSendCode(email, session, userId);
-
-
+        try {
+            // 아이디 + 비번 검사 2단계 : 인증 코드 전송 (세션 처리 포함)
+            if (userId != null) {
+                // 비번 찾기
+                authService.generateAndSendCode(email, session, userId);
+                model.addAttribute("userId", userId);
+                model.addAttribute("type", "pw");
+            }else {
+                // 아이디찾기
+                authService.generateAndSendCode(email, session, null);
+            }
             model.addAttribute("email", email);
-            model.addAttribute("userId", userId);
             model.addAttribute("step", "verify");
             model.addAttribute("message", "인증번호가 전송되었습니다.");
-            model.addAttribute("type", "pw");
+            return "member/find-idpw";
+        } catch (CommonException e) {
+            model.addAttribute("error", e.getMessage()); // 사용자에게 오류 메시지 전달
             return "member/find-idpw";
         }
 
-        // 4. 인증번호 확인
-        String sessionCode = (String) session.getAttribute("authCode");
-        String sessionEmail = (String) session.getAttribute("authEmail");
-        String sessionUserId = (String) session.getAttribute("authUserId");
+    }
 
+    // 아이디 + 비번 합쳐서 인증 코드 검증
+    @PostMapping("/auth-idpw-verification")
+    public String findIdCodeVerification(@RequestParam String email, Model model,
+        @RequestParam(required = false) String userId,
+        @RequestParam String code, HttpSession session) {
+
+        // 인증번호가 입력된 상태 → 인증번호 검증 단계
+        String sessionCode, sessionEmail, sessionUserId;
+        if (userId != null) {
+            // 비밀번호 찾기
+            sessionCode = (String) session.getAttribute("pwAuthCode");
+            sessionEmail = (String) session.getAttribute("pwAuthEmail");
+            sessionUserId = (String) session.getAttribute("pwAuthUserId");
+        } else {
+            // 아이디 찾기
+            sessionCode = (String) session.getAttribute("idAuthCode");
+            sessionEmail = (String) session.getAttribute("idAuthEmail");
+            sessionUserId = null;
+        }
+
+        // 인증 성공!!
         if (sessionCode != null && sessionCode.equals(code)) {
             // 세션 제거
             session.removeAttribute("authCode");
-
-            // 비밀번호 재설정 페이지로 이동
-            model.addAttribute("email", sessionEmail);
-            model.addAttribute("userId", sessionUserId);
+            model.addAttribute("isSuccess", true);
+            if( userId == null) {
+                try {
+                    // 아이디 찾기
+                    userId = memberService.findUserIdByEmailFromSession(session);
+                    log.info("userId : " + userId);
+                    model.addAttribute("message", userId);
+                    return "member/find-idpw-verification";
+                } catch (CommonException e) {
+                    model.addAttribute("error", e.getMessage());
+                    model.addAttribute("step", null);
+                    return "member/find-idpw";
+                }
+            } else {
+                // 비번 찾기
+                model.addAttribute("email", sessionEmail);
+                model.addAttribute("userId", sessionUserId);
+                model.addAttribute("step", "verify");
+                return "member/reset-password";
+            }
+        }else {
+            // 인증 실패!!
+            if (userId != null) {
+                // 비번 찾기
+                model.addAttribute("userId", userId);
+                model.addAttribute("type", "pw");
+            }
+            model.addAttribute("error", "인증번호가 일치하지 않습니다.");
+            model.addAttribute("email", email);
             model.addAttribute("step", "verify");
-
-            return "member/reset-password";
+            model.addAttribute("isSuccess", false);
+            return "member/find-idpw";
         }
-
-        model.addAttribute("error", "인증번호가 일치하지 않습니다.");
-        model.addAttribute("step", "verify");
-        model.addAttribute("email", email);
-        model.addAttribute("userId", userId);
-        model.addAttribute("type", "pw");
-        return "member/find-idpw";
     }
 
     @PostMapping("/change-pw")

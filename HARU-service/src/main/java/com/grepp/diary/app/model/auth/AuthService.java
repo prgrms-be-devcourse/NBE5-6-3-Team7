@@ -22,13 +22,17 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,58 +42,53 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
-public class AuthService {
+public class AuthService implements UserDetailsService {
 
-    private final Map<String, String> authCodeStorage = new HashMap<>(); // 인증번호 저장용
+    private final Map<String, String> authCodeStorage = new HashMap<>();
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailApi mailApi;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    // ✅ 변경된 부분
+    private AuthenticationManager authenticationManager;
+
     private final UserBlackListRepository userBlackListRepository;
     private final RefreshTokenService refreshTokenService;
 
     @Value("${app.domain}")
     private String domain;
 
-    public UserDetails loadUserByUsername(String username) {
+    @Lazy
+    @Autowired
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) {
         Member member = memberRepository.findById(username)
             .orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다."));
 
-        if(!member.isEnabled()) {
+        if (!member.isEnabled()) {
             throw new UsernameNotFoundException("계정이 비활성화되어 있습니다.");
         }
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(member.getRole().name()));
 
-        // 스프링시큐리티는 기본적으로 권한 앞에 ROLE_ 이 있음을 가정
-        // hasRole("ADMIN") =>  ROLE_ADMIN 권한이 있는 지 확인.
         return Principal.createPrincipal(member, authorities);
     }
 
     public TokenDto verifyPasswordAndLogin(SigninForm signinForm, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken authToken =
+            new UsernamePasswordAuthenticationToken(signinForm.getUserId(), signinForm.getPassword());
 
-        // 1. 사용자 데이터 조회
-        UserDetails userDetails = loadUserByUsername(signinForm.getUserId());
-
-        // 2. 비밀번호 체크
-        if (!passwordEncoder.matches(signinForm.getPassword(), userDetails.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
-        }
-
-        // 3. 인증 설정
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(signinForm.getUserId(), signinForm.getPassword());
-
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-        request.getSession()
-            .setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authToken);
+        Authentication authentication = authenticationManager.authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
         boolean rememberMe = "on".equals(request.getParameter("remember-me"));
         return processTokenSignin(signinForm.getUserId(), rememberMe);
     }
@@ -103,33 +102,28 @@ public class AuthService {
         mailDto.setFrom("haru");
         mailDto.setTo(List.of(email));
         mailDto.setSubject("Diary 인증번호 안내");
+
         Map<String, String> props = new HashMap<>();
         props.put("domain", domain);
         props.put("code", code);
-
         mailDto.setProperties(props);
         mailDto.setEventType("send_code");
 
-        mailApi.sendMail(
-            "user-service",
-            "ROLE_SERVER",
-            mailDto
-        );
+        mailApi.sendMail("user-service", "ROLE_SERVER", mailDto);
 
-        session.setAttribute("authCode", code);
-        session.setAttribute("authEmail", email);
         if (userId != null) {
-            session.setAttribute("authUserId", userId);
+            session.setAttribute("pwAuthCode", code);
+            session.setAttribute("pwAuthEmail", email);
+            session.setAttribute("pwAuthUserId", userId);
+        } else {
+            session.setAttribute("idAuthCode", code);
+            session.setAttribute("idAuthEmail", email);
         }
     }
 
     public TokenDto processTokenSignin(String username, boolean rememberMe) {
-        // 블랙리스트에서 제거
         userBlackListRepository.deleteById(username);
-
         AccessTokenDto dto = jwtProvider.generateAccessToken(username);
-
-        // 리멤버 미 체크 여부에 따라 만료 시간 결정
         long rtExpiration = rememberMe ? 60L * 60 * 24 * 30 : 60L * 60 * 24;
 
         RefreshToken refreshToken = new RefreshToken(username, dto.getId());
@@ -143,4 +137,5 @@ public class AuthService {
             .grantType(GrantType.BEARER)
             .build();
     }
+
 }

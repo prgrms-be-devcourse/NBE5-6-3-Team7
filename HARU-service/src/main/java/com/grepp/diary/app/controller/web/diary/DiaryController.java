@@ -1,11 +1,15 @@
 package com.grepp.diary.app.controller.web.diary;
 
 import com.grepp.diary.app.controller.web.diary.payload.DiaryRequest;
+import com.grepp.diary.app.model.common.code.ImgType;
 import com.grepp.diary.app.model.custom.dto.CustomAiInfoDto;
 import com.grepp.diary.app.model.custom.CustomService;
 import com.grepp.diary.app.model.diary.DiaryService;
 import com.grepp.diary.app.model.diary.dto.DiaryRecordDto;
 import com.grepp.diary.app.model.diary.entity.Diary;
+import com.grepp.diary.app.model.diary.entity.DiaryImg;
+import com.grepp.diary.app.model.keyword.KeywordService;
+import com.grepp.diary.app.model.keyword.entity.Keyword;
 import com.grepp.diary.infra.error.exceptions.CommonException;
 import com.grepp.diary.infra.util.xss.XssProtectionUtils;
 import java.time.LocalDate;
@@ -25,6 +29,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import static com.grepp.diary.app.model.diary.entity.QDiary.diary;
 
 @Controller
 @RequiredArgsConstructor
@@ -103,6 +109,11 @@ public class DiaryController {
         String userId = user.getUsername();
         Optional<Diary> diaryExist = diaryService.findDiaryByUserIdAndDiaryId(userId, id);
         model.addAttribute("diary", DiaryRecordDto.fromEntity(diaryExist.get()));
+
+        Optional<DiaryImg> thumbnailImg = diaryExist.get().getImages().stream()
+                                               .filter(img -> ImgType.THUMBNAIL.equals(img.getType()))
+                                               .findFirst();
+        model.addAttribute("thumbnailName", thumbnailImg.map(DiaryImg::getOriginName).orElse(null));
 
         // 선택했던 키워드들
         List<String> keywordNames = diaryExist.get().getKeywords().stream()

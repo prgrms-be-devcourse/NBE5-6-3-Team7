@@ -203,12 +203,12 @@ public class MemberService {
     }
 
     public String findUserIdByEmailFromSession(HttpSession session) {
-        String sessionEmail = (String) session.getAttribute("authEmail");
+        String sessionEmail = (String) session.getAttribute("idAuthEmail");
         session.removeAttribute("authCode");
         session.removeAttribute("authEmail");
         return memberRepository.findByEmail(sessionEmail)
             .map(Member::getUserId)
-            .orElseThrow(() -> new CommonException(ResponseCode.BAD_REQUEST, "해당 이메일로 가입된 계정이 없습니다."));
+            .orElseThrow(() -> new CommonException(ResponseCode.BAD_REQUEST, "아이디를 찾던 도중 문제가 발생했습니다."));
     }
 
     // 이메일 검증
