@@ -132,20 +132,21 @@
       <!-- 이미지 업로드 + 기존 이미지 미리보기 통합 영역 -->
       <div class="form-box">
         <label>이미지</label>
+        <div class="form-group image-upload-wrapper">
+          <!-- 이미지 미리보기 -->
+          <div id="preview-area" class="image-preview-box">
+            <span class="placeholder-icon"><i class="fa-solid fa-image custom-icon"></i></span>
+          </div>
 
-        <!-- 이미지 미리보기 -->
-        <div id="preview-area" class="image-preview-box">
-          <span class="placeholder-icon"><i class="fa-solid fa-image custom-icon"></i></span>
+          <!-- 업로드 버튼 -->
+          <div class="upload-btn-wrapper">
+            <input type="file" multiple name="images" id="images" accept="image/*"
+                   style="display: none;" onchange="previewImages(event)">
+            <label for="images" class="upload-btn">사진 추가하기</label>
+          </div>
+
+          <p class="image-guide">사진은 여러 장 추가할 수 있으며, 기본적으로 첫 번째 이미지가 썸네일로 설정됩니다.</p>
         </div>
-
-        <!-- 업로드 버튼 -->
-        <div class="upload-btn-wrapper">
-          <input type="file" multiple name="images" id="images" accept="image/*"
-                 style="display: none;" onchange="previewImages(event)">
-          <label for="images" class="upload-btn">사진 추가하기</label>
-        </div>
-
-        <p class="image-guide">사진은 여러 장 추가할 수 있으며, 기본적으로 첫 번째 이미지가 썸네일로 설정됩니다.</p>
       </div>
 
       <div class="form-group">
