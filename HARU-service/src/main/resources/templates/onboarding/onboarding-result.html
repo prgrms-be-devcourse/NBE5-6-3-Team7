@@ -1,42 +1,175 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI 추천 결과</title>
   <link rel="stylesheet" href="/css/onboarding-result.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <script src="/js/onboarding-result.js" defer></script>
 </head>
 <body>
-<main class="container">
-  <h1><span th:text="${name}"></span>님에게 어울리는 AI를 찾았어요.</h1>
+<!-- 배경 장식 요소들 -->
+<div class="bg-decoration"></div>
+<div class="bg-decoration"></div>
+<div class="bg-decoration"></div>
 
-  <form method="post" id="aiForm" th:action="@{/member/custom-ai}">
-    <div class="ai-preview">
-      <div class="circle">
-        <img
-            th:if="${ai.images != null and !#lists.isEmpty(ai.images)}"
-            th:src="@{${ai.images[0].renamedName}}"
-            alt="AI 썸네일"
-        />
+<main class="container">
+  <div class="content-wrapper">
+    <!-- 헤더 섹션 -->
+    <div class="header-section">
+      <div class="success-badge">
+        <span class="success-icon">🎉</span>
+        <span class="success-text">완료!</span>
       </div>
-      <div class="ai-name">
-        <span th:text="${ai.name}"></span>
-      </div>
-      <p class="ai-desc">
-        <span th:text="${name + '님, ' + ai.info}"></span>
-      </p>
+      <h1 class="main-title">
+        <span th:text="${name}" class="user-name">사용자</span>님에게<br>
+        <strong>완벽한 AI 친구</strong>를 찾았어요!
+      </h1>
     </div>
 
-    <!-- hidden input으로 aiId 등 필요한 값도 함께 전송 -->
-    <input type="hidden" name="ai" th:value="${ai}" />
-    <input type="hidden" name="aiId" th:value="${ai.aiId}" />
-    <input type="hidden" name="name" th:value="${name}">
+    <form method="post" id="aiForm" th:action="@{/member/custom-ai}">
+      <!-- AI 프리뷰 카드 -->
+      <div class="ai-preview-card">
+        <div class="ai-preview">
+          <div class="circle">
+            <img
+                th:if="${ai.images != null and !#lists.isEmpty(ai.images)}"
+                th:src="@{${ai.images[0].renamedName}}"
+                th:alt="${ai.name + ' AI 썸네일'}"
+            />
+            <div th:unless="${ai.images != null and !#lists.isEmpty(ai.images)}"
+                 class="ai-placeholder">
+              <span class="ai-emoji">🤖</span>
+            </div>
+          </div>
 
-    <button type="submit" class="start-btn">시작하기</button>
-  </form>
+          <div class="ai-info">
+            <div class="ai-name">
+              <span th:text="${ai.name}">AI 친구</span>
+            </div>
+            <p class="ai-desc">
+              <span th:text="${name + '님, ' + ai.info}">당신을 위한 특별한 AI입니다.</span>
+            </p>
+          </div>
+        </div>
 
-  <p class="check-other" style="cursor: pointer;">다른 AI도 확인하시겠어요?</p>
+        <!-- AI 특성 태그들 -->
+        <div class="ai-features">
+          <div class="feature-tag">
+            <span class="feature-icon">💝</span>
+            <span>공감형</span>
+          </div>
+          <div class="feature-tag">
+            <span class="feature-icon">🎯</span>
+            <span>해결사</span>
+          </div>
+          <div class="feature-tag">
+            <span class="feature-icon">😊</span>
+            <span>친근함</span>
+          </div>
+        </div>
+      </div>
 
+      <!-- Hidden inputs -->
+      <input type="hidden" name="ai" th:value="${ai}" />
+      <input type="hidden" name="aiId" th:value="${ai.aiId}" />
+      <input type="hidden" name="name" th:value="${name}">
+
+      <!-- 액션 버튼들 -->
+      <div class="action-buttons">
+        <button type="submit" class="start-btn" id="startBtn">
+          <span class="btn-icon">🚀</span>
+          <span class="btn-text">시작하기</span>
+          <div class="btn-shine"></div>
+        </button>
+
+        <button type="button" class="check-other-btn" id="checkOtherBtn">
+          <span class="btn-icon">🔍</span>
+          <span class="btn-text">다른 AI도 확인하기</span>
+        </button>
+      </div>
+    </form>
+  </div>
 </main>
+
+<!-- 로딩 오버레이 -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <h3>설정을 저장하고 있어요...</h3>
+    <p>잠시만 기다려주세요!</p>
+  </div>
+</div>
+
+<script>
+  // 페이지 로드 시 초기화
+  document.addEventListener('DOMContentLoaded', function() {
+    // 콘텐츠 즉시 표시
+    document.querySelector('.container').classList.add('show');
+
+    // 배경 장식 요소들 애니메이션
+    const decorations = document.querySelectorAll('.bg-decoration');
+    decorations.forEach((decoration, index) => {
+      const randomDelay = Math.random() * 2;
+      decoration.style.animationDelay = `${randomDelay}s`;
+    });
+  });
+
+  // 버튼 클릭 효과
+  document.getElementById('startBtn').addEventListener('click', function(e) {
+    this.classList.add('clicked');
+
+    // 로딩 표시
+    setTimeout(() => {
+      document.getElementById('loadingOverlay').style.display = 'flex';
+    }, 300);
+  });
+
+  // 다른 AI 확인 버튼
+  document.getElementById('checkOtherBtn').addEventListener('click', function() {
+    this.classList.add('clicked');
+
+    const form = document.getElementById("aiForm");
+    const formData = new FormData(form);
+
+    // 로딩 표시
+    document.getElementById('loadingOverlay').style.display = 'flex';
+
+    fetch(form.action, {
+      method: "POST",
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        setTimeout(() => {
+          location.href = "/app/settings/ai";
+        }, 800);
+      } else {
+        throw new Error('폼 전송 실패');
+      }
+    })
+    .catch(error => {
+      console.error("오류 발생:", error);
+      document.getElementById('loadingOverlay').style.display = 'none';
+
+      // 에러 알림 (더 나은 UI로 개선 가능)
+      alert("오류가 발생했습니다. 다시 시도해주세요.");
+
+      this.classList.remove('clicked');
+    });
+  });
+
+  // 키보드 지원
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) {
+      document.getElementById('startBtn').click();
+    }
+    if (e.key === ' ' && e.target === document.body) {
+      e.preventDefault();
+      document.getElementById('checkOtherBtn').click();
+    }
+  });
+</script>
 </body>
 </html>
