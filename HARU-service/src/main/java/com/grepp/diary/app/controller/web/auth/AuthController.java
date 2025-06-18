@@ -4,16 +4,22 @@ import com.grepp.diary.app.controller.web.auth.form.SigninForm;
 import com.grepp.diary.app.controller.web.auth.form.SignupForm;
 import com.grepp.diary.app.model.auth.AuthService;
 import com.grepp.diary.app.model.auth.code.Role;
+import com.grepp.diary.app.model.auth.token.dto.TokenDto;
 import com.grepp.diary.app.model.custom.CustomService;
 import com.grepp.diary.app.model.member.MemberService;
+import com.grepp.diary.infra.auth.token.JwtProvider;
+import com.grepp.diary.infra.auth.token.TokenCookieFactory;
+import com.grepp.diary.infra.auth.token.code.TokenType;
 import com.grepp.diary.infra.error.exceptions.CommonException;
 import com.grepp.diary.infra.response.ResponseCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -38,6 +44,7 @@ public class AuthController {
     private final MemberService memberService;
     private final AuthService authService;
     private final CustomService customService;
+    private final JwtProvider jwtProvider;
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("signinForm") SigninForm signinForm,
@@ -53,7 +60,15 @@ public class AuthController {
         }
 
         try {
-            authService.verifyPasswordAndLogin(signinForm, request, response);
+            TokenDto dto = authService.verifyPasswordAndLogin(signinForm, request);
+            ResponseCookie accessTokenCookie = TokenCookieFactory.create(TokenType.ACCESS_TOKEN.name(),
+                dto.getAccessToken(), dto.getAtExpiresIn());
+            ResponseCookie refreshTokenCookie = TokenCookieFactory.create(TokenType.REFRESH_TOKEN.name(),
+                dto.getRefreshToken(), dto.getRtExpiresIn());
+
+            response.addHeader("Set-Cookie", accessTokenCookie.toString());
+            response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+
             return "redirect:/app";
         } catch (UsernameNotFoundException | IllegalArgumentException e) {
             // 로그인 실패 시
@@ -114,16 +129,31 @@ public class AuthController {
     }
 
     // 이메일 인증 -> 회원가입(db 등록)
-    @GetMapping("regist/{token}")
+    @GetMapping("/regist/{token}")
     public String verifiedRegist(
-        @PathVariable
-        String token,
-        HttpSession session,
+        @PathVariable String token,
+        HttpServletRequest request,
+        HttpServletResponse response,
         RedirectAttributes redirectAttributes
     ) {
         try {
-            memberService.signup(session, token, Role.ROLE_USER); // 일반 사용자로 회원가입
+            // 회원가입 및 수동 로그인
+            Principal principal = memberService.signup(request.getSession(), token, Role.ROLE_USER);
+
+            // 토큰 발급
+            TokenDto dto = authService.generateTokenAfterSignup(principal);
+
+            // 쿠키 설정
+            ResponseCookie accessTokenCookie = TokenCookieFactory.create(TokenType.ACCESS_TOKEN.name(),
+                dto.getAccessToken(), dto.getAtExpiresIn());
+            ResponseCookie refreshTokenCookie = TokenCookieFactory.create(TokenType.REFRESH_TOKEN.name(),
+                dto.getRefreshToken(), dto.getRtExpiresIn());
+
+            response.addHeader("Set-Cookie", accessTokenCookie.toString());
+            response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+
             return "redirect:/app";
+
         } catch (CommonException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.code().message());
             return "redirect:/app";

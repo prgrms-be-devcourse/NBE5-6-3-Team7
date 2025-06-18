@@ -63,14 +63,11 @@ function handleClick(option) {
       // 버튼 2, 4 => 용맹한 거북이 4  false false
       ai_id = 4;
     }
-    const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
     fetch('/api/member/onboarding-ai', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
       },
       body: JSON.stringify({
         aiId: ai_id,

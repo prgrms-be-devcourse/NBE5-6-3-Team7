@@ -2,9 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const keywordContent = document.getElementById('keywordContent');
   const defaultType = 'EMOTION';
 
-  const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
   let keywordMap = new Map();
 
   fetchKeywords(defaultType);
@@ -130,8 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
       },
+      credentials: 'include',
       body: JSON.stringify(requestBody)
     })
     .then(res => {
@@ -161,8 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
       },
+      credentials: 'include',
       body: JSON.stringify(keywordIds)
     })
     .then(res => {

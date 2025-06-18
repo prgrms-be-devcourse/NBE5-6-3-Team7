@@ -253,7 +253,7 @@
   color: #ef4444 !important;
 }
 
-/* 숨겨진 input 필드 (CSRF 토큰 등) */
+/* 숨겨진 input 필드*/
 .bento-form input[type="hidden"] {
   display: none;
   padding: 0;

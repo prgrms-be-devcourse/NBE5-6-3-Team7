@@ -5,9 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let type = 'all';
   let replyMap = new Map();
 
-  const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
   fetchDiaryAndReply(period, type);
 
   // 드랍다운 action (기간)
@@ -168,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
       },
       body: JSON.stringify(itemIds)
     })

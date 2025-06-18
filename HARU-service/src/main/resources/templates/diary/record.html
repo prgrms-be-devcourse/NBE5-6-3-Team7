@@ -9,7 +9,6 @@
 
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <th:block th:replace="fragments/csrf-meta :: csrfMeta"></th:block>
 </head>
 <body>
 <div th:replace="~{fragments/member-sidebar :: memberSidebar}"></div>
@@ -54,13 +53,19 @@
       </div>
 
       <div class="diary-content">
-        <!-- 이미지 섹션 -->
-        <div th:if="${diary.images != null && !diary.images.isEmpty()}" class="diary-image-section">
-          <div class="diary-image-wrapper">
-            <div th:each="image : ${diary.images}">
-              <img th:src="@{${image.path}}" th:alt="${image.originName}">
+        <!-- 이미지 슬라이드 영역 -->
+        <div class="carousel-container">
+          <button class="carousel-btn prev" onclick="moveSlide(-1)">❮</button>
+
+          <div class="carousel-track-wrapper">
+            <div class="carousel-track" id="carousel-track">
+              <div class="carousel-item" th:each="image : ${diary.images}">
+                <img th:src="@{${image.path}}" th:alt="${image.originName}">
+              </div>
             </div>
           </div>
+
+          <button class="carousel-btn next" onclick="moveSlide(1)">❯</button>
         </div>
 
         <!-- 텍스트 섹션 -->
@@ -149,15 +154,12 @@
     window.location.href = `/diary/edit/${diaryId}`;
   }
 
-  const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
   function deleteDiary() {
     if (confirm("정말로 삭제하시겠습니까?")) {
       fetch(`/api/diary/${diaryId}`, {
         method: 'DELETE',
         headers: {
-          [csrfHeader]: csrfToken
         },
       })
       .then(response => {
@@ -191,6 +193,21 @@
       }
     }
   });
+
+  // 이미지 화면 노출 개선
+  let currentSlide = 0;
+
+  function moveSlide(direction) {
+    const track = document.getElementById('carousel-track');
+    const items = track.querySelectorAll('.carousel-item');
+    const totalSlides = items.length;
+
+    currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+  }
+
+  // 자동 슬라이드
+  // setInterval(() => moveSlide(1), 4000); // 4초마다 다음으로 이동
 
 </script>
 <script src="/js/sidebar.js"></script>
