@@ -1,209 +1,358 @@
+/* 헤더 */
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #89C07E, #467750);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  color: #6b8e6e;
+  opacity: 0.8;
+}
+
 .container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  max-width: 800px;
-  margin: 30px auto;
-  align-content: center;
-  padding: 0 16px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.diary-main {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  background-color: #FEFBF6;
-  border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  padding: 24px;
-  margin-top: 10px;
-  margin-bottom: 24px;
-}
-
-.reply-main {
-  width: 100%;
-  background-color: #FEFBF6;
-  border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  padding: 24px;
-  margin-bottom: 24px;
-  margin-top: 10px;
+/* 일기 카드 */
+.diary-card {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  margin-bottom: 30px;
+  border: 1px solid rgba(137, 192, 126, 0.15);
 }
 
 .diary-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 32px;
+  background: linear-gradient(135deg, #89C07E, #6b8e6e);
+  border-bottom: 1px solid rgba(137, 192, 126, 0.1);
 }
 
-.diary-date {
+.diary-date-section {
   display: flex;
   align-items: center;
+  gap: 20px;
 }
 
-#diary-emotion {
-  width: 50px;
-  height: 50px;
+.emotion-icon {
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   display: flex;
-  flex-direction: column;
-}
-
-#diary-emotion img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.5);
-}
-
-.button-group {
-  display: flex;
   align-items: center;
-  margin-right: 7px;
-  width: 200px;
-  text-align: center;
-}
-
-.button-group .button {
-  width: 100%;
-  margin-left: 20px;
-  gap: 15px;
-  font-size: 1.5rem;
-  padding: 5px;
-  border-radius: 5px;
-  border: 2px solid transparent;
-  cursor: pointer;
-}
-
-.button-group .button:hover {
-  border-color: #6b8e6e;
-  background-color: #e0f0e0;
-  transition: 0.7s ease;
-}
-
-.diary-image {
-  width: 100%;
-  height: 320px;
-  display: flex;
   justify-content: center;
-  align-items: center;
-  /*overflow-x: auto;*/
-  /*gap: 10px;*/
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
 }
 
-.diary-image img {
-  border-radius: 12px;
-  height: 300px;
-  width: 100%;
+.emotion-icon img {
+  width: 38px;
+  height: 38px;
   object-fit: contain;
-  /*height: auto;*/
-  /*width: auto;*/
-  /*flex: 0 0 auto;*/
+}
+
+.date-info h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 6px;
+}
+
+.date-info .weekday {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.action-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: none;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  transition: all 0.3s ease;
+  box-shadow: none;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.action-btn.delete {
+  color: #ff7675;
+  border-color: rgba(255, 118, 117, 0.5);
+}
+
+.action-btn.delete:hover {
+  background: rgba(255, 118, 117, 0.2);
+  color: #ff7675;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 118, 117, 0.7);
+}
+
+/* 일기 내용 */
+.diary-content {
+  padding: 32px;
+}
+
+.diary-image-section {
+  margin-bottom: 32px;
 }
 
 .diary-image-wrapper {
-  border-radius: 12px;
-  width: 100%;
-  height: 310px;
-  display: flex;
-  justify-content: center;
-  /*overflow-x: auto;*/
-  align-items: center;
-  /*background: #fafafa;*/
+  border-radius: 20px;
+  overflow: hidden;
+  background: #f8f9fa;
+  border: 2px solid rgba(137, 192, 126, 0.15);
 }
 
-.diary-text {
+.diary-image-wrapper img {
   width: 100%;
-  margin: 20px 0;
+  height: 320px;
+  object-fit: cover;
 }
 
-.diary-text-wrapper {
-  border-radius: 12px;
-  border: 2px solid #6b8e6e;
-  width: 100%;
-  height: 100%;
-  min-height: 150px;
-  background-color: white;
-  padding: 20px;
+.diary-text-section {
+  margin-bottom: 28px;
 }
 
-.diary-keyword {
+.diary-text-content {
+  background: #f8fffe;
+  border: 2px solid rgba(137, 192, 126, 0.2);
+  border-radius: 20px;
+  padding: 28px;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #2d3436;
+  min-height: 140px;
+}
+
+.diary-keywords {
   display: flex;
   flex-wrap: wrap;
-  width: 100%;
-  color: #89C07E;
-  font-weight: bold;
-  margin-top: 10px;
   gap: 10px;
 }
 
-.keyword {
-  white-space: nowrap;
-  padding: 4px 8px;
-  display: inline-block;
+.keyword-tag {
+  background: linear-gradient(135deg, #89C07E, #6b8e6e);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(137, 192, 126, 0.25);
+  transition: all 0.3s ease;
+}
+
+.keyword-tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(137, 192, 126, 0.35);
+}
+
+/* AI 답장 섹션 */
+.reply-card {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  border: 1px solid rgba(137, 192, 126, 0.15);
 }
 
 .reply-header {
+  background: linear-gradient(135deg, #f8fffe, #e8f5e8);
+  color: #467750;
+  padding: 28px 32px;
   display: flex;
   align-items: center;
-  padding-left: 10px;
+  gap: 18px;
+  border-bottom: 1px solid rgba(137, 192, 126, 0.15);
 }
 
-.reply-text {
+.reply-icon {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #89C07E, #467750);
+  border-radius: 50%;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  box-shadow: 0 4px 12px rgba(137, 192, 126, 0.3);
+}
+
+.reply-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.reply-content {
+  padding: 32px;
+}
+
+.ai-message {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
 }
 
 .ai-avatar {
-  width: 10%;
-  height: 100%;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(137, 192, 126, 0.3);
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(137, 192, 126, 0.2);
 }
 
 .ai-avatar img {
-  width: 80%;
-  height: 80%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 50%;
 }
 
-.ai-reply {
-  width: 90%;
-  height: 100%;
+.ai-message-content {
+  flex: 1;
+  background: #f8fffe;
+  border: 2px solid rgba(137, 192, 126, 0.2);
+  border-radius: 24px 24px 24px 8px;
+  padding: 24px;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #2d3436;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(137, 192, 126, 0.1);
 }
 
-.ai-reply-wrapper {
-  border-radius: 12px;
-  border: 2px solid #6b8e6e;
-  width: 100%;
-  height: 100%;
-  min-height: 100px;
-  background-color: white;
-  padding: 20px;
+.ai-message-content::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 24px;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid rgba(137, 192, 126, 0.2);
 }
 
-.chat-btn-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-top: 30px;
+.ai-message-content::after {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 24px;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid #f8fffe;
 }
 
-.chat-btn {
-  background-color: transparent;
-  border: 1px solid #467750;
-  color: #467750;
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+.loading-message {
+  text-align: center;
+  color: #6b8e6e;
+  font-style: italic;
+  padding: 48px;
+  background: #f8fffe;
+  border-radius: 20px;
+  border: 2px solid rgba(137, 192, 126, 0.15);
 }
 
-.chat-btn:hover {
-  background-color: #467750;
+/* 채팅 버튼 */
+.chat-button-wrapper {
+  padding: 32px;
+  text-align: center;
+  border-top: 1px solid rgba(137, 192, 126, 0.1);
+}
+
+.chat-button {
+  background: linear-gradient(135deg, #89C07E, #467750);
   color: white;
-  border: 1px solid white;
-  transition: 0.3s ease;
+  border: none;
+  padding: 18px 36px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(137, 192, 126, 0.3);
+}
+
+.chat-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(137, 192, 126, 0.4);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .main {
+    margin-left: 60px;
+    padding: 20px;
+  }
+
+  .diary-header {
+    flex-direction: column;
+    gap: 24px;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .diary-content {
+    padding: 24px;
+  }
+
+  .reply-content {
+    padding: 24px;
+  }
+
+  .ai-message {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .ai-message-content::before,
+  .ai-message-content::after {
+    display: none;
+  }
+
+  .ai-message-content {
+    border-radius: 20px;
+  }
 }
