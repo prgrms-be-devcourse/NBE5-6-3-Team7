@@ -40,7 +40,6 @@ public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
-//    private final MailTemplate mailTemplate;
     private final AuthService authService;
     private final AiService aiService;
     private final CustomRepository customRepository;
