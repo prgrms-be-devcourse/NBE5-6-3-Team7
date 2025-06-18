@@ -230,31 +230,6 @@ body {
   max-width: 400px;
 }
 
-/* AI 특성 태그들 */
-.ai-features {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.feature-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(137, 192, 126, 0.1);
-  color: #4a7c59;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  border: 1px solid rgba(137, 192, 126, 0.2);
-}
-
-.feature-icon {
-  font-size: 16px;
-}
-
 /* 액션 버튼들 */
 .action-buttons {
   display: flex;
