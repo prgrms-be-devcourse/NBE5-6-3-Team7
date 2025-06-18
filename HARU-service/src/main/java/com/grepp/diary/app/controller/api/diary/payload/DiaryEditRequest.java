@@ -15,5 +15,6 @@ public class DiaryEditRequest {
     private LocalDate date;
     private List<String> keywords;
     private List<Integer> deletedImageIds;
+    private String thumbnailFileName;
 
 }

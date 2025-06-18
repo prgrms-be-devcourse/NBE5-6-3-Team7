@@ -130,7 +130,7 @@ public class KeywordService {
     }
 
     public Map<String, List<Keyword>> findAllGroupedKeyword() {
-        List<Keyword> allKeywords = keywordRepository.findAll();
+        List<Keyword> allKeywords = keywordRepository.findByIsUseTrue();
         return allKeywords.stream().collect(Collectors.groupingBy(k -> k.getType().name()));
     }
 }

@@ -107,19 +107,57 @@
 }
 
 .image-preview-box {
+  position: relative;
   width: 100%;
   height: 320px;
   background-color: #D9D8D5;
   border-radius: 12px;
   margin-top: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow-y: auto;
   margin-bottom: 16px;
+  /*display: flex;*/
+  /*flex-wrap: nowrap;               !* ❗ 한 줄에 나열 *!*/
+  /*overflow-x: auto;                !* ❗ 가로 스크롤 허용 *!*/
+  /*overflow-y: hidden;              !* ❌ 세로 스크롤 제거 *!*/
+  /*padding: 12px;                   !* ✅ 내부 여백 추가로 잘림 방지 *!*/
+  /*gap: 12px;                       !* ✅ 이미지 사이 간격 *!*/
+  /*scroll-behavior: smooth;*/
 }
 
 /* 감정 아이콘 그룹 */
+
+
+.placeholder-icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: #aaa;
+  pointer-events: none;
+}
+
+.upload-btn-wrapper {
+  width: 100%;
+  text-align: center;
+}
+
+.upload-btn {
+  background-color: #6b8e6e;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.image-guide {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 4px;
+  text-align: center;
+}
+
 .icon-group {
   display: flex;
   justify-content: space-between;
@@ -439,4 +477,53 @@ input[type="file"] {
 
 .form-box {
   animation: fadeInUp 0.4s ease forwards;
+}
+
+/*이미지 미리 보기*/
+
+.preview-img {
+  width: 200px;
+  height: auto;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: #f8f8f8; /* 배경색으로 여백 보완 */
+  padding: 4px;
+}
+
+.preview-img-wrapper {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+  text-align: center;
+}
+
+.delete-btn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.thumbnail-btn {
+  margin-top: 6px;
+  font-size: 12px;
+  padding: 3px 6px;
+  background-color: #f0f0f0;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* 썸네일 강조 */
+.selected-thumbnail .preview-img{
+  border: 4px solid #007bff;
 }
