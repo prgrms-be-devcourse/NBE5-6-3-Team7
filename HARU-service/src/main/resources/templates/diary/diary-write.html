@@ -27,7 +27,6 @@
 
     <div class="container">
       <form th:action="@{/diary}" method="post" enctype="multipart/form-data" th:object="${diaryRequest}">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <!-- 날짜 선택 -->
         <div class="form-box">
           <div class="date-display">

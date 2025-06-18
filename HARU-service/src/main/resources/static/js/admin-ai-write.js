@@ -11,9 +11,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const promptInput = document.getElementById('prompt-input');
   const editingAiId = localStorage.getItem('editingAiId');
 
-  const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
   if (!submitBtn) return;
 
   if (editingAiId) {
@@ -84,7 +81,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const res = await fetch(url, {
         method,
         headers: {
-          [csrfHeader]: csrfToken
         },
         body: formData
       });

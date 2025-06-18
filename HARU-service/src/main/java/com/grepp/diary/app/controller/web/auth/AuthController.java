@@ -4,8 +4,12 @@ import com.grepp.diary.app.controller.web.auth.form.SigninForm;
 import com.grepp.diary.app.controller.web.auth.form.SignupForm;
 import com.grepp.diary.app.model.auth.AuthService;
 import com.grepp.diary.app.model.auth.code.Role;
+import com.grepp.diary.app.model.auth.token.dto.TokenDto;
 import com.grepp.diary.app.model.custom.CustomService;
 import com.grepp.diary.app.model.member.MemberService;
+import com.grepp.diary.infra.auth.token.JwtProvider;
+import com.grepp.diary.infra.auth.token.TokenCookieFactory;
+import com.grepp.diary.infra.auth.token.code.TokenType;
 import com.grepp.diary.infra.error.exceptions.CommonException;
 import com.grepp.diary.infra.response.ResponseCode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +18,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -38,6 +43,7 @@ public class AuthController {
     private final MemberService memberService;
     private final AuthService authService;
     private final CustomService customService;
+    private final JwtProvider jwtProvider;
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("signinForm") SigninForm signinForm,
@@ -53,7 +59,15 @@ public class AuthController {
         }
 
         try {
-            authService.verifyPasswordAndLogin(signinForm, request, response);
+            TokenDto dto = authService.verifyPasswordAndLogin(signinForm, request);
+            ResponseCookie accessTokenCookie = TokenCookieFactory.create(TokenType.ACCESS_TOKEN.name(),
+                dto.getAccessToken(), dto.getAtExpiresIn());
+            ResponseCookie refreshTokenCookie = TokenCookieFactory.create(TokenType.REFRESH_TOKEN.name(),
+                dto.getRefreshToken(), dto.getRtExpiresIn());
+
+            response.addHeader("Set-Cookie", accessTokenCookie.toString());
+            response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+
             return "redirect:/app";
         } catch (UsernameNotFoundException | IllegalArgumentException e) {
             // 로그인 실패 시

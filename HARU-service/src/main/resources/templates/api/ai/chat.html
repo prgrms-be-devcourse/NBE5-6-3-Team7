@@ -467,8 +467,6 @@
 
 <!-- 메인 컨텐츠 -->
 <main class="main">
-  <input type="hidden" id="csrf-token" th:value="${_csrf.token}"/>
-  <input type="hidden" id="csrf-header" th:value="${_csrf.headerName}"/>
   <!-- 이 줄이 누락되어 있었습니다 -->
   <input type="hidden" id="ai-img-url" th:value="@{'/uploads/' + ${imgSavePath} + ${imgRenamedName}}"/>
 
@@ -542,9 +540,6 @@
   const sendButton = document.getElementById('send-button');
 
   const aiImgUrl = document.getElementById('ai-img-url').value;
-  const csrfToken = document.getElementById('csrf-token').value;
-  const csrfHeader = document.getElementById('csrf-header').value;
-
   function getCurrentTime() {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
@@ -641,7 +636,6 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
       },
       body: JSON.stringify({
         diaryId: diaryId,
@@ -740,7 +734,6 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
       },
       body: JSON.stringify({
         diaryId: diaryId,
@@ -775,7 +768,6 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
       },
       body: JSON.stringify({
         diaryId: diaryId,

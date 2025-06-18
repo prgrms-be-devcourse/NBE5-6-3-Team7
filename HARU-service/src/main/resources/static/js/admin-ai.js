@@ -1,9 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const aiContent = document.getElementById('aiContent');
 
-  const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-
   if (aiContent) {
     fetchAis();
   }
@@ -85,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
       },
       body: JSON.stringify(requestBody)
     })
@@ -108,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        [csrfHeader]: csrfToken
       },
       body: JSON.stringify(aiIds)
     })

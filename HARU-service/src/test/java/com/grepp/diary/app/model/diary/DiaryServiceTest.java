@@ -1,8 +1,5 @@
 package com.grepp.diary.app.model.diary;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.grepp.diary.app.model.diary.repository.DiaryRepository;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
