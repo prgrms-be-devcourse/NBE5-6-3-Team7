@@ -22,7 +22,7 @@
 <tr>
       <td align="center"><a href="https://github.com/namdragonkiller"><img src="https://github.com/namdragonkiller.png" width="100px;" alt="kdu"/></a></td>
       <td align="center"><a href="https://github.com/eonwy"><img src="https://github.com/eonwy.png" width="100px;" alt="ash"/></a></td>
-      <td align="center"><a href="https://github.com/IDIOcoder"><img src="https://github.com/IDIOcoder.png" width="100px;" alt="lkh"/></a></td>
+      <td align="center"><a href="https://github.com/oharang"><img src="https://github.com/oharang.png" width="100px;" alt="lkh"/></a></td>
       <td align="center"><a href="https://github.com/Irreplaceable-j"><img src="https://github.com/Irreplaceable-j.png" width="100px;" alt="lcr"/></a></td>
       <td align="center"><a href="https://github.com/JongWook6"><img src="https://github.com/JongWook6.png" width="100px;" alt="hyj"/></a></td>
      <tr/>
@@ -30,7 +30,7 @@
 <tr>
       <td align="center"><a href="https://github.com/namdragonkiller"><sub><b>@namdragonkiller</b></sub></a><br /></td>
       <td align="center"><a href="https://github.com/eonwy"><sub><b>@eonwy</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/IDIOcoder"><sub><b>@IDIOcoder</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/oharang"><sub><b>@oharang</b></sub></a><br /></td>
       <td align="center"><a href="https://github.com/Irreplaceable-j"><sub><b>@Irreplaceable-j</b></sub></a><br /></td>
       <td align="center"><a href="https://github.com/JongWook6"><sub><b>@JongWook6</b></sub></a><br /></td>
      <tr/>
